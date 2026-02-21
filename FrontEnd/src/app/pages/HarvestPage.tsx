@@ -1,0 +1,448 @@
+import { useState, useEffect, useMemo } from 'react';
+import { Plus, Scale, Calendar, TrendingUp, Loader2 } from 'lucide-react';
+import { useUser, useAuth } from '@clerk/clerk-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { api } from '@/lib/api';
+
+interface HarvestRecord {
+  id: number;
+  worker: { id: number; user?: { name: string } };
+  plot: { blockId: string };
+  harvestDate: string;
+  grossWeight: number;
+  tareWeight: number;
+  netWeight: number;
+  calculatedPay?: number;
+}
+
+export function HarvestPage() {
+  const { user } = useUser();
+  const { getToken } = useAuth();
+  const plantationId = user?.publicMetadata?.plantationId as string | undefined;
+
+  const [harvests, setHarvests] = useState<HarvestRecord[]>([]);
+  const [workers, setWorkers] = useState<any[]>([]);
+  const [plots, setPlots] = useState<any[]>([]);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
+  const [selectedWorker, setSelectedWorker] = useState<string>('ALL');
+  const [selectedPlot, setSelectedPlot] = useState<string>('ALL');
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [editingRecord, setEditingRecord] = useState<HarvestRecord | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    workerId: '',
+    plotId: '',
+    harvestDate: new Date().toISOString().split('T')[0],
+    grossWeight: '',
+    tareWeight: ''
+  });
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const token = await getToken();
+      const [harvestData, workerData, plotData] = await Promise.all([
+        api.getHarvests(selectedMonth, plantationId, token || undefined).catch(err => {
+          console.error('Failed to fetch harvests:', err);
+          return [];
+        }),
+        api.getWorkers(plantationId, token || undefined).catch(err => {
+          console.error('Failed to fetch workers:', err);
+          return [];
+        }),
+        api.getPlots(plantationId, token || undefined).catch(err => {
+          console.error('Failed to fetch plots:', err);
+          return [];
+        })
+      ]);
+      setHarvests(harvestData);
+      setWorkers(workerData);
+      setPlots(plotData);
+    } catch (error) {
+      console.error('Failed to fetch data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [selectedMonth]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.workerId || !formData.plotId || !formData.grossWeight || !formData.tareWeight) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        ...formData,
+        workerId: parseInt(formData.workerId),
+        grossWeight: parseFloat(formData.grossWeight),
+        tareWeight: parseFloat(formData.tareWeight),
+        plantationId: plantationId ? parseInt(plantationId) : null
+      };
+
+      const token = await getToken();
+      if (editingRecord) {
+        await api.updateHarvest(editingRecord.id, payload, token || undefined);
+      } else {
+        await api.recordHarvest(payload, token || undefined);
+      }
+
+      setShowModal(false);
+      setEditingRecord(null);
+      setFormData({
+        workerId: '',
+        plotId: '',
+        harvestDate: new Date().toISOString().split('T')[0],
+        grossWeight: '',
+        tareWeight: ''
+      });
+      fetchData();
+    } catch (error) {
+      console.error('Failed to save harvest:', error);
+      alert('Failed to save harvest record.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleEdit = (record: HarvestRecord) => {
+    setEditingRecord(record);
+    setFormData({
+      workerId: record.worker.id.toString(),
+      plotId: record.plot.blockId,
+      harvestDate: record.harvestDate,
+      grossWeight: record.grossWeight.toString(),
+      tareWeight: record.tareWeight.toString()
+    });
+    setShowModal(true);
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm('Are you sure you want to delete this harvest record?')) return;
+    try {
+      const token = await getToken();
+      await api.deleteHarvest(id, token || undefined);
+      fetchData();
+    } catch (error) {
+      console.error('Failed to delete harvest:', error);
+      alert('Failed to delete record.');
+    }
+  };
+
+  const todayTotal = useMemo(() => harvests
+    .filter(h => h.harvestDate === new Date().toISOString().split('T')[0])
+    .filter(h => selectedWorker === 'ALL' || h.worker.id.toString() === selectedWorker)
+    .filter(h => selectedPlot === 'ALL' || h.plot.blockId === selectedPlot)
+    .reduce((sum, h) => sum + h.netWeight, 0), [harvests, selectedWorker, selectedPlot]);
+
+  const weeklyData = useMemo(() => {
+    const last7Days = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - (6 - i));
+      return d.toISOString().split('T')[0];
+    });
+
+    return last7Days.map(date => ({
+      day: new Date(date).toLocaleDateString('en-US', { weekday: 'short' }),
+      yield: harvests
+        .filter(h => h.harvestDate === date)
+        .filter(h => selectedWorker === 'ALL' || h.worker.id.toString() === selectedWorker)
+        .filter(h => selectedPlot === 'ALL' || h.plot.blockId === selectedPlot)
+        .reduce((sum, h) => sum + h.netWeight, 0)
+    }));
+  }, [harvests, selectedWorker, selectedPlot]);
+
+  const weeklyTotal = useMemo(() =>
+    weeklyData.reduce((sum, d) => sum + d.yield, 0),
+    [weeklyData]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Loader2 className="w-8 h-8 animate-spin text-green-600" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Harvest & Yield Tracker</h1>
+          <div className="flex items-center gap-2 mt-1">
+            <p className="text-sm font-medium text-gray-600">Period:</p>
+            <input
+              type="month"
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+              className="px-2 py-0.5 border border-gray-300 rounded text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+            />
+            <select
+              value={selectedWorker}
+              onChange={(e) => setSelectedWorker(e.target.value)}
+              className="px-2 py-0.5 border border-gray-300 rounded text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+            >
+              <option value="ALL">All Workers</option>
+              {workers.map(w => (
+                <option key={w.id} value={w.id}>{w.user?.name || 'Unnamed Worker'}</option>
+              ))}
+            </select>
+            <select
+              value={selectedPlot}
+              onChange={(e) => setSelectedPlot(e.target.value)}
+              className="px-2 py-0.5 border border-gray-300 rounded text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+            >
+              <option value="ALL">All Blocks</option>
+              {plots.map(p => (
+                <option key={p.id} value={p.blockId}>{p.blockId}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <button
+          onClick={() => {
+            setEditingRecord(null);
+            setFormData({
+              workerId: '',
+              plotId: '',
+              harvestDate: new Date().toISOString().split('T')[0],
+              grossWeight: '',
+              tareWeight: ''
+            });
+            setShowModal(true);
+          }}
+          className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium"
+        >
+          <Plus className="w-5 h-5" />
+          Record Harvest
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <p className="text-sm text-gray-600 mb-1">Today's Harvest</p>
+          <p className="text-2xl font-bold text-gray-900">{todayTotal.toFixed(1)} kg</p>
+        </div>
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <p className="text-sm text-gray-600 mb-1">Weekly Total</p>
+          <p className="text-2xl font-bold text-gray-900">
+            {weeklyTotal.toFixed(1)} kg
+          </p>
+        </div>
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <p className="text-sm text-gray-600 mb-1">Total Records</p>
+          <p className="text-2xl font-bold text-blue-600">
+            {harvests.length}
+          </p>
+        </div>
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <p className="text-sm text-gray-600 mb-1">Average Net Weight</p>
+          <p className="text-2xl font-bold text-green-600">
+            {harvests.length > 0 ? (harvests.reduce((s, h) => s + h.netWeight, 0) / harvests.length).toFixed(1) : 0} kg
+          </p>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Weekly Harvest Trend</h3>
+        <div className="h-[300px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={weeklyData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="day" />
+              <YAxis />
+              <Tooltip />
+              <Line type="monotone" dataKey="yield" stroke="#16a34a" strokeWidth={2} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="p-4 border-b border-gray-200">
+          <h3 className="font-semibold text-gray-900">Recent Harvest Records</h3>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Date</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Worker</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Block</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Weight (kg)</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Details</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Status</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Payout</th>
+              </tr>
+            </thead>
+            <tbody>
+              {harvests
+                .filter(h => selectedWorker === 'ALL' || h.worker.id.toString() === selectedWorker)
+                .filter(h => selectedPlot === 'ALL' || h.plot.blockId === selectedPlot)
+                .map((harvest) => (
+                  <tr key={harvest.id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="py-3 px-4 text-sm text-gray-900">{harvest.harvestDate}</td>
+                    <td className="py-3 px-4 text-sm font-medium text-gray-900">{harvest.worker.user?.name || 'Unnamed Worker'}</td>
+                    <td className="py-3 px-4 text-sm text-gray-900">{harvest.plot.blockId}</td>
+                    <td className="py-3 px-4 text-sm font-semibold text-gray-900">{harvest.netWeight.toFixed(1)}</td>
+                    <td className="py-3 px-4">
+                      <span className="text-xs text-gray-400">G: {harvest.grossWeight} | T: {harvest.tareWeight}</span>
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleEdit(harvest)}
+                          className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(harvest.id)}
+                          className="text-red-600 hover:text-red-700 text-sm font-medium ml-2"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                    <td className="py-3 px-4 text-sm font-bold text-green-700">
+                      {harvest.calculatedPay ? `LKR ${harvest.calculatedPay.toLocaleString()}` : '-'}
+                    </td>
+                  </tr>
+                ))}
+              {harvests.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="py-8 text-center text-gray-500 text-sm">
+                    No harvest records found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {/* Record Harvest Modal */}
+      {
+        showModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+              <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-green-50">
+                <h2 className="text-xl font-bold text-green-900">
+                  {editingRecord ? 'Edit Harvest Record' : 'Record New Harvest'}
+                </h2>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                  disabled={isSubmitting}
+                >
+                  <Plus className="w-6 h-6 rotate-45" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Worker *</label>
+                  <select
+                    required
+                    value={formData.workerId}
+                    onChange={(e) => setFormData({ ...formData, workerId: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                  >
+                    <option value="">Select Worker</option>
+                    {workers.map(w => (
+                      <option key={w.id} value={w.id}>{w.user?.name || 'Unnamed Worker'}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Plot / Block *</label>
+                  <select
+                    required
+                    value={formData.plotId}
+                    onChange={(e) => setFormData({ ...formData, plotId: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                  >
+                    <option value="">Select Block</option>
+                    {plots.map(p => (
+                      <option key={p.id} value={p.blockId}>{p.blockId}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Date *</label>
+                  <input
+                    required
+                    type="date"
+                    value={formData.harvestDate}
+                    onChange={(e) => setFormData({ ...formData, harvestDate: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Gross Weight (kg) *</label>
+                    <input
+                      required
+                      type="number"
+                      step="0.01"
+                      placeholder="e.g. 25.5"
+                      value={formData.grossWeight}
+                      onChange={(e) => setFormData({ ...formData, grossWeight: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Tare Weight (kg) *</label>
+                    <input
+                      required
+                      type="number"
+                      step="0.01"
+                      placeholder="e.g. 1.2"
+                      value={formData.tareWeight}
+                      onChange={(e) => setFormData({ ...formData, tareWeight: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-4 border-t border-gray-100">
+                  <button
+                    type="button"
+                    onClick={() => setShowModal(false)}
+                    disabled={isSubmitting}
+                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      editingRecord ? 'Update Record' : 'Record Harvest'
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )
+      }
+    </div >
+  );
+}
