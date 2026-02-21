@@ -1,0 +1,30 @@
+@startuml system_overview
+!include https://raw.githubusercontent.com/plantuml-office/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title "TeaPlanter - System Overview [Container Diagram]"
+
+Person(owner, "Tea Estate Owner", "Manages the entire estate, finances, and workforce.")
+Person(worker, "Estate Worker", "Tracks attendance, harvest, and personal records.")
+Person(admin, "System Admin", "Manages users, system settings, and data integrity.")
+
+System_Boundary(teaplanter, "TeaPlanter System") {
+    Container(web_app, "Web Application", "React, TypeScript, Tailwind CSS", "Main interface for owners and workers to manage estate operations.")
+    Container(api_service, "API Application", "Java, Spring Boot", "Handles business logic for workforce, inventory, harvests, and financial records.")
+    ContainerDb(database, "PostgreSQL Database", "Stores estate data, including worker details, harvest records, and payroll.")
+}
+
+System_Ext(ai_assistant, "AI Assistant", "External AI service for estate management advice.")
+System_Ext(disease_scanner, "Disease Scanner API", "External computer vision service for tea leaf disease detection.")
+
+Rel(owner, web_app, "Uses", "HTTPS/JSON")
+Rel(worker, web_app, "Uses", "HTTPS/JSON")
+Rel(admin, web_app, "Uses", "HTTPS/JSON")
+
+Rel(web_app, api_service, "Calls API", "HTTPS/JSON")
+Rel(api_service, database, "Reads/Writes", "JDBC")
+Rel(api_service, ai_assistant, "Interacts with")
+Rel(api_service, disease_scanner, "Sends leaf images to")
+
+@enduml
