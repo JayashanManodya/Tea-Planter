@@ -1,13 +1,13 @@
-package online.jayashan.teaplanter;
+package online.teaplanter.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TeaPlanterApplication {
+public class BackEndApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(TeaPlanterApplication.class, args);
+        SpringApplication.run(BackEndApplication.class, args);
     }
 
 }

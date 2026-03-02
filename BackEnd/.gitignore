@@ -1,0 +1,45 @@
+# Maven
+target/
+pom.xml.tag
+pom.xml.next
+pom.xml.bak
+pom.xml.versions
+pom.xml.releaseBackup
+releases/
+# Eclipse
+.classpath
+.factorypath
+.project
+.settings/
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+# VS Code
+.vscode/
+# General Java
+*.class
+*.jar
+*.war
+*.ear
+*.swp
+# Spring Boot
+/code/
+build/
+!**/src/**/bin/
+!**/src/**/build/
+# Miscellaneous
+*.log
+*.sql
+*.h2.db # H2 database files, if used
+.mvn/wrapper/maven-wrapper.jar
+# Optional: Keep Maven wrapper scripts but ignore the generated jar file in the wrapper directory
+!.mvn/wrapper/maven-wrapper.properties
+!.mvn/wrapper/maven-wrapper.sh
+!.mvn/wrapper/maven-wrapper.bat
+# Operating System files
+.DS_Store
+# Temporary files
+*~
+.#*

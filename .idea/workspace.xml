@@ -5,9 +5,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="889a02de-13c4-4831-96b4-7b121ffd7483" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/TeaPlanterApplication.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/config/SecurityConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/config/TaskRateSeeder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/controller/FinancialController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/controller/ReportController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/dto/PayrollPreviewDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/entity/Factory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/entity/FactoryPaysheet.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/entity/Harvest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/entity/IncomeDate.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/entity/Payroll.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/entity/TeaDelivery.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/exception/GlobalExceptionHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/repository/FactoryPaysheetRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/repository/FactoryRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/repository/HarvestRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/repository/PayrollRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/repository/TeaDeliveryRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/security/UserSynchronizationFilter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/service/FactoryService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/service/FinancialService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/service/HarvestService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TeaPlanter/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/TeaPlanter/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TeaPlanter/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/TeaPlanter/target/classes/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackEnd/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackEnd/src/main/java/online/teaplanter/backend/BackEndApplication.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,12 +54,12 @@
     &quot;assignee&quot;: &quot;JayashanManodya&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/JayashanManodya/TeaPlanter&quot;,
-    &quot;accountId&quot;: &quot;30ff3744-db21-490a-8927-2294648d2775&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/JayashanManodya/TeaPlanter.git",
+    "accountId": "30ff3744-db21-490a-8927-2294648d2775"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
 }</component>
@@ -55,10 +78,10 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "Spring Boot.TeaPlanterApplication.executor": "Run",
-    "git-widget-placeholder": "jayashan",
+    "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/Projects/TeaPlanter",
+    "last_opened_file_path": "D:/Projects/TeaPlanter/TeaPlanter/BackEnd",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -67,6 +90,15 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Projects\TeaPlanter\TeaPlanter\BackEnd" />
+      <recent name="D:\Projects\TeaPlanter\TeaPlanter\BackEnd\src\main\java\online\teaplanter\backend" />
+      <recent name="D:\Projects\TeaPlanter\TeaPlanter\BackEnd\src\main\java\online\teaplanter\backend\service" />
+      <recent name="D:\Projects\TeaPlanter\TeaPlanter\BackEnd\src\main\java\online\teaplanter\backend\security" />
+      <recent name="D:\Projects\TeaPlanter\TeaPlanter\BackEnd\src\main\java\online\teaplanter\backend\repository" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="TeaPlanterApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <envs>
@@ -113,6 +145,11 @@
       <workItem from="1770282951606" duration="1427000" />
       <workItem from="1770344028024" duration="14000" />
       <workItem from="1770446841887" duration="1867000" />
+      <workItem from="1770646510033" duration="751000" />
+      <workItem from="1770697332210" duration="768000" />
+      <workItem from="1770699832637" duration="16000" />
+      <workItem from="1771648824059" duration="103000" />
+      <workItem from="1772446645651" duration="397000" />
     </task>
     <servers />
   </component>

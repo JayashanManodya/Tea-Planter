@@ -1,10 +1,10 @@
-package online.jayashan.teaplanter;
+package online.teaplanter.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TeaPlanterApplicationTests {
+class BackEndApplicationTests {
 
     @Test
     void contextLoads() {
