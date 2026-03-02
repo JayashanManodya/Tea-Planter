@@ -1,2 +1,10 @@
 TeaPlanter/src/main/resources/application.properties
 TeaPlanter/target/classes/application.properties
+BackEnd/.idea/jarRepositories.xml
+BackEnd/.idea/misc.xml
+BackEnd/.idea/vcs.xml
+BackEnd/.idea/encodings.xml
+BackEnd/.idea/copilot.data.migration.ask2agent.xml
+BackEnd/.idea/compiler.xml
+BackEnd/target/classes/application.properties
+BackEnd/target/classes/online/teaplanter/backend/BackEndApplication.class
