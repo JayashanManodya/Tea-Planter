@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useUser, useAuth } from '@clerk/clerk-react';
 import { api } from '@/lib/api';
-import { Building2, Loader2, Calendar, TrendingUp, DollarSign } from 'lucide-react';
+import { Building2, Loader2, Calendar, TrendingUp, DollarSign, Search, Filter } from 'lucide-react';
 
 interface Plantation {
     id: number;
@@ -29,6 +29,8 @@ export function WorkerFinancial() {
     const [payrolls, setPayrolls] = useState<Payroll[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filterStatus, setFilterStatus] = useState<string>('ALL');
 
     useEffect(() => {
         fetchPlantations();
@@ -75,6 +77,21 @@ export function WorkerFinancial() {
             setLoading(false);
         }
     };
+
+    const filteredPayrolls = useMemo(() => {
+        let result = [...payrolls];
+        if (searchTerm) {
+            const term = searchTerm.toLowerCase();
+            result = result.filter(p => 
+                p.status.toLowerCase().includes(term) ||
+                new Date(p.month).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }).toLowerCase().includes(term)
+            );
+        }
+        if (filterStatus !== 'ALL') {
+            result = result.filter(p => p.status === filterStatus);
+        }
+        return result;
+    }, [payrolls, searchTerm, filterStatus]);
 
     const totalEarnings = payrolls.reduce((sum, p) => sum + (p.netPay || 0), 0);
     const totalBonuses = payrolls.reduce((sum, p) => sum + (p.bonuses || 0), 0);
@@ -148,14 +165,41 @@ export function WorkerFinancial() {
 
             {/* Payroll Records */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Payroll Records</h2>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <h2 className="text-lg font-semibold text-gray-900">Payroll Records</h2>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                        <div className="relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            <input
+                                type="text"
+                                placeholder="Search by month or status..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none w-full sm:w-64"
+                            />
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Filter className="w-4 h-4 text-gray-400" />
+                            <select
+                                value={filterStatus}
+                                onChange={(e) => setFilterStatus(e.target.value)}
+                                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+                            >
+                                <option value="ALL">All Status</option>
+                                <option value="PENDING">Pending</option>
+                                <option value="APPROVED">Approved</option>
+                                <option value="PAID">Paid</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
 
                 {loading ? (
                     <div className="flex justify-center py-12">
                         <Loader2 className="w-8 h-8 animate-spin text-green-600" />
                     </div>
-                ) : payrolls.length === 0 ? (
-                    <p className="text-center text-gray-500 py-12">No payroll records for this month</p>
+                ) : filteredPayrolls.length === 0 ? (
+                    <p className="text-center text-gray-500 py-12">No payroll records match your criteria.</p>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full">
@@ -170,7 +214,7 @@ export function WorkerFinancial() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {payrolls.map((payroll) => (
+                                {filteredPayrolls.map((payroll) => (
                                     <tr key={payroll.id} className="border-b border-gray-100">
                                         <td className="py-3 px-4 text-sm text-gray-900">
                                             {new Date(payroll.month).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}
