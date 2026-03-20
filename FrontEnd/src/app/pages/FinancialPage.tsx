@@ -85,6 +85,7 @@ export function FinancialPage() {
   const [payrollPreview, setPayrollPreview] = useState<any>(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [formData, setFormData] = useState({
     workerId: '',
     month: new Date().toISOString().slice(0, 7) // YYYY-MM
@@ -449,6 +450,28 @@ export function FinancialPage() {
   const netProfit = useMemo(() => {
     return totalRevenue - totalExpenses;
   }, [totalRevenue, totalExpenses]);
+  
+  const handleExport = async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    try {
+      const token = await getToken();
+      const blob = await api.downloadFinancialReport(plantationId!, selectedMonth, token || undefined);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Financial_Report_${selectedMonth}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Export failed:', error);
+      alert('Failed to export financial report.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -481,9 +504,13 @@ export function FinancialPage() {
             <Plus className="w-5 h-5" />
             Generate Payroll
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg font-medium outline-none">
-            <Download className="w-5 h-5" />
-            Export
+          <button 
+            onClick={handleExport}
+            disabled={isExporting}
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg font-medium outline-none disabled:opacity-50 transition-all"
+          >
+            {isExporting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-5 h-5" />}
+            {isExporting ? 'Exporting...' : 'Export'}
           </button>
         </div>
       </div>

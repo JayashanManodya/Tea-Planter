@@ -404,14 +404,30 @@ export function InventoryPage() {
       </div>
 
       {lowStockItems.length > 0 && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-2">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 shadow-sm animate-in slide-in-from-top-2 duration-300">
+          <div className="flex items-center gap-2 mb-3">
             <AlertTriangle className="w-5 h-5 text-red-700" />
             <h3 className="font-semibold text-red-900">Low Stock Alert</h3>
           </div>
-          <p className="text-sm text-red-800">
-            {lowStockItems.length} item(s) below minimum stock level. Please reorder soon.
-          </p>
+          <div className="space-y-2">
+            <p className="text-sm text-red-800 font-medium">
+              The following {lowStockItems.length} item(s) are below their minimum stock thresholds:
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+              {lowStockItems.map(item => (
+                <div key={item.id} className="bg-white/50 border border-red-100 rounded-md p-2 flex items-center justify-between group hover:bg-white transition-colors">
+                  <span className="text-xs font-bold text-gray-900 truncate pr-2" title={item.name}>{item.name}</span>
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <span className="text-[10px] font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded">
+                      {item.currentStock} {item.unit}
+                    </span>
+                    <span className="text-[9px] text-gray-400 font-medium">/ Min: {item.reorderLevel}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider pt-1">Please reorder these supplies soon to avoid operational delays.</p>
+          </div>
         </div>
       )}
 

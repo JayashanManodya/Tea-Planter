@@ -27,6 +27,7 @@ export function OwnerDashboard() {
         revenue: 0,
     });
     const [harvests, setHarvests] = useState<any[]>([]);
+    const [inventory, setInventory] = useState<any[]>([]);
     const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
     const [loading, setLoading] = useState(true);
 
@@ -35,13 +36,15 @@ export function OwnerDashboard() {
             setLoading(true);
             try {
                 const token = await getToken();
-                const [plots, workers, fetchedHarvests, fetchedIncomes] = await Promise.all([
+                const [plots, workers, fetchedHarvests, fetchedIncomes, fetchedInventory] = await Promise.all([
                     api.getPlots(plantationId, token || undefined),
                     api.getWorkers(plantationId, token || undefined),
                     api.getHarvests(selectedMonth, plantationId, token || undefined).catch(() => []),
                     api.getIncomes(selectedMonth, plantationId, token || undefined).catch(() => []),
+                    api.getInventoryItems(plantationId || '', token || undefined).catch(() => []),
                 ]);
                 setHarvests(fetchedHarvests);
+                setInventory(fetchedInventory);
                 setStats({
                     plots: plots.length,
                     workers: workers.filter((w: any) => w.status === 'Active').length,
@@ -194,26 +197,13 @@ export function OwnerDashboard() {
                     </div>
                     <div className="space-y-3">
                         {[
-                            {
-                                title: 'Weather Alert',
-                                message: 'Heavy rain expected tomorrow. Postpone fertilization.',
-                                severity: 'warning',
-                            },
-                            {
-                                title: 'Low Inventory',
-                                message: 'Fertilizer T-200 stock is running low (15kg remaining)',
-                                severity: 'error',
-                            },
-                            {
-                                title: 'AI Recommendation',
-                                message: 'Optimal pruning time for Block B: Next week',
-                                severity: 'info',
-                            },
-                            {
-                                title: 'Productivity Insight',
-                                message: 'Block A showing 15% higher yield than average',
-                                severity: 'success',
-                            },
+                            ...inventory
+                                .filter(item => item.currentStock <= (item.reorderLevel || 0))
+                                .map(item => ({
+                                    title: 'Low Inventory',
+                                    message: `${item.name} is running low (${item.currentStock} ${item.unit} remaining)`,
+                                    severity: 'error' as const,
+                                })),
                         ].map((alert, i) => (
                             <div
                                 key={i}
