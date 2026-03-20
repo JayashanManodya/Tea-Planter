@@ -22,6 +22,7 @@ public class Task {
     @Column(nullable = false)
     private String title; // Pruning, Weeding, Spraying, Manuring
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)

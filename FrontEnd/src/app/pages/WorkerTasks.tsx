@@ -259,9 +259,9 @@ export function WorkerTasks() {
                                 setPriorityFilter('ALL');
                                 setBlockFilter('ALL');
                             }}
-                            className="ml-auto text-xs font-bold text-red-600 hover:text-red-700"
+                            className="ml-auto text-xs font-medium text-red-600 hover:text-red-700"
                         >
-                            CLEAR FILTERS
+                            Clear all filters
                         </button>
                     )}
                 </div>
@@ -312,16 +312,13 @@ export function WorkerTasks() {
                                                 {task.status.replace('_', ' ')}
                                             </span>
                                         </div>
-                                        {task.description && (
-                                            <p className="text-sm text-gray-600 mb-2">{task.description}</p>
-                                        )}
                                         <div className="flex items-center gap-4 text-sm text-gray-600">
                                             <span>
                                                 <span className="font-medium">Date:</span> {new Date(task.taskDate).toLocaleDateString()}
                                             </span>
                                             {task.taskCategory && (
                                                 <span>
-                                                    <span className="font-medium">Category:</span> {task.taskCategory}
+                                                    <span className="font-medium">Block:</span> {task.taskCategory}
                                                 </span>
                                             )}
                                             {task.paymentAmount > 0 && (
@@ -330,6 +327,14 @@ export function WorkerTasks() {
                                                 </span>
                                             )}
                                         </div>
+                                        
+                                        {task.description && (
+                                            <div className="bg-gray-50 rounded-lg p-3 mt-4 border-l-4 border-green-500/20 text-left">
+                                                <p className="text-sm text-gray-600 whitespace-pre-wrap leading-relaxed break-words">
+                                                    {task.description}
+                                                </p>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {(task.status === 'ASSIGNED' || task.status === 'IN_PROGRESS') && (

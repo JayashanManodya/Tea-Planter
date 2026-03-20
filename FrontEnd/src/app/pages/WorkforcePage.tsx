@@ -53,16 +53,8 @@ export function WorkforcePage() {
   const [filterBlock, setFilterBlock] = useState<string>('ALL');
   const [sortBy, setSortBy] = useState<string>('name');
 
-  const [showTaskModal, setShowTaskModal] = useState(false);
-  const [selectedWorkerForTask, setSelectedWorkerForTask] = useState<Worker | null>(null);
   const [plots, setPlots] = useState<any[]>([]);
-  const [taskFormData, setTaskFormData] = useState<any>({
-    priority: 'MEDIUM',
-    plotId: '',
-    taskCategory: '',
-    title: '',
-    description: ''
-  });
+  const [selectedWorker, setSelectedWorker] = useState<Worker | null>(null);
 
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'info' | 'tasks' | 'attendance' | 'harvest'>('info');
@@ -239,39 +231,8 @@ export function WorkforcePage() {
     }
   };
 
-  const handleTaskSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedWorkerForTask) return;
-    if (!taskFormData.plotId || !taskFormData.taskCategory) {
-      alert('Please fill in Plot and Task Category');
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const token = await getToken();
-      await api.createTask({
-        ...taskFormData,
-        workerId: selectedWorkerForTask.id,
-        plantationId: plantationId
-      }, token || undefined);
-      setShowTaskModal(false);
-      setTaskFormData({
-        priority: 'MEDIUM',
-        plotId: '',
-        taskCategory: ''
-      });
-      alert('Task assigned successfully!');
-    } catch (error) {
-      console.error('Failed to assign task:', error);
-      alert('Failed to assign task.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   const handleViewDetails = async (worker: Worker) => {
-    setSelectedWorkerForTask(worker);
+    setSelectedWorker(worker);
     setShowDetailsModal(true);
     setLoadingHistory(true);
     setActiveTab('info');
@@ -432,6 +393,21 @@ export function WorkforcePage() {
             </div>
           </div>
         </div>
+        {(searchTerm || filterStatus !== 'ALL' || filterRole !== 'ALL' || filterBlock !== 'ALL') && (
+          <div className="flex justify-end pt-2 border-t border-gray-50">
+            <button
+              onClick={() => {
+                setSearchTerm('');
+                setFilterStatus('ALL');
+                setFilterRole('ALL');
+                setFilterBlock('ALL');
+              }}
+              className="text-xs font-medium text-red-600 hover:text-red-700"
+            >
+              Clear all filters
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -544,15 +520,6 @@ export function WorkforcePage() {
                     >
                       <QrCode className="w-4 h-4" />
                       QR Code
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSelectedWorkerForTask(worker);
-                        setShowTaskModal(true);
-                      }}
-                      className="text-green-600 hover:text-green-700 text-sm font-medium mr-2 px-1"
-                    >
-                      Assign Task
                     </button>
                     <button
                       onClick={() => handleEdit(worker)}
@@ -916,151 +883,30 @@ export function WorkforcePage() {
               </form>
             </div>
           </div>
-        )
-      }
-      {/* Task Assignment Modal */}
-      {
-        showTaskModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
-              <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-green-50">
-                <h2 className="text-xl font-bold text-green-900">
-                  Assign Task to {selectedWorkerForTask?.name}
-                </h2>
-                <button
-                  onClick={() => setShowTaskModal(false)}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
-                  disabled={isSubmitting}
-                >
-                  <Plus className="w-6 h-6 rotate-45" />
-                </button>
-              </div>
+      )}
 
-              <form onSubmit={handleTaskSubmit} className="p-6 space-y-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Task Title *</label>
-                  <input
-                    required
-                    type="text"
-                    placeholder="e.g. Pruning Block A"
-                    value={taskFormData.title}
-                    onChange={(e) => setTaskFormData({ ...taskFormData, title: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Description</label>
-                  <textarea
-                    placeholder="Detailed instructions..."
-                    value={taskFormData.description}
-                    onChange={(e) => setTaskFormData({ ...taskFormData, description: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none h-24"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Task Category *</label>
-                  <select
-                    required
-                    value={taskFormData.taskCategory}
-                    onChange={(e) => setTaskFormData({ ...taskFormData, taskCategory: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
-                  >
-                    <option value="">Select Category</option>
-                    <option value="HARVESTING">Harvesting</option>
-                    <option value="PRUNING">Pruning</option>
-                    <option value="WEEDING">Weeding</option>
-                    <option value="FERTILIZING">Fertilizing</option>
-                    <option value="PLANTING">Planting</option>
-                    <option value="OTHER">Other</option>
-                  </select>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Priority</label>
-                    <select
-                      value={taskFormData.priority}
-                      onChange={(e) => setTaskFormData({ ...taskFormData, priority: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
-                    >
-                      <option value="LOW">Low</option>
-                      <option value="MEDIUM">Medium</option>
-                      <option value="HIGH">High</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Plot / Block</label>
-                    <select
-                      value={taskFormData.plotId}
-                      onChange={(e) => setTaskFormData({ ...taskFormData, plotId: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
-                    >
-                      <option value="">General / No Block</option>
-                      {plots.map(plot => (
-                        <option key={plot.id} value={plot.blockId}>{plot.blockId}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-
-                <div className="flex gap-3 pt-4 border-t border-gray-100">
-                  <button
-                    type="button"
-                    onClick={() => setShowTaskModal(false)}
-                    disabled={isSubmitting}
-                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        Assigning...
-                      </>
-                    ) : (
-                      'Assign Task'
-                    )}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )
-      }
       {/* Worker Details Modal */}
       {
-        showDetailsModal && selectedWorkerForTask && (
+        showDetailsModal && selectedWorker && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col animate-in fade-in zoom-in duration-200">
               <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-blue-50">
-                <div className="flex items-center gap-3">
-                  <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-2xl overflow-hidden border-2 border-white shadow-md">
-                    {selectedWorkerForTask.user?.profileImageUrl ? (
-                      <img 
-                        src={selectedWorkerForTask.user.profileImageUrl} 
-                        alt={selectedWorkerForTask.user.name}
-                        className="w-full h-full object-cover"
-                      />
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
+                    {selectedWorker.user?.profileImageUrl ? (
+                      <img src={selectedWorker.user.profileImageUrl} alt="" className="w-full h-full object-cover" />
                     ) : (
-                      (selectedWorkerForTask.user?.name || 'W').charAt(0)
+                      <Users className="w-6 h-6 text-blue-600" />
                     )}
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-blue-900">{selectedWorkerForTask.user?.name || 'Unnamed Worker'}</h2>
-                    <p className="text-xs text-blue-600 font-medium">{selectedWorkerForTask.workerFunctions}</p>
+                    <h2 className="text-xl font-bold text-blue-900">{selectedWorker.user?.name}</h2>
+                    <p className="text-xs text-blue-600 font-medium">{selectedWorker.workerFunctions}</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setShowDetailsModal(false)}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                  className="p-2 hover:bg-white/50 rounded-full transition-colors text-blue-400 hover:text-blue-600"
                 >
                   <Plus className="w-6 h-6 rotate-45" />
                 </button>

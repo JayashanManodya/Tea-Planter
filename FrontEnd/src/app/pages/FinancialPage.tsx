@@ -476,7 +476,7 @@ export function FinancialPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
       </div>
     );
   }
@@ -492,14 +492,14 @@ export function FinancialPage() {
               type="month"
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="px-2 py-0.5 border border-gray-300 rounded text-sm font-medium focus:ring-2 focus:ring-purple-500 outline-none"
+              className="px-2 py-0.5 border border-gray-300 rounded text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
         </div>
         <div className="flex gap-2">
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium"
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
           >
             <Plus className="w-5 h-5" />
             Generate Payroll
@@ -516,12 +516,12 @@ export function FinancialPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 rounded-lg bg-green-100">
               <TrendingUp className="w-5 h-5 text-green-700" />
             </div>
-            <p className="text-sm font-medium text-gray-600">Total Revenue</p>
+            <p className="text-sm font-normal text-gray-600">Total Revenue</p>
           </div>
           <p className="text-2xl font-bold text-gray-900">
             LKR {totalRevenue.toLocaleString()}
@@ -529,12 +529,12 @@ export function FinancialPage() {
           <p className="text-sm text-gray-500 mt-2">Total from factory labels</p>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 rounded-lg bg-red-100">
               <TrendingDown className="w-5 h-5 text-red-700" />
             </div>
-            <p className="text-sm font-medium text-gray-600">Labor Expenses</p>
+            <p className="text-sm font-normal text-gray-600">Labor Expenses</p>
           </div>
           <p className="text-2xl font-bold text-gray-900">
             LKR {totalPayroll.toLocaleString()}
@@ -542,12 +542,12 @@ export function FinancialPage() {
           <p className="text-sm text-gray-500 mt-2">Sum of all net payrolls</p>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 rounded-lg bg-orange-100">
               <Package className="w-5 h-5 text-orange-700" />
             </div>
-            <p className="text-sm font-medium text-gray-600">Input Expenses</p>
+            <p className="text-sm font-normal text-gray-600">Input Expenses</p>
           </div>
           <p className="text-2xl font-bold text-gray-900">
             LKR {inventoryExpenses.toLocaleString()}
@@ -555,12 +555,12 @@ export function FinancialPage() {
           <p className="text-sm text-gray-500 mt-2">Fertilizer, chemicals & stock</p>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 rounded-lg bg-indigo-100">
-              <Activity className="w-5 h-5 text-indigo-700" />
+            <div className="p-2 rounded-lg bg-blue-100">
+              <Activity className="w-5 h-5 text-blue-700" />
             </div>
-            <p className="text-sm font-medium text-gray-600">Net Profit</p>
+            <p className="text-sm font-normal text-gray-600">Net Profit</p>
           </div>
           <p className={`text-2xl font-bold ${netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
             LKR {netProfit.toLocaleString()}
@@ -571,12 +571,12 @@ export function FinancialPage() {
 
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900">Factory Paysheets (Monthly)</h3>
             <button
               onClick={() => setShowIncomeModal(true)}
-              className="text-sm text-purple-600 hover:text-purple-700 font-medium whitespace-nowrap"
+              className="text-sm text-blue-600 hover:text-blue-700 font-medium whitespace-nowrap"
             >
               + Record Paysheet
             </button>
@@ -590,7 +590,7 @@ export function FinancialPage() {
                 placeholder="Search factory..."
                 value={incomeSearchTerm}
                 onChange={(e) => setIncomeSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-4 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 outline-none"
+                className="w-full pl-9 pr-4 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
               />
             </div>
             <div className="flex items-center gap-2">
@@ -598,7 +598,7 @@ export function FinancialPage() {
               <select
                 value={incomeSortBy}
                 onChange={(e) => setIncomeSortBy(e.target.value)}
-                className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-purple-500 outline-none"
+                className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none"
               >
                 <option value="date-desc">Newest First</option>
                 <option value="amount-desc">Highest Amount</option>
@@ -613,7 +613,7 @@ export function FinancialPage() {
                 <div className="flex justify-between items-start mb-2">
                   <div>
                     <p className="font-bold text-gray-900">{income.factory?.name}</p>
-                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">{new Date(0, (income.date?.month || 1) - 1).toLocaleString('default', { month: 'long' })} {income.date?.year}</p>
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">{new Date(0, (income.date?.month || 1) - 1).toLocaleString('default', { month: 'long' })} {income.date?.year}</p>
                   </div>
                   <div className="text-right flex flex-col items-end">
                     <p className="font-bold text-green-600 text-lg">LKR {income.netAmount?.toLocaleString()}</p>
@@ -633,7 +633,7 @@ export function FinancialPage() {
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
-                    <span className="text-[10px] text-gray-400 bg-gray-200 px-2 py-0.5 rounded-full mt-1">Paysheet ID: #{income.id}</span>
+                    <span className="text-xs text-gray-400 bg-gray-200 px-2 py-0.5 rounded-full mt-1">Paysheet ID: #{income.id}</span>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-y-1 text-xs border-t border-gray-200 pt-2 mt-2">
@@ -654,7 +654,7 @@ export function FinancialPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6 flex flex-col">
+        <div className="bg-white rounded-xl shadow-sm p-6 flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900">Profit Distribution</h3>
           </div>
@@ -687,23 +687,23 @@ export function FinancialPage() {
                 <text x="50%" y="48%" textAnchor="middle" dominantBaseline="middle" className="text-xl font-bold fill-gray-900">
                   LKR {totalRevenue.toLocaleString()}
                 </text>
-                <text x="50%" y="55%" textAnchor="middle" dominantBaseline="middle" className="text-[10px] font-bold fill-gray-400 uppercase tracking-widest">
+                <text x="50%" y="55%" textAnchor="middle" dominantBaseline="middle" className="text-xs font-medium fill-gray-400 uppercase tracking-wider">
                   Total Revenue
                 </text>
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <p className="text-center text-[10px] text-gray-400 mt-2 uppercase tracking-widest font-bold">
+          <p className="text-center text-xs text-gray-400 mt-2 uppercase tracking-wider font-medium">
             Revenue Allocation Overview
           </p>
         </div>
       </div>
 
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-white rounded-xl shadow-sm p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900">Payroll Records</h3>
           <div className="text-sm text-gray-500">
-            Total payout: <span className="font-bold text-purple-600">LKR {totalPayroll.toLocaleString()}</span>
+            Total payout: <span className="font-bold text-blue-600">LKR {totalPayroll.toLocaleString()}</span>
           </div>
         </div>
 
@@ -715,7 +715,7 @@ export function FinancialPage() {
               placeholder="Search by worker name..."
               value={payrollSearchTerm}
               onChange={(e) => setPayrollSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+              className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
           <div className="flex flex-wrap items-center gap-3">
@@ -724,7 +724,7 @@ export function FinancialPage() {
               <select
                 value={payrollFilterStatus}
                 onChange={(e) => setPayrollFilterStatus(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-purple-500 outline-none"
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none"
               >
                 <option value="ALL">All Status</option>
                 <option value="PENDING">Pending</option>
@@ -737,7 +737,7 @@ export function FinancialPage() {
               <select
                 value={payrollSortBy}
                 onChange={(e) => setPayrollSortBy(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-purple-500 outline-none"
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none"
               >
                 <option value="name-asc">Name (A-Z)</option>
                 <option value="amount-desc">Net Pay (High-Low)</option>
@@ -767,23 +767,23 @@ export function FinancialPage() {
               </div>
               <div className="grid grid-cols-2 sm:flex sm:items-center gap-4 sm:gap-8 text-sm">
                 <div className="flex flex-col">
-                  <span className="text-[10px] text-gray-400 uppercase">Base Wage</span>
+                  <span className="text-xs text-gray-400 font-medium uppercase">Base Wage</span>
                   <span className="text-gray-600">LKR {(payroll.basicWage || 0).toLocaleString()}</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[10px] text-green-400 uppercase">Bonus</span>
+                  <span className="text-xs text-green-400 font-medium uppercase">Bonus</span>
                   <span className="text-green-600">LKR {(payroll.bonuses || 0).toLocaleString()}</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[10px] text-red-400 uppercase">Deductions</span>
+                  <span className="text-xs text-red-400 font-medium uppercase">Deductions</span>
                   <span className="text-red-600">LKR {(payroll.deductions || 0).toLocaleString()}</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[10px] text-purple-400 uppercase font-bold">Net Pay</span>
+                  <span className="text-xs text-blue-400 uppercase font-medium">Net Pay</span>
                   <span className="font-bold text-gray-900">LKR {(payroll.netPay || 0).toLocaleString()}</span>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className={`text-[10px] px-2 py-1 rounded-full font-bold ${payroll.status === 'PAID' ? 'bg-green-100 text-green-700' :
+                  <span className={`text-xs px-2 py-1 rounded-full font-bold ${payroll.status === 'PAID' ? 'bg-green-100 text-green-700' :
                     payroll.status === 'APPROVED' ? 'bg-blue-100 text-blue-700' :
                       'bg-orange-100 text-orange-700'
                     }`}>
@@ -836,8 +836,8 @@ export function FinancialPage() {
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-purple-50">
-              <h2 className="text-xl font-bold text-purple-900">Generate Payroll</h2>
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-blue-50">
+              <h2 className="text-xl font-bold text-blue-900">Generate Payroll</h2>
               <button
                 onClick={() => {
                   setShowModal(false);
@@ -857,7 +857,7 @@ export function FinancialPage() {
                   required
                   value={formData.workerId}
                   onChange={(e) => setFormData({ ...formData, workerId: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 >
                   <option value="">Select Worker</option>
                   {workers.map(w => (
@@ -873,19 +873,19 @@ export function FinancialPage() {
                   type="month"
                   value={formData.month}
                   onChange={(e) => setFormData({ ...formData, month: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 />
               </div>
 
               {isPreviewLoading ? (
-                <div className="py-4 flex flex-col items-center justify-center gap-2 text-purple-600">
+                <div className="py-4 flex flex-col items-center justify-center gap-2 text-blue-600">
                   <Loader2 className="w-6 h-6 animate-spin" />
                   <span className="text-xs font-medium">Calculating earnings...</span>
                 </div>
               ) : payrollPreview ? (
                 <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
-                  <div className="p-4 bg-purple-50 rounded-xl border border-purple-100">
-                    <p className="text-[10px] text-purple-500 font-bold uppercase tracking-wider mb-2">Earnings Summary</p>
+                  <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                    <p className="text-xs text-blue-500 font-medium uppercase tracking-wider mb-2">Earnings Summary</p>
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
@@ -901,15 +901,15 @@ export function FinancialPage() {
                         </div>
                         <span className="text-sm font-bold text-gray-900">LKR {payrollPreview.taskEarnings.toLocaleString()}</span>
                       </div>
-                      <div className="pt-2 mt-2 border-t border-purple-200 flex justify-between items-center">
-                        <span className="text-xs font-bold text-purple-900">Total Calculated Base Wage</span>
-                        <span className="text-lg font-black text-purple-600">LKR {payrollPreview.totalEarnings.toLocaleString()}</span>
+                      <div className="pt-2 mt-2 border-t border-blue-200 flex justify-between items-center">
+                        <span className="text-xs font-medium text-blue-900">Total Calculated Base Wage</span>
+                        <span className="text-lg font-black text-blue-600">LKR {payrollPreview.totalEarnings.toLocaleString()}</span>
                       </div>
                     </div>
                   </div>
                   <div className="flex gap-2 p-2 bg-blue-50 rounded-lg border border-blue-100">
                     <Info className="w-4 h-4 text-blue-500 mt-0.5" />
-                    <p className="text-[10px] text-blue-700">
+                    <p className="text-xs text-blue-700">
                       Bonuses and deductions can be added after generating the initial payroll record.
                     </p>
                   </div>
@@ -936,7 +936,7 @@ export function FinancialPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting || (payrollPreview && payrollPreview.totalEarnings === 0)}
-                  className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 disabled:bg-gray-300"
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 disabled:bg-gray-300"
                 >
                   {isSubmitting ? (
                     <>
@@ -1080,7 +1080,7 @@ export function FinancialPage() {
 
               <div className="bg-blue-50 p-3 rounded-lg flex gap-2">
                 <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                <p className="text-[10px] text-blue-700">
+                <p className="text-xs text-blue-700">
                   The total value will be calculated automatically based on the factory's current price per kg.
                 </p>
               </div>
@@ -1111,8 +1111,8 @@ export function FinancialPage() {
       {showIncomeModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-purple-50">
-              <h2 className="text-xl font-bold text-purple-900">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-blue-50">
+              <h2 className="text-xl font-bold text-blue-900">
                 {editingIncome ? 'Edit Factory Paysheet' : 'Record Factory Paysheet'}
               </h2>
               <button
@@ -1134,7 +1134,7 @@ export function FinancialPage() {
                   required
                   value={incomeFormData.factoryId}
                   onChange={(e) => setIncomeFormData({ ...incomeFormData, factoryId: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 >
                   <option value="">Select Factory</option>
                   {factories.map(f => (
@@ -1152,7 +1152,7 @@ export function FinancialPage() {
                     step="0.01"
                     value={incomeFormData.totalWeight}
                     onChange={(e) => setIncomeFormData({ ...incomeFormData, totalWeight: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                   />
                 </div>
                 <div>
@@ -1163,7 +1163,7 @@ export function FinancialPage() {
                     step="0.01"
                     value={incomeFormData.pricePerKg}
                     onChange={(e) => setIncomeFormData({ ...incomeFormData, pricePerKg: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                   />
                 </div>
               </div>
@@ -1195,7 +1195,7 @@ export function FinancialPage() {
                   <select
                     value={incomeFormData.month}
                     onChange={(e) => setIncomeFormData({ ...incomeFormData, month: parseInt(e.target.value) })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                   >
                     {Array.from({ length: 12 }, (_, i) => (
                       <option key={i + 1} value={i + 1}>
@@ -1210,14 +1210,14 @@ export function FinancialPage() {
                     type="number"
                     value={incomeFormData.year}
                     onChange={(e) => setIncomeFormData({ ...incomeFormData, year: parseInt(e.target.value) })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                   />
                 </div>
               </div>
 
-              <div className="bg-purple-50 p-3 rounded-lg flex gap-2">
-                <Info className="w-4 h-4 text-purple-600 flex-shrink-0 mt-0.5" />
-                <p className="text-[10px] text-purple-700">
+              <div className="bg-blue-50 p-3 rounded-lg flex gap-2">
+                <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                <p className="text-xs text-blue-700">
                   Gross amount and net amount will be calculated automatically based on the values above.
                 </p>
               </div>
@@ -1234,7 +1234,7 @@ export function FinancialPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : (editingIncome ? 'Save Changes' : 'Record Paysheet')}
                 </button>
@@ -1260,7 +1260,7 @@ export function FinancialPage() {
 
             <form onSubmit={handleUpdatePayroll} className="p-6 space-y-4">
               <div className="bg-gray-50 p-3 rounded-lg flex flex-col gap-1 border border-gray-100">
-                <span className="text-[10px] text-gray-400 uppercase font-bold">Base Wage</span>
+                <span className="text-xs text-gray-400 uppercase font-medium">Base Wage</span>
                 <span className="text-lg font-bold text-gray-700">LKR {editingPayroll.basicWage?.toLocaleString()}</span>
               </div>
 
@@ -1346,25 +1346,25 @@ export function FinancialPage() {
 
               <div className="space-y-4">
                 <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
-                  <h3 className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <h3 className="text-xs font-medium text-blue-400 uppercase tracking-wider mb-2 flex items-center gap-2">
                     <TrendingUp className="w-3.5 h-3.5" />
                     Bank Information
                   </h3>
-                  <p className="text-[10px] text-blue-700 space-y-1">
-                    <div><span className="font-bold text-blue-400 uppercase mr-2">Bank:</span> {selectedPayrollForPayment.worker.user?.bankName || 'N/A'}</div>
-                    <div><span className="font-bold text-blue-400 uppercase mr-2">Branch:</span> {selectedPayrollForPayment.worker.user?.branchName || 'N/A'}</div>
-                    <div><span className="font-bold text-blue-400 uppercase mr-2">A/C No:</span> <span className="font-mono text-blue-900">{selectedPayrollForPayment.worker.user?.accountNumber || 'N/A'}</span></div>
-                    <div><span className="font-bold text-blue-400 uppercase mr-2">Holder:</span> {selectedPayrollForPayment.worker.user?.accountHolderName || 'N/A'}</div>
+                  <p className="text-xs text-blue-700 space-y-1">
+                    <div><span className="font-normal text-blue-400 uppercase mr-2">Bank:</span> {selectedPayrollForPayment.worker.user?.bankName || 'N/A'}</div>
+                    <div><span className="font-normal text-blue-400 uppercase mr-2">Branch:</span> {selectedPayrollForPayment.worker.user?.branchName || 'N/A'}</div>
+                    <div><span className="font-normal text-blue-400 uppercase mr-2">A/C No:</span> <span className="font-mono text-blue-900">{selectedPayrollForPayment.worker.user?.accountNumber || 'N/A'}</span></div>
+                    <div><span className="font-normal text-blue-400 uppercase mr-2">Holder:</span> {selectedPayrollForPayment.worker.user?.accountHolderName || 'N/A'}</div>
                   </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
-                    <p className="text-xs text-gray-400 font-bold uppercase mb-1">Total Payout</p>
+                    <p className="text-xs text-gray-400 font-normal uppercase mb-1">Total Payout</p>
                     <p className="text-lg font-black text-gray-900">LKR {selectedPayrollForPayment.netPay.toLocaleString()}</p>
                   </div>
                   <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
-                    <p className="text-xs text-gray-400 font-bold uppercase mb-1">Status</p>
+                    <p className="text-xs text-gray-400 font-normal uppercase mb-1">Status</p>
                     <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${selectedPayrollForPayment.status === 'PAID' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
                       }`}>
                       {selectedPayrollForPayment.status}

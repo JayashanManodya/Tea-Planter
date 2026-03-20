@@ -42,4 +42,8 @@ public class Plot {
     @JoinColumn(name = "plantation_id")
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     private Plantation plantation;
+
+    @OneToMany(mappedBy = "plot", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("plot")
+    private java.util.List<SoilTest> soilTests;
 }

@@ -239,12 +239,17 @@ export function WorkerDashboard() {
                                                 </span>
                                             )}
                                         </div>
-                                        {task.description && (
-                                            <p className="text-sm text-gray-600 mb-2">{task.description}</p>
-                                        )}
                                         <p className="text-sm text-gray-600">
                                             <span className="font-medium">Date:</span> {new Date(task.taskDate).toLocaleDateString()}
                                         </p>
+
+                                        {task.description && (
+                                            <div className="bg-gray-50 rounded-lg p-3 mt-4 border-l-4 border-green-500/20 text-left">
+                                                <p className="text-sm text-gray-600 whitespace-pre-wrap leading-relaxed break-words">
+                                                    {task.description}
+                                                </p>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {(task.status === 'ASSIGNED' || task.status === 'IN_PROGRESS') && (

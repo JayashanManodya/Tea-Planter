@@ -126,9 +126,10 @@ export function TasksPage() {
                 taskDate: new Date().toISOString().split('T')[0]
             });
             fetchData();
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to save task:', error);
-            alert('Failed to save task');
+            const errorMessage = error.message || (typeof error === 'string' ? error : 'Unknown error');
+            alert(`Failed to save task: ${errorMessage}`);
         } finally {
             setIsSubmitting(false);
         }
@@ -290,7 +291,7 @@ export function TasksPage() {
                         />
                     </div>
                 </div>
-                {userRole === 'owner' && (
+                {(userRole === 'owner' || userRole === 'clerk') && (
                     <div className="flex gap-2">
                         <button
                             onClick={() => {
@@ -394,9 +395,9 @@ export function TasksPage() {
                                 setPriorityFilter('ALL');
                                 setBlockFilter('ALL');
                             }}
-                            className="text-xs font-bold text-red-600 hover:text-red-700 uppercase tracking-wider"
+                            className="text-xs font-medium text-red-600 hover:text-red-700"
                         >
-                            Clear All Filters
+                            Clear all filters
                         </button>
                     </div>
                 )}
@@ -420,7 +421,6 @@ export function TasksPage() {
                                 <Calendar className="w-3.5 h-3.5" />
                                 <span className="font-semibold">{new Date(task.taskDate).toLocaleDateString()}</span>
                             </div>
-                            <p className="text-sm text-gray-600 mb-4 line-clamp-2 text-left">{task.description}</p>
 
                             <div className="space-y-2 mt-auto">
                                 <div className="flex items-center gap-2 text-xs text-gray-500">
@@ -443,6 +443,12 @@ export function TasksPage() {
                                         )}
                                     </div>
                                 )}
+                            </div>
+
+                            <div className="bg-gray-50 rounded-lg p-3 mt-4 border-l-4 border-green-500/20 text-left">
+                                <p className="text-sm text-gray-600 whitespace-pre-wrap leading-relaxed break-words">
+                                    {task.description || "No description provided."}
+                                </p>
                             </div>
                         </div>
 
@@ -575,6 +581,16 @@ export function TasksPage() {
                                     value={assignFormData.taskDate}
                                     onChange={(e) => setAssignFormData({ ...assignFormData, taskDate: e.target.value })}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1 text-left">Description</label>
+                                <textarea
+                                    value={assignFormData.description}
+                                    onChange={(e) => setAssignFormData({ ...assignFormData, description: e.target.value })}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none h-32 resize-none"
+                                    placeholder="Add detailed instructions for the worker..."
                                 />
                             </div>
 

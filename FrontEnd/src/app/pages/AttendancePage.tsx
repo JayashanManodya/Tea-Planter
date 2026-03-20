@@ -380,17 +380,31 @@ export function AttendancePage() {
             </div>
 
             <button
-              onClick={() => setSortConfig({
-                ...sortConfig,
-                direction: sortConfig.direction === 'asc' ? 'desc' : 'asc'
-              })}
-              title={sortConfig.direction === 'asc' ? 'Sort Descending' : 'Sort Ascending'}
-              className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
+               onClick={() => setSortConfig({
+                 ...sortConfig,
+                 direction: sortConfig.direction === 'asc' ? 'desc' : 'asc'
+               })}
+               title={sortConfig.direction === 'asc' ? 'Sort Descending' : 'Sort Ascending'}
+               className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
             >
-              <ArrowUpDown className={`w-4 h-4 transition-transform duration-200 ${sortConfig.direction === 'desc' ? 'rotate-180' : ''}`} />
+               <ArrowUpDown className={`w-4 h-4 transition-transform duration-200 ${sortConfig.direction === 'desc' ? 'rotate-180' : ''}`} />
             </button>
           </div>
         </div>
+        {(searchTerm || statusFilter !== 'ALL' || dateFilter !== new Date().toISOString().split('T')[0]) && (
+          <div className="flex justify-end pt-2 border-t border-gray-50">
+            <button
+              onClick={() => {
+                setSearchTerm('');
+                setStatusFilter('ALL');
+                setDateFilter(new Date().toISOString().split('T')[0]);
+              }}
+              className="text-xs font-medium text-red-600 hover:text-red-700"
+            >
+              Clear all filters
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
@@ -561,7 +575,7 @@ export function AttendancePage() {
                 <input
                   required
                   type="datetime-local"
-                  value={formData.checkIn}
+                  value={formData.checkIn || ''}
                   onChange={(e) => setFormData({ ...formData, checkIn: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 />
@@ -571,7 +585,7 @@ export function AttendancePage() {
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Check Out</label>
                 <input
                   type="datetime-local"
-                  value={formData.checkOut}
+                  value={formData.checkOut || ''}
                   onChange={(e) => setFormData({ ...formData, checkOut: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 />
