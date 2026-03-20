@@ -200,7 +200,8 @@ export function AttendancePage() {
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this attendance record?')) return;
     try {
-      await api.deleteAttendance(id);
+      const token = await getToken();
+      await api.deleteAttendance(id, token || undefined);
       fetchData();
     } catch (error) {
       console.error('Failed to delete attendance:', error);
