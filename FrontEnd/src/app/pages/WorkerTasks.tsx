@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useUser, useAuth } from '@clerk/clerk-react';
 import { api } from '@/lib/api';
-import { Building2, Loader2, CheckCircle2, Clock, ClipboardList } from 'lucide-react';
+import { Building2, Loader2, CheckCircle2, Clock, ClipboardList, Search, Filter, ArrowUpDown } from 'lucide-react';
 
 interface Plantation {
     id: number;
@@ -28,9 +28,14 @@ export function WorkerTasks() {
     const [plantations, setPlantations] = useState<Plantation[]>([]);
     const [selectedPlantation, setSelectedPlantation] = useState<number | null>(null);
     const [tasks, setTasks] = useState<Task[]>([]);
+    const [plots, setPlots] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [isUpdatingTask, setIsUpdatingTask] = useState(false);
     const [filterStatus, setFilterStatus] = useState<string>('ALL');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [priorityFilter, setPriorityFilter] = useState('ALL');
+    const [blockFilter, setBlockFilter] = useState('ALL');
+    const [sortBy, setSortBy] = useState('date-desc');
 
     useEffect(() => {
         fetchPlantations();
@@ -69,8 +74,12 @@ export function WorkerTasks() {
             const clerkId = user?.id;
             if (!clerkId) return;
 
-            const data = await api.getWorkerTasks(selectedPlantation, clerkId, token || undefined);
-            setTasks(data);
+            const [taskData, plotData] = await Promise.all([
+                api.getWorkerTasks(selectedPlantation, clerkId, token || undefined),
+                api.getPlots(selectedPlantation, token || undefined).catch(() => [])
+            ]);
+            setTasks(taskData);
+            setPlots(plotData);
         } catch (error) {
             console.error('Failed to fetch tasks:', error);
         } finally {
@@ -95,9 +104,31 @@ export function WorkerTasks() {
         }
     };
 
-    const filteredTasks = filterStatus === 'ALL'
-        ? tasks
-        : tasks.filter(t => t.status === filterStatus);
+    const filteredTasks = useMemo(() => {
+        let result = tasks.filter((task) => {
+            const matchesSearch =
+                task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                task.description.toLowerCase().includes(searchTerm.toLowerCase());
+
+            const matchesStatus = filterStatus === 'ALL' || task.status === filterStatus;
+            const matchesPriority = priorityFilter === 'ALL' || task.priority === priorityFilter;
+            const matchesBlock = blockFilter === 'ALL' || (task as any).plotId === blockFilter;
+
+            return matchesSearch && matchesStatus && matchesPriority && matchesBlock;
+        });
+
+        result.sort((a, b) => {
+            if (sortBy === 'date-desc') return new Date(b.taskDate).getTime() - new Date(a.taskDate).getTime();
+            if (sortBy === 'date-asc') return new Date(a.taskDate).getTime() - new Date(b.taskDate).getTime();
+            if (sortBy === 'priority-high') {
+                const pMap: any = { HIGH: 3, MEDIUM: 2, LOW: 1 };
+                return pMap[b.priority] - pMap[a.priority];
+            }
+            return 0;
+        });
+
+        return result;
+    }, [tasks, searchTerm, filterStatus, priorityFilter, blockFilter, sortBy]);
 
     const pendingTasks = tasks.filter(t => t.status === 'ASSIGNED' || t.status === 'IN_PROGRESS').length;
     const completedTasks = tasks.filter(t => t.status === 'COMPLETED').length;
@@ -154,20 +185,86 @@ export function WorkerTasks() {
                 </div>
             </div>
 
-            {/* Filter */}
-            <div className="flex gap-2">
-                {['ALL', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED'].map((status) => (
-                    <button
-                        key={status}
-                        onClick={() => setFilterStatus(status)}
-                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${filterStatus === status
-                                ? 'bg-green-600 text-white'
-                                : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                            }`}
+            {/* Filters Section */}
+            <div className="bg-white rounded-lg border border-gray-200 p-4 space-y-4">
+                <div className="flex flex-col md:flex-row shadow-sm gap-4">
+                    <div className="flex-1 relative">
+                        <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                        <input
+                            type="text"
+                            placeholder="Search my tasks..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                        />
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                        {['ALL', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED'].map((status) => (
+                            <button
+                                key={status}
+                                onClick={() => setFilterStatus(status)}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border ${filterStatus === status
+                                        ? 'bg-green-600 text-white border-green-600'
+                                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                                    }`}
+                            >
+                                {status.replace('_', ' ')}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-gray-50">
+                    <div className="flex items-center gap-2">
+                        <Filter className="w-4 h-4 text-gray-400" />
+                        <select
+                            value={priorityFilter}
+                            onChange={(e) => setPriorityFilter(e.target.value)}
+                            className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+                        >
+                            <option value="ALL">All Priorities</option>
+                            <option value="HIGH">High Priority</option>
+                            <option value="MEDIUM">Medium Priority</option>
+                            <option value="LOW">Low Priority</option>
+                        </select>
+                    </div>
+                    <select
+                        value={blockFilter}
+                        onChange={(e) => setBlockFilter(e.target.value)}
+                        className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
                     >
-                        {status.replace('_', ' ')}
-                    </button>
-                ))}
+                        <option value="ALL">All Blocks</option>
+                        {plots.map(p => (
+                            <option key={p.id} value={p.blockId}>{p.blockId}</option>
+                        ))}
+                    </select>
+                    <div className="h-6 w-px bg-gray-200 hidden md:block mx-1" />
+                    <div className="flex items-center gap-2">
+                        <ArrowUpDown className="w-4 h-4 text-gray-400" />
+                        <select
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                            className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+                        >
+                            <option value="date-desc">Newest First</option>
+                            <option value="date-asc">Oldest First</option>
+                            <option value="priority-high">Priority High-Low</option>
+                        </select>
+                    </div>
+                    {(searchTerm || filterStatus !== 'ALL' || priorityFilter !== 'ALL' || blockFilter !== 'ALL') && (
+                        <button
+                            onClick={() => {
+                                setSearchTerm('');
+                                setFilterStatus('ALL');
+                                setPriorityFilter('ALL');
+                                setBlockFilter('ALL');
+                            }}
+                            className="ml-auto text-xs font-bold text-red-600 hover:text-red-700"
+                        >
+                            CLEAR FILTERS
+                        </button>
+                    )}
+                </div>
             </div>
 
             {/* Tasks List */}

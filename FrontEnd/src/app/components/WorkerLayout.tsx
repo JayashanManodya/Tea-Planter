@@ -25,6 +25,7 @@ const navItems: NavItem[] = [
     { to: '/worker-dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/worker-financial', icon: DollarSign, label: 'Financial' },
     { to: '/worker-tasks', icon: ClipboardList, label: 'Tasks' },
+    { to: '/worker-harvest', icon: Leaf, label: 'Harvest' },
     { to: '/disease-scanner', icon: Scan, label: 'Disease Scanner' },
     { to: '/ai-assistant', icon: MessageSquare, label: 'AI Assistant' },
     { to: '/worker-reports', icon: FileText, label: 'Reports' },

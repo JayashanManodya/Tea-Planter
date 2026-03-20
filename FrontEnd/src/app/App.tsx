@@ -8,6 +8,7 @@ import { OwnerDashboard } from './pages/OwnerDashboard';
 import { WorkerDashboard } from './pages/WorkerDashboard';
 import { WorkerFinancial } from './pages/WorkerFinancial';
 import { WorkerTasks } from './pages/WorkerTasks';
+import { WorkerHarvests } from './pages/WorkerHarvests';
 import { PlotsPage } from './pages/PlotsPage';
 import { WorkforcePage } from './pages/WorkforcePage';
 import { HarvestPage } from './pages/HarvestPage';
@@ -80,6 +81,7 @@ function AppRoutes() {
         <Route path="/worker-dashboard" element={<WorkerDashboard />} />
         <Route path="/worker-financial" element={<WorkerFinancial />} />
         <Route path="/worker-tasks" element={<WorkerTasks />} />
+        <Route path="/worker-harvest" element={<WorkerHarvests />} />
         <Route path="/worker-reports" element={<WorkerReportsPage />} />
       </Route>
 

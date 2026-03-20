@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Search, Loader2, Clock, Plus, Calendar, User, MapPin, Edit2, Trash2, Settings2 } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Search, Loader2, Clock, Plus, Calendar, User, MapPin, Edit2, Trash2, Settings2, Filter, ArrowUpDown } from 'lucide-react';
 import { useAuth, useUser } from "@clerk/clerk-react";
 import { api } from '@/lib/api';
 
@@ -32,6 +32,9 @@ export function TasksPage() {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('ALL');
+    const [priorityFilter, setPriorityFilter] = useState('ALL');
+    const [blockFilter, setBlockFilter] = useState('ALL');
+    const [sortBy, setSortBy] = useState('date-desc');
 
     const [showAssignModal, setShowAssignModal] = useState(false);
     const [workers, setWorkers] = useState<any[]>([]);
@@ -168,16 +171,32 @@ export function TasksPage() {
         }
     };
 
-    const filteredTasks = tasks.filter((task) => {
-        const matchesSearch =
-            task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            task.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (task.assignedWorker?.user?.name || '').toLowerCase().includes(searchTerm.toLowerCase());
+    const filteredTasks = useMemo(() => {
+        let result = tasks.filter((task) => {
+            const matchesSearch =
+                task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                task.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (task.assignedWorker?.user?.name || '').toLowerCase().includes(searchTerm.toLowerCase());
 
-        const matchesStatus = statusFilter === 'ALL' || task.status === statusFilter;
+            const matchesStatus = statusFilter === 'ALL' || task.status === statusFilter;
+            const matchesPriority = priorityFilter === 'ALL' || task.priority === priorityFilter;
+            const matchesBlock = blockFilter === 'ALL' || task.plotId === blockFilter;
 
-        return matchesSearch && matchesStatus;
-    });
+            return matchesSearch && matchesStatus && matchesPriority && matchesBlock;
+        });
+
+        result.sort((a, b) => {
+            if (sortBy === 'date-desc') return new Date(b.taskDate).getTime() - new Date(a.taskDate).getTime();
+            if (sortBy === 'date-asc') return new Date(a.taskDate).getTime() - new Date(b.taskDate).getTime();
+            if (sortBy === 'priority-high') {
+                const pMap: any = { HIGH: 3, MEDIUM: 2, LOW: 1 };
+                return pMap[b.priority] - pMap[a.priority];
+            }
+            return 0;
+        });
+
+        return result;
+    }, [tasks, searchTerm, statusFilter, priorityFilter, blockFilter, sortBy]);
 
     const getStatusStyle = (status: string) => {
         switch (status) {
@@ -300,28 +319,87 @@ export function TasksPage() {
                 )}
             </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 p-4 flex gap-4">
-                <div className="flex-1 relative">
-                    <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                    <input
-                        type="text"
-                        placeholder="Search tasks, descriptions or workers..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
-                    />
+            <div className="bg-white rounded-lg border border-gray-200 p-4 space-y-4">
+                <div className="flex flex-col md:flex-row gap-4">
+                    <div className="flex-1 relative">
+                        <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                        <input
+                            type="text"
+                            placeholder="Search tasks, descriptions or workers..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                        />
+                    </div>
+                    <div className="flex flex-wrap items-center gap-3">
+                        <div className="flex items-center gap-2">
+                            <Filter className="w-4 h-4 text-gray-400" />
+                            <select
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value)}
+                                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+                            >
+                                <option value="ALL">All Status</option>
+                                <option value="ASSIGNED">Assigned</option>
+                                <option value="IN_PROGRESS">In Progress</option>
+                                <option value="COMPLETED">Completed</option>
+                                <option value="CANCELLED">Cancelled</option>
+                            </select>
+                        </div>
+                        <select
+                            value={priorityFilter}
+                            onChange={(e) => setPriorityFilter(e.target.value)}
+                            className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+                        >
+                            <option value="ALL">All Priorities</option>
+                            <option value="HIGH">High Priority</option>
+                            <option value="MEDIUM">Medium Priority</option>
+                            <option value="LOW">Low Priority</option>
+                        </select>
+                        <select
+                            value={blockFilter}
+                            onChange={(e) => setBlockFilter(e.target.value)}
+                            className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+                        >
+                            <option value="ALL">All Blocks</option>
+                            {plots.map(p => (
+                                <option key={p.id} value={p.blockId}>{p.blockId}</option>
+                            ))}
+                        </select>
+                        <div className="h-8 w-px bg-gray-200 hidden md:block" />
+                        <div className="flex items-center gap-2">
+                            <ArrowUpDown className="w-4 h-4 text-gray-400" />
+                            <select
+                                value={sortBy}
+                                onChange={(e) => setSortBy(e.target.value)}
+                                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+                            >
+                                <option value="date-desc">Newest First</option>
+                                <option value="date-asc">Oldest First</option>
+                                <option value="priority-high">Priority High-Low</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
-                >
-                    <option value="ALL">All Status</option>
-                    <option value="ASSIGNED">Assigned</option>
-                    <option value="IN_PROGRESS">In Progress</option>
-                    <option value="COMPLETED">Completed</option>
-                    <option value="CANCELLED">Cancelled</option>
-                </select>
+
+                {(searchTerm || statusFilter !== 'ALL' || priorityFilter !== 'ALL' || blockFilter !== 'ALL') && (
+                    <div className="flex items-center justify-between pt-2 border-t border-gray-50">
+                        <p className="text-xs text-gray-500">
+                            Found <span className="font-bold text-green-600">{filteredTasks.length}</span> results
+                        </p>
+                        <button
+                            onClick={() => {
+                                setSearchTerm('');
+                                setStatusFilter('ALL');
+                                setPriorityFilter('ALL');
+                                setBlockFilter('ALL');
+                            }}
+                            className="text-xs font-bold text-red-600 hover:text-red-700 uppercase tracking-wider"
+                        >
+                            Clear All Filters
+                        </button>
+                    </div>
+                )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
