@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Plus, Search, MapPin, Edit2, Trash2, Loader2 } from 'lucide-react';
 import { useUser, useAuth } from '@clerk/clerk-react';
 import { api } from '@/lib/api';
@@ -49,6 +49,11 @@ export function PlotsPage() {
   const [selectedPlotDetails, setSelectedPlotDetails] = useState<Plot | null>(null);
   const [soilTests, setSoilTests] = useState<SoilTest[]>([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
+
+  const [filterStatus, setFilterStatus] = useState<string>('ALL');
+  const [filterClone, setFilterClone] = useState<string>('ALL');
+  const [filterSoil, setFilterSoil] = useState<string>('ALL');
+  const [sortBy, setSortBy] = useState<string>('blockId');
 
   const fetchPlots = async () => {
     setLoading(true);
@@ -177,10 +182,35 @@ export function PlotsPage() {
     }
   };
 
-  const filteredPlots = plots.filter((plot) =>
-    plot.blockId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    plot.teaClone.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredPlots = useMemo(() => {
+    let result = plots.filter((plot) => {
+      const searchStr = searchTerm.toLowerCase();
+      const matchesSearch =
+        plot.blockId.toLowerCase().includes(searchStr) ||
+        plot.teaClone.toLowerCase().includes(searchStr) ||
+        (plot.soilType || '').toLowerCase().includes(searchStr);
+
+      const matchesStatus = filterStatus === 'ALL' || plot.status === filterStatus;
+      const matchesClone = filterClone === 'ALL' || plot.teaClone === filterClone;
+      const matchesSoil = filterSoil === 'ALL' || plot.soilType === filterSoil;
+
+      return matchesSearch && matchesStatus && matchesClone && matchesSoil;
+    });
+
+    // Apply Sorting
+    return [...result].sort((a, b) => {
+      if (sortBy === 'blockId') {
+        return a.blockId.localeCompare(b.blockId);
+      }
+      if (sortBy === 'acreage') {
+        return b.acreage - a.acreage;
+      }
+      if (sortBy === 'plantingDate') {
+        return new Date(b.plantingDate).getTime() - new Date(a.plantingDate).getTime();
+      }
+      return 0;
+    });
+  }, [plots, searchTerm, filterStatus, filterClone, filterSoil, sortBy]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -227,24 +257,62 @@ export function PlotsPage() {
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <div className="flex items-center gap-4">
+      <div className="bg-white rounded-lg border border-gray-200 p-4 space-y-4">
+        <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
             <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Search plots by name or tea clone..."
+              placeholder="Search plots by ID, clone, or soil..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
             />
           </div>
-          <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
-            <option>All Status</option>
-            <option>Active</option>
-            <option>Resting</option>
-            <option>Maintenance</option>
-          </select>
+          <div className="flex flex-wrap gap-2">
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+            >
+              <option value="ALL">All Status</option>
+              <option value="Active">Active</option>
+              <option value="Resting">Resting</option>
+              <option value="Maintenance">Maintenance</option>
+            </select>
+            <select
+              value={filterClone}
+              onChange={(e) => setFilterClone(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+            >
+              <option value="ALL">All Clones</option>
+              {Array.from(new Set(plots.map(p => p.teaClone).filter(Boolean))).map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+            <select
+              value={filterSoil}
+              onChange={(e) => setFilterSoil(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+            >
+              <option value="ALL">All Soil Types</option>
+              {Array.from(new Set(plots.map(p => p.soilType).filter(Boolean))).map(s => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+            <div className="flex items-center gap-2 border-l pl-2 ml-2 border-gray-200">
+              <span className="text-sm text-gray-500 font-medium">Sort:</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+              >
+                <option value="blockId">Block ID</option>
+                <option value="acreage">Acreage (Highest)</option>
+                <option value="plantingDate">Date (Newest)</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
 
