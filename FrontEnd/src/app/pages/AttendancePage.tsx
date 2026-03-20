@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useUser, useAuth } from '@clerk/clerk-react';
-import { Calendar as CalendarIcon, CheckCircle2, XCircle, Loader2, Clock, Plus, QrCode } from 'lucide-react';
+import { Calendar as CalendarIcon, CheckCircle2, XCircle, Loader2, Clock, Plus, QrCode, Search, Filter, ArrowUpDown } from 'lucide-react';
 import { api } from '@/lib/api';
 import { Html5Qrcode } from 'html5-qrcode';
 import { toast } from 'sonner';
@@ -35,6 +35,11 @@ export function AttendancePage() {
   });
   const [showScanner, setShowScanner] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('ALL');
+  const [dateFilter, setDateFilter] = useState(new Date().toISOString().split('T')[0]);
+  const [sortConfig, setSortConfig] = useState<{ key: 'name' | 'time'; direction: 'asc' | 'desc' }>({ key: 'time', direction: 'desc' });
+  
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const isProcessingScan = useRef(false);
 
@@ -128,6 +133,8 @@ export function AttendancePage() {
     setLoading(true);
     try {
       const token = await getToken();
+      // Fetch attendance for the selected date if needed, or filter locally if backend returns all
+      // For now, assuming backend returns all or current plantation attendance
       const [attendanceData, workerData] = await Promise.all([
         api.getAttendance(plantationId, token || undefined),
         api.getWorkers(plantationId, token || undefined)
@@ -210,8 +217,43 @@ export function AttendancePage() {
     }
   };
 
-  const presentCount = attendance.filter(a => a.status === 'PRESENT').length;
-  const leaveCount = attendance.filter(a => a.status === 'ON_LEAVE').length;
+  const dailyAttendance = attendance.filter(record => new Date(record.checkIn).toISOString().split('T')[0] === dateFilter);
+  const presentCount = dailyAttendance.filter(a => a.status?.toUpperCase() === 'PRESENT').length;
+  const leaveCount = dailyAttendance.filter(a => a.status?.toUpperCase() === 'ON_LEAVE').length;
+
+  const filteredAttendance = attendance
+    .filter(record => {
+      const matchesSearch = (record.worker.user?.name || '').toLowerCase().includes(searchTerm.toLowerCase());
+      const recordDate = new Date(record.checkIn).toISOString().split('T')[0];
+      const matchesDate = recordDate === dateFilter;
+      
+      let matchesStatus = true;
+      if (statusFilter !== 'ALL') {
+        const s = record.status?.toUpperCase();
+        if (statusFilter === 'WORKING') matchesStatus = s === 'PRESENT' && !record.checkOut;
+        else if (statusFilter === 'COMPLETED') matchesStatus = s === 'PRESENT' && !!record.checkOut;
+        else if (statusFilter === 'HALF_DAY') matchesStatus = s === 'HALF_DAY' || s === 'PARTIAL';
+        else matchesStatus = s === statusFilter;
+      }
+      
+      return matchesSearch && matchesDate && matchesStatus;
+    })
+    .sort((a, b) => {
+      let comparison = 0;
+      if (sortConfig.key === 'name') {
+        const nameA = (a.worker.user?.name || '').toLowerCase();
+        const nameB = (b.worker.user?.name || '').toLowerCase();
+        comparison = nameA.localeCompare(nameB);
+      } else {
+        const timeA = new Date(a.checkIn).getTime();
+        const timeB = new Date(b.checkIn).getTime();
+        comparison = timeA - timeB;
+      }
+      return sortConfig.direction === 'asc' ? comparison : -comparison;
+    });
+
+  const activeWorkersCount = workers.filter(w => w.status !== 'Inactive').length;
+  const attendanceRate = activeWorkersCount > 0 ? ((presentCount / activeWorkersCount) * 100).toFixed(0) : 0;
 
   if (loading) {
     return (
@@ -272,14 +314,91 @@ export function AttendancePage() {
         <div className="bg-white rounded-lg border border-gray-200 p-4">
           <p className="text-sm text-gray-600 mb-1">Attendance Rate</p>
           <p className="text-2xl font-bold text-gray-900">
-            {attendance.length > 0 ? ((presentCount / attendance.length) * 100).toFixed(0) : 0}%
+            {attendanceRate}%
           </p>
         </div>
       </div>
 
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <div className="p-4 border-b border-gray-200">
-          <h3 className="font-semibold text-gray-900">Today's Attendance</h3>
+      <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-4">
+        <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+          <div className="relative w-full md:w-96">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search worker by name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+            />
+          </div>
+          
+          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+            <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
+              <Filter className="w-4 h-4 text-gray-500" />
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="bg-transparent text-sm font-medium outline-none text-gray-700"
+              >
+                <option value="ALL">All Status</option>
+                <option value="WORKING">Working</option>
+                <option value="COMPLETED">Completed</option>
+                <option value="HALF_DAY">Half Day</option>
+                <option value="ABSENT">Absent</option>
+                <option value="ON_LEAVE">On Leave</option>
+              </select>
+            </div>
+
+            <input
+              type="date"
+              value={dateFilter}
+              onChange={(e) => setDateFilter(e.target.value)}
+              className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+            />
+
+            <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-lg">
+              <button
+                onClick={() => setSortConfig({ ...sortConfig, key: 'name' })}
+                className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
+                  sortConfig.key === 'name' 
+                    ? 'bg-white text-blue-600 shadow-sm' 
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                By Name
+              </button>
+              <button
+                onClick={() => setSortConfig({ ...sortConfig, key: 'time' })}
+                className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
+                  sortConfig.key === 'time' 
+                    ? 'bg-white text-blue-600 shadow-sm' 
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                By Time
+              </button>
+            </div>
+
+            <button
+              onClick={() => setSortConfig({
+                ...sortConfig,
+                direction: sortConfig.direction === 'asc' ? 'desc' : 'asc'
+              })}
+              title={sortConfig.direction === 'asc' ? 'Sort Descending' : 'Sort Ascending'}
+              className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
+            >
+              <ArrowUpDown className={`w-4 h-4 transition-transform duration-200 ${sortConfig.direction === 'desc' ? 'rotate-180' : ''}`} />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="p-4 border-b border-gray-200 bg-gray-50/50">
+          <h3 className="font-bold text-gray-900 flex items-center gap-2">
+            <CalendarIcon className="w-5 h-5 text-blue-600" />
+            Attendance Records for {new Date(dateFilter).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+          </h3>
         </div>
         <table className="w-full">
           <thead className="bg-gray-50">
@@ -292,72 +411,80 @@ export function AttendancePage() {
             </tr>
           </thead>
           <tbody>
-            {attendance.map((record) => (
-              <tr key={record.id} className="border-b border-gray-100 hover:bg-gray-50">
-                <td className="py-3 px-4 text-sm font-medium text-gray-900">{record.worker.user?.name || 'Unnamed Worker'}</td>
-                <td className="py-3 px-4 text-sm text-gray-900">{new Date(record.checkIn).toLocaleString()}</td>
-                <td className="py-3 px-4 text-sm text-gray-900">{record.checkOut ? new Date(record.checkOut).toLocaleString() : '-'}</td>
-                <td className="py-3 px-4">
-                  <div className="flex items-center gap-2">
-                    {record.status?.toUpperCase() === 'PRESENT' && (
-                      <div className="flex items-center gap-2">
-                        {!record.checkOut ? (
-                          <>
-                            <div className="relative flex h-3 w-3">
-                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                              <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                            </div>
-                            <span className="text-sm font-semibold text-green-600">Working</span>
-                          </>
-                        ) : (
-                          <>
-                            <div className="flex -space-x-1">
-                              <CheckCircle2 className="w-4 h-4 text-green-600" />
-                              <CheckCircle2 className="w-4 h-4 text-green-600 -ml-2" />
-                            </div>
-                            <span className="text-sm font-bold text-green-700">Completed</span>
-                          </>
-                        )}
-                      </div>
-                    )}
-                    {(record.status?.toUpperCase() === 'HALF_DAY' || record.status?.toUpperCase() === 'PARTIAL') && (
-                      <>
-                        <Clock className="w-4 h-4 text-blue-600" />
-                        <span className="text-sm font-medium text-blue-600">Half Day</span>
-                      </>
-                    )}
-                    {record.status?.toUpperCase() === 'ABSENT' && (
-                      <>
-                        <XCircle className="w-4 h-4 text-red-600" />
-                        <span className="text-sm font-medium text-red-600">Absent</span>
-                      </>
-                    )}
-                    {record.status?.toUpperCase() === 'ON_LEAVE' && (
-                      <>
-                        <CalendarIcon className="w-4 h-4 text-orange-600" />
-                        <span className="text-sm font-medium text-orange-600">On Leave</span>
-                      </>
-                    )}
-                  </div>
-                </td>
-                <td className="py-3 px-4 text-right">
-                  <div className="flex justify-end gap-2">
-                    <button
-                      onClick={() => handleEdit(record)}
-                      className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(record.id)}
-                      className="text-red-600 hover:text-red-700 text-sm font-medium"
-                    >
-                      Delete
-                    </button>
-                  </div>
+            {filteredAttendance.length > 0 ? (
+              filteredAttendance.map((record) => (
+                <tr key={record.id} className="border-b border-gray-100 last:border-0 hover:bg-blue-50/30 transition-colors">
+                  <td className="py-3 px-4 text-sm font-medium text-gray-900">{record.worker.user?.name || 'Unnamed Worker'}</td>
+                  <td className="py-3 px-4 text-sm text-gray-900">{new Date(record.checkIn).toLocaleString()}</td>
+                  <td className="py-3 px-4 text-sm text-gray-900">{record.checkOut ? new Date(record.checkOut).toLocaleString() : '-'}</td>
+                  <td className="py-3 px-4">
+                    <div className="flex items-center gap-2">
+                      {record.status?.toUpperCase() === 'PRESENT' && (
+                        <div className="flex items-center gap-2">
+                          {!record.checkOut ? (
+                            <>
+                              <div className="relative flex h-3 w-3">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                              </div>
+                              <span className="text-sm font-semibold text-green-600">Working</span>
+                            </>
+                          ) : (
+                            <>
+                              <div className="flex -space-x-1">
+                                <CheckCircle2 className="w-4 h-4 text-green-600" />
+                                <CheckCircle2 className="w-4 h-4 text-green-600 -ml-2" />
+                              </div>
+                              <span className="text-sm font-bold text-green-700">Completed</span>
+                            </>
+                          )}
+                        </div>
+                      )}
+                      {(record.status?.toUpperCase() === 'HALF_DAY' || record.status?.toUpperCase() === 'PARTIAL') && (
+                        <>
+                          <Clock className="w-4 h-4 text-blue-600" />
+                          <span className="text-sm font-medium text-blue-600">Half Day</span>
+                        </>
+                      )}
+                      {record.status?.toUpperCase() === 'ABSENT' && (
+                        <>
+                          <XCircle className="w-4 h-4 text-red-600" />
+                          <span className="text-sm font-medium text-red-600">Absent</span>
+                        </>
+                      )}
+                      {record.status?.toUpperCase() === 'ON_LEAVE' && (
+                        <>
+                          <CalendarIcon className="w-4 h-4 text-orange-600" />
+                          <span className="text-sm font-medium text-orange-600">On Leave</span>
+                        </>
+                      )}
+                    </div>
+                  </td>
+                  <td className="py-3 px-4 text-right">
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => handleEdit(record)}
+                        className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(record.id)}
+                        className="text-red-600 hover:text-red-700 text-sm font-medium"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5} className="py-12 text-center text-gray-500 italic bg-gray-50/30">
+                  No attendance records found for the selected criteria.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
