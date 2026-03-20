@@ -38,5 +38,8 @@ public class Worker {
     @Column(nullable = false)
     private String status; // Active, On Leave, Inactive
 
+    @Column(unique = true)
+    private String qrCode;
+
     private Double monthlyHarvest; // This might be calculated, but can store summary
 }

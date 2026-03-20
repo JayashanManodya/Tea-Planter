@@ -54,6 +54,7 @@ public class WorkerController {
                         map.put("name", w.getPlantation().getName());
                         map.put("location", w.getPlantation().getLocation());
                         map.put("workerId", w.getId());
+                        map.put("qrCode", w.getQrCode());
                         return map;
                     })
                     .collect(Collectors.toList());
@@ -121,6 +122,8 @@ public class WorkerController {
                     .totalHarvestWeight(totalHarvestWeight)
                     .monthlyEarnings(monthlyEarnings)
                     .attendanceDays(attendanceDays)
+                    .qrCode(worker.getQrCode())
+                    .workerId(worker.getId())
                     .build();
 
             return ResponseEntity.ok(dashboard);

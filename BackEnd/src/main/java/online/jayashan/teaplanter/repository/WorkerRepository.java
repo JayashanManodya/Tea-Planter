@@ -14,6 +14,8 @@ public interface WorkerRepository extends JpaRepository<Worker, Long> {
             online.jayashan.teaplanter.entity.Plantation plantation);
 
     List<Worker> findByPlantation(online.jayashan.teaplanter.entity.Plantation plantation);
+    
+    java.util.Optional<Worker> findByQrCode(String qrCode);
 
     List<Worker> findByUser(online.jayashan.teaplanter.entity.User user);
 }

@@ -58,6 +58,16 @@ public class WorkforceController {
         return workforceService.checkOut(attendanceId);
     }
 
+    @PostMapping("/attendance/scan")
+    public Attendance markAttendanceByQr(@RequestParam String qrCode, @RequestParam Long plantationId) {
+        return workforceService.markAttendanceByQr(qrCode, plantationId);
+    }
+
+    @PostMapping("/workers/{id}/generate-qr")
+    public Worker generateQrCode(@PathVariable Long id) {
+        return workforceService.generateQrCode(id);
+    }
+
     @GetMapping("/attendance")
     public List<Attendance> getAllAttendance(@RequestParam(required = false) Long plantationId) {
         return workforceService.getAllAttendance(plantationId);

@@ -16,11 +16,85 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@lombok.extern.slf4j.Slf4j
 public class WorkforceService {
     private final online.jayashan.teaplanter.repository.UserRepository userRepository;
 
     private final WorkerRepository workerRepository;
     private final AttendanceRepository attendanceRepository;
+    
+    // QR Code Management
+    public Worker generateQrCode(Long workerId) {
+        Worker worker = getWorkerById(workerId);
+        if (worker.getQrCode() == null || worker.getQrCode().isEmpty()) {
+            String qrCode = "TP-WORKER-" + workerId + "-" + java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+            worker.setQrCode(qrCode);
+            return workerRepository.save(worker);
+        }
+        return worker;
+    }
+
+    @Transactional
+    public Attendance markAttendanceByQr(String qrCode, Long plantationId) {
+        log.info("Processing QR Attendance scan. QR: {}, PlantationId: {}", qrCode, plantationId);
+        
+        Worker worker = workerRepository.findByQrCode(qrCode)
+                .orElseThrow(() -> {
+                    log.error("Worker not found for QR: {}", qrCode);
+                    return new RuntimeException("Invalid QR code. Worker not found.");
+                });
+
+        log.info("Worker found: {} (ID: {}). Assigned Plantation ID: {}", 
+                worker.getUser().getName(), worker.getId(), worker.getPlantation().getId());
+
+        if (!worker.getPlantation().getId().equals(plantationId)) {
+            log.warn("Plantation mismatch! Worker's: {}, Scanner's: {}", 
+                    worker.getPlantation().getId(), plantationId);
+            throw new RuntimeException("Worker does not belong to this plantation.");
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startOfDay = now.toLocalDate().atStartOfDay();
+        LocalDateTime endOfDay = now.toLocalDate().atTime(23, 59, 59, 999999999);
+
+        log.debug("Checking attendance for date: {}. Range: {} to {}", now.toLocalDate(), startOfDay, endOfDay);
+        List<Attendance> existing = attendanceRepository.findByWorkerAndCheckInBetween(worker, startOfDay, endOfDay);
+
+        if (existing.isEmpty()) {
+            log.info("No existing attendance today. Performing Check-in for worker: {}", worker.getId());
+            Attendance attendance = Attendance.builder()
+                    .worker(worker)
+                    .checkIn(now)
+                    .status("Present")
+                    .plantation(worker.getPlantation())
+                    .build();
+            return attendanceRepository.save(attendance);
+        } else {
+            Attendance attendance = existing.get(0);
+            log.info("Existing attendance found (ID: {}). Check-in time: {}", attendance.getId(), attendance.getCheckIn());
+            
+            // Grace period: ignore duplicate scans within 10 seconds of check-in
+            if (java.time.Duration.between(attendance.getCheckIn(), now).getSeconds() < 10) {
+                log.info("Scan within 10s grace period of Check-in. Returning existing record to handle duplicate scans.");
+                return attendance;
+            }
+
+            if (attendance.getCheckOut() != null) {
+                // Grace period for check-out as well
+                if (java.time.Duration.between(attendance.getCheckOut(), now).getSeconds() < 10) {
+                    log.info("Scan within 10s grace period of Check-out. Returning existing record.");
+                    return attendance;
+                }
+                log.warn("Attendance already completed for today (Check-out exists).");
+                throw new RuntimeException("Attendance already completed for today.");
+            }
+            
+            log.info("Performing Check-out for worker: {}", worker.getId());
+            attendance.setCheckOut(now);
+            return attendanceRepository.save(attendance);
+        }
+    }
+
     private final LeaveRepository leaveRepository;
     private final online.jayashan.teaplanter.repository.HarvestRepository harvestRepository;
     private final online.jayashan.teaplanter.repository.PayrollRepository payrollRepository;

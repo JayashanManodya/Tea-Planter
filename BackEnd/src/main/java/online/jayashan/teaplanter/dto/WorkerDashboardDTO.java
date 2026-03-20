@@ -17,4 +17,6 @@ public class WorkerDashboardDTO {
     private double totalHarvestWeight;
     private double monthlyEarnings;
     private int attendanceDays;
+    private String qrCode;
+    private Long workerId;
 }
