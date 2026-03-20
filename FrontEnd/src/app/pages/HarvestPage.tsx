@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { Plus, Scale, Calendar, TrendingUp, Loader2, QrCode, X } from 'lucide-react';
+import { Plus, Scale, Calendar, TrendingUp, Loader2, QrCode, X, Search, Filter, ArrowUpDown } from 'lucide-react';
 import { useUser, useAuth } from '@clerk/clerk-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { api } from '@/lib/api';
@@ -39,6 +39,9 @@ export function HarvestPage() {
     grossWeight: '',
     tareWeight: '1.2'
   });
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState<string>('date-desc');
 
   const [showScanner, setShowScanner] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
@@ -202,11 +205,33 @@ export function HarvestPage() {
     }
   };
 
-  const todayTotal = useMemo(() => harvests
+  const filteredHarvests = useMemo(() => {
+    let result = harvests.filter((h) => {
+      const searchStr = searchTerm.toLowerCase();
+      const matchesSearch =
+        (h.worker.user?.name || '').toLowerCase().includes(searchStr) ||
+        h.plot.blockId.toLowerCase().includes(searchStr);
+
+      const matchesWorker = selectedWorker === 'ALL' || h.worker.id.toString() === selectedWorker;
+      const matchesPlot = selectedPlot === 'ALL' || h.plot.blockId === selectedPlot;
+
+      return matchesSearch && matchesWorker && matchesPlot;
+    });
+
+    // Apply Sorting
+    return [...result].sort((a, b) => {
+      if (sortBy === 'date-desc') return new Date(b.harvestDate).getTime() - new Date(a.harvestDate).getTime();
+      if (sortBy === 'date-asc') return new Date(a.harvestDate).getTime() - new Date(b.harvestDate).getTime();
+      if (sortBy === 'weight-desc') return b.netWeight - a.netWeight;
+      if (sortBy === 'weight-asc') return a.netWeight - b.netWeight;
+      if (sortBy === 'payout-desc') return (b.calculatedPay || 0) - (a.calculatedPay || 0);
+      return 0;
+    });
+  }, [harvests, searchTerm, selectedWorker, selectedPlot, sortBy]);
+
+  const todayTotal = useMemo(() => filteredHarvests
     .filter(h => h.harvestDate === new Date().toISOString().split('T')[0])
-    .filter(h => selectedWorker === 'ALL' || h.worker.id.toString() === selectedWorker)
-    .filter(h => selectedPlot === 'ALL' || h.plot.blockId === selectedPlot)
-    .reduce((sum, h) => sum + h.netWeight, 0), [harvests, selectedWorker, selectedPlot]);
+    .reduce((sum, h) => sum + h.netWeight, 0), [filteredHarvests]);
 
   const weeklyData = useMemo(() => {
     const last7Days = Array.from({ length: 7 }, (_, i) => {
@@ -217,13 +242,11 @@ export function HarvestPage() {
 
     return last7Days.map(date => ({
       day: new Date(date).toLocaleDateString('en-US', { weekday: 'short' }),
-      yield: harvests
+      yield: filteredHarvests
         .filter(h => h.harvestDate === date)
-        .filter(h => selectedWorker === 'ALL' || h.worker.id.toString() === selectedWorker)
-        .filter(h => selectedPlot === 'ALL' || h.plot.blockId === selectedPlot)
         .reduce((sum, h) => sum + h.netWeight, 0)
     }));
-  }, [harvests, selectedWorker, selectedPlot]);
+  }, [filteredHarvests]);
 
   const weeklyTotal = useMemo(() =>
     weeklyData.reduce((sum, d) => sum + d.yield, 0),
@@ -242,35 +265,7 @@ export function HarvestPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Harvest & Yield Tracker</h1>
-          <div className="flex items-center gap-2 mt-1">
-            <p className="text-sm font-medium text-gray-600">Period:</p>
-            <input
-              type="month"
-              value={selectedMonth}
-              onChange={(e) => setSelectedMonth(e.target.value)}
-              className="px-2 py-0.5 border border-gray-300 rounded text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
-            />
-            <select
-              value={selectedWorker}
-              onChange={(e) => setSelectedWorker(e.target.value)}
-              className="px-2 py-0.5 border border-gray-300 rounded text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
-            >
-              <option value="ALL">All Workers</option>
-              {workers.map(w => (
-                <option key={w.id} value={w.id}>{w.user?.name || 'Unnamed Worker'}</option>
-              ))}
-            </select>
-            <select
-              value={selectedPlot}
-              onChange={(e) => setSelectedPlot(e.target.value)}
-              className="px-2 py-0.5 border border-gray-300 rounded text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
-            >
-              <option value="ALL">All Blocks</option>
-              {plots.map(p => (
-                <option key={p.id} value={p.blockId}>{p.blockId}</option>
-              ))}
-            </select>
-          </div>
+          <p className="text-gray-600 mt-1">Monitor and record worker leaf yield</p>
         </div>
         <div className="flex gap-3">
           <button
@@ -297,6 +292,76 @@ export function HarvestPage() {
             <Plus className="w-5 h-5" />
             Record Harvest
           </button>
+        </div>
+      </div>
+
+      {/* Enhanced Filter Section */}
+      <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm space-y-4">
+        <div className="flex flex-col lg:flex-row gap-4">
+          {/* Search Bar */}
+          <div className="flex-1 relative">
+            <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Search by worker name or block ID..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition-all"
+            />
+          </div>
+
+          {/* Filter Dropdowns */}
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-gray-400" />
+              <input
+                type="month"
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+              />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Filter className="w-4 h-4 text-gray-400" />
+              <select
+                value={selectedWorker}
+                onChange={(e) => setSelectedWorker(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+              >
+                <option value="ALL">All Workers</option>
+                {workers.map(w => (
+                  <option key={w.id} value={w.id}>{w.user?.name || 'Unnamed Worker'}</option>
+                ))}
+              </select>
+            </div>
+
+            <select
+              value={selectedPlot}
+              onChange={(e) => setSelectedPlot(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+            >
+              <option value="ALL">All Blocks</option>
+              {plots.map(p => (
+                <option key={p.id} value={p.blockId}>{p.blockId}</option>
+              ))}
+            </select>
+
+            <div className="flex items-center gap-2 border-l pl-3 ml-2 border-gray-200">
+              <ArrowUpDown className="w-4 h-4 text-gray-400" />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+              >
+                <option value="date-desc">Newest First</option>
+                <option value="date-asc">Oldest First</option>
+                <option value="weight-desc">Weight (High-Low)</option>
+                <option value="weight-asc">Weight (Low-High)</option>
+                <option value="payout-desc">Payout (Highest)</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -354,10 +419,7 @@ export function HarvestPage() {
               </tr>
             </thead>
             <tbody>
-              {harvests
-                .filter(h => selectedWorker === 'ALL' || h.worker.id.toString() === selectedWorker)
-                .filter(h => selectedPlot === 'ALL' || h.plot.blockId === selectedPlot)
-                .map((harvest) => (
+              {filteredHarvests.map((harvest) => (
                   <tr key={harvest.id} className="border-b border-gray-100 hover:bg-gray-50">
                     <td className="py-3 px-4 text-sm text-gray-900">{harvest.harvestDate}</td>
                     <td className="py-3 px-4 text-sm font-medium text-gray-900">{harvest.worker.user?.name || 'Unnamed Worker'}</td>
