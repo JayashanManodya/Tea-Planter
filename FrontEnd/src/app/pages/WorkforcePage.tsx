@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Plus, Search, Users, Mail, Phone, Calendar, Loader2 } from 'lucide-react';
+import { Plus, Search, Users, Mail, Phone, Calendar, Loader2, QrCode, Download } from 'lucide-react';
 import { useUser, useAuth } from "@clerk/clerk-react";
 import { api } from '@/lib/api';
+import { QRCodeSVG } from 'qrcode.react';
+import { toast } from 'sonner';
 
 interface Worker {
   id: number;
@@ -66,6 +68,47 @@ export function WorkforcePage() {
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [modalRefreshing, setModalRefreshing] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
+  const [showQrModal, setShowQrModal] = useState(false);
+  const [selectedWorkerForQr, setSelectedWorkerForQr] = useState<Worker | null>(null);
+
+  const handleViewQr = async (worker: Worker) => {
+    setSelectedWorkerForQr(worker);
+    setShowQrModal(true);
+    
+    // If worker doesn't have a QR code, generate it
+    if (!worker.qrCode) {
+      try {
+        const token = await getToken();
+        const updatedWorker = await api.generateWorkerQr(worker.id, token || undefined);
+        setSelectedWorkerForQr(updatedWorker);
+        // Update the worker in the main list too
+        setWorkers(prev => prev.map(w => w.id === updatedWorker.id ? updatedWorker : w));
+      } catch (error) {
+        console.error('Failed to generate QR code:', error);
+        toast.error('Failed to generate QR code');
+      }
+    }
+  };
+
+  const downloadQr = () => {
+    const svg = document.getElementById('worker-qr');
+    if (!svg) return;
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx?.drawImage(img, 0, 0);
+      const pngFile = canvas.toDataURL('image/png');
+      const downloadLink = document.createElement('a');
+      downloadLink.download = `${selectedWorkerForQr?.user?.name || 'worker'}-qr.png`;
+      downloadLink.href = pngFile;
+      downloadLink.click();
+    };
+    img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+  };
 
   const { user } = useUser();
   const { getToken } = useAuth();
@@ -397,11 +440,18 @@ export function WorkforcePage() {
                 <td className="py-3 px-4">
                   <div className="flex gap-2">
                     <button
+                      onClick={() => handleViewQr(worker)}
+                      className="text-orange-600 hover:text-orange-700 text-sm font-medium mr-2 flex items-center gap-1"
+                    >
+                      <QrCode className="w-4 h-4" />
+                      QR Code
+                    </button>
+                    <button
                       onClick={() => {
                         setSelectedWorkerForTask(worker);
                         setShowTaskModal(true);
                       }}
-                      className="text-green-600 hover:text-green-700 text-sm font-medium mr-2"
+                      className="text-green-600 hover:text-green-700 text-sm font-medium mr-2 px-1"
                     >
                       Assign Task
                     </button>
@@ -545,6 +595,63 @@ export function WorkforcePage() {
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* QR Code Modal */}
+      {showQrModal && selectedWorkerForQr && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[70] backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-orange-50">
+              <h2 className="text-xl font-bold text-orange-900 flex items-center gap-2">
+                <QrCode className="w-6 h-6" />
+                Worker QR Code
+              </h2>
+              <button
+                onClick={() => setShowQrModal(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <Plus className="w-6 h-6 rotate-45" />
+              </button>
+            </div>
+            <div className="p-8 flex flex-col items-center gap-6">
+              <div className="p-4 bg-white rounded-xl shadow-inner border border-gray-100">
+                {selectedWorkerForQr.qrCode ? (
+                  <QRCodeSVG
+                    id="worker-qr"
+                    value={selectedWorkerForQr.qrCode}
+                    size={200}
+                    level="H"
+                    includeMargin={true}
+                  />
+                ) : (
+                  <div className="w-[200px] h-[200px] flex items-center justify-center">
+                    <Loader2 className="w-8 h-8 animate-spin text-orange-600" />
+                  </div>
+                )}
+              </div>
+              <div className="text-center">
+                <h3 className="text-lg font-bold text-gray-900">{selectedWorkerForQr.user?.name}</h3>
+                <p className="text-sm text-gray-500 font-mono mt-1">{selectedWorkerForQr.qrCode || 'Generating...'}</p>
+              </div>
+            </div>
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex gap-3">
+              <button
+                onClick={() => setShowQrModal(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+              >
+                Close
+              </button>
+              <button
+                onClick={downloadQr}
+                disabled={!selectedWorkerForQr.qrCode}
+                className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg font-medium hover:bg-orange-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                <Download className="w-4 h-4" />
+                Download
+              </button>
             </div>
           </div>
         </div>
@@ -1004,6 +1111,6 @@ export function WorkforcePage() {
           </div>
         )
       }
-    </div >
+    </div>
   );
 }

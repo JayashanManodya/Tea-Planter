@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeaPlanter - Reports & Analytics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: 154 64% 50%;
+            /* Emerald Green */
+            --primary-light: 154 64% 95%;
+            --emerald: 154 64% 50%;
+            --glass: rgba(255, 255, 255, 0.8);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at top right, hsl(154, 40%, 95%), hsl(220, 20%, 97%));
+            overflow-x: hidden;
+            color: #1a202c;
+        }
+
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(12px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        .report-card {
+            background: white;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #edf2f7;
+        }
+
+        .report-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+            border-color: hsl(var(--primary) / 0.2);
+        }
+
+        .btn-emerald {
+            background: linear-gradient(135deg, hsl(154, 64%, 50%), hsl(154, 70%, 40%));
+            box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.25);
+            transition: all 0.2s ease;
+        }
+
+        .btn-emerald:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-black {
+            background: #111827;
+            transition: all 0.2s ease;
+        }
+
+        .btn-black:hover {
+            background: #000;
+            transform: translateY(-1px);
+        }
+
+        /* Custom Input */
+        input[type="month"] {
+            appearance: none;
+            background: white;
+            padding: 0.5rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-weight: 600;
+            color: #4a5568;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        input[type="month"]:focus {
+            border-color: hsl(var(--emerald));
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        /* Loader Animation */
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .animate-spin-fast {
+            animation: spin 0.6s linear infinite;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+
+    <!-- Header / Navigation Bar -->
+    <header
+        class="w-full h-20 bg-white/50 border-b border-gray-200/50 flex items-center justify-between px-10 sticky top-0 z-40 backdrop-blur-xl">
+        <div class="flex items-center gap-3">
+            <div
+                class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-200">
+                <i data-lucide="trending-up" class="text-white w-6 h-6"></i>
+            </div>
+            <h1 class="text-xl font-black tracking-tight text-gray-900">TeaPlanter <span
+                    class="text-emerald-500">Reports</span></h1>
+        </div>
+
+        <div class="flex items-center gap-6 font-bold text-sm text-gray-500">
+            <a href="#" class="text-emerald-500 border-b-2 border-emerald-500 pb-1">Analytics Hub</a>
+            <a href="#" class="hover:text-gray-900 transition-colors">Historical Data</a>
+            <a href="#" class="hover:text-gray-900 transition-colors">Tax Exports</a>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3 p-2 bg-white/50 border border-white rounded-2xl backdrop-blur-md">
+                <div
+                    class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-white font-bold text-xs shadow-sm">
+                    JD
+                </div>
+                <p class="text-[10px] font-bold text-gray-900 pr-2"></p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-[1200px] mx-auto p-10 space-y-12">
+
+        <!-- TITLE & FILTER SECTION -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 animate-fade-in">
+            <div class="space-y-2">
+                <h2 class="text-4xl font-black text-gray-900 tracking-tight">Report Generation</h2>
+                <p class="text-gray-500 font-medium text-lg">Generate, export, and analyze detailed plantation metrics.
+                </p>
+            </div>
+
+            <div class="glass p-4 rounded-3xl flex items-center gap-4 border border-white">
+                <div>
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-1">Target Period
+                    </p>
+                    <input type="month" id="reportMonth" value="2024-03" onchange="updateMonthDisplay()">
+                </div>
+            </div>
+        </div>
+
+        <!-- REPORTS GRID -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 animate-fade-in" style="animation-delay: 0.1s;">
+
+            <!-- 1. Plantation Performance -->
+            <div class="report-card p-8 rounded-[40px] flex flex-col justify-between">
+                <div class="flex items-start gap-5">
+                    <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center">
+                        <i data-lucide="trending-up" class="w-7 h-7"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <h3 class="text-xl font-bold text-gray-900">Plantation Performance</h3>
+                        <p class="text-sm text-gray-500 font-medium leading-relaxed">Comprehensive overview of harvest
+                            yields and worker productivity across all sectors.</p>
+                    </div>
+                </div>
+                <div class="mt-8 pt-6 border-t border-gray-50 flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Selected Scope</p>
+                        <p class="text-sm font-bold text-emerald-600 month-display">March 2024</p>
+                    </div>
+                    <button onclick="simulateDownload('harvest')" id="btn-harvest"
+                        class="btn-black px-6 py-3 text-white rounded-2xl font-black text-xs flex items-center gap-2">
+                        <i data-lucide="download" class="w-4 h-4"></i> Download PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2. Worker Payroll Registry -->
+            <div class="report-card p-8 rounded-[40px] flex flex-col justify-between">
+                <div class="flex items-start gap-5">
+                    <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center">
+                        <i data-lucide="file-text" class="w-7 h-7"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <h3 class="text-xl font-bold text-gray-900">Worker Payroll Registry</h3>
+                        <p class="text-sm text-gray-500 font-medium leading-relaxed">Complete breakdown of wages,
+                            bonuses, and deductions for the entire workforce.</p>
+                    </div>
+                </div>
+                <div class="mt-8 pt-6 border-t border-gray-50 flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Selected Scope</p>
+                        <p class="text-sm font-bold text-blue-600 month-display">March 2024</p>
+                    </div>
+                    <button onclick="simulateDownload('payroll')" id="btn-payroll"
+                        class="btn-black px-6 py-3 text-white rounded-2xl font-black text-xs flex items-center gap-2">
+                        <i data-lucide="download" class="w-4 h-4"></i> Download PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3. Resource Usage Report -->
+            <div class="report-card p-8 rounded-[40px] flex flex-col justify-between">
+                <div class="flex items-start gap-5">
+                    <div class="w-14 h-14 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center">
+                        <i data-lucide="calendar" class="w-7 h-7"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <h3 class="text-xl font-bold text-gray-900">Resource Usage Report</h3>
+                        <p class="text-sm text-gray-500 font-medium leading-relaxed">Detailed tracking of operational
+                            resources, fertilizers, and inventory flow cycles.</p>
+                    </div>
+                </div>
+                <div class="mt-8 pt-6 border-t border-gray-50 flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Selected Scope</p>
+                        <p class="text-sm font-bold text-amber-600 month-display">March 2024</p>
+                    </div>
+                    <button onclick="simulateDownload('inventory')" id="btn-inventory"
+                        class="btn-black px-6 py-3 text-white rounded-2xl font-black text-xs flex items-center gap-2">
+                        <i data-lucide="download" class="w-4 h-4"></i> Download PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- 4. Financial Summary & Analysis -->
+            <div class="report-card p-8 rounded-[40px] flex flex-col justify-between">
+                <div class="flex items-start gap-5">
+                    <div class="w-14 h-14 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center">
+                        <i data-lucide="trending-up" class="w-7 h-7"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <h3 class="text-xl font-bold text-gray-900">Financial Summary & Analysis</h3>
+                        <p class="text-sm text-gray-500 font-medium leading-relaxed">Monthly profit/loss statement with
+                            revenue streams and expense categorization.</p>
+                    </div>
+                </div>
+                <div class="mt-8 pt-6 border-t border-gray-50 flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Selected Scope</p>
+                        <p class="text-sm font-bold text-indigo-600 month-display">March 2024</p>
+                    </div>
+                    <button onclick="simulateDownload('financial')" id="btn-financial"
+                        class="btn-black px-6 py-3 text-white rounded-2xl font-black text-xs flex items-center gap-2">
+                        <i data-lucide="download" class="w-4 h-4"></i> Download PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- 5. Factory Income Analysis -->
+            <div
+                class="report-card p-8 rounded-[40px] border-2 border-dashed border-rose-100 bg-rose-50/20 md:col-span-2">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div class="flex items-start gap-6">
+                        <div
+                            class="w-16 h-16 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center shadow-lg shadow-rose-100">
+                            <i data-lucide="file-text" class="w-8 h-8"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <h3 class="text-2xl font-black text-gray-900 tracking-tight">Income Analysis (Factory-wise)
+                            </h3>
+                            <p class="text-gray-500 font-medium max-w-xl leading-relaxed">Advanced breakdown of income
+                                generated and weight delivered across all authorized factory partners.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-8 pr-4">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Current Scope</p>
+                            <p class="text-lg font-black text-rose-600 month-display">March 2024</p>
+                        </div>
+                        <button onclick="simulateDownload('income')" id="btn-income"
+                            class="px-10 py-5 bg-rose-600 hover:bg-rose-700 text-white rounded-[30px] font-black text-lg transition-all transform hover:scale-105 shadow-xl shadow-rose-100 flex items-center gap-3">
+                            <i data-lucide="download" class="w-6 h-6"></i> Export Analysis
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- HELP / SUPPORT CARD -->
+        <div class="glass p-12 rounded-[50px] border-emerald-100 relative overflow-hidden animate-fade-in"
+            style="animation-delay: 0.2s;">
+            <div class="absolute -top-10 -right-10 w-64 h-64 bg-emerald-50 rounded-full blur-3xl opacity-50"></div>
+            <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
+                <div class="space-y-4 text-center md:text-left">
+                    <h3 class="text-3xl font-black text-emerald-900 tracking-tight">Need a custom report?</h3>
+                    <p class="text-emerald-700 font-medium text-lg max-w-lg">Our data science team can help you build
+                        custom charts and specialized data exports tailored to your specific plantation needs.</p>
+                </div>
+                <button
+                    class="btn-emerald px-12 py-5 text-white rounded-[32px] font-black text-xl flex items-center gap-3 shadow-2xl">
+                    <i data-lucide="message-circle" class="w-6 h-6 text-emerald-100"></i> Contact Support
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- TOAST NOTIFICATION (Hidden by default) -->
+    <div id="toast"
+        class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-8 py-4 rounded-2xl font-bold flex items-center gap-3 shadow-2xl transition-all duration-300 translate-y-20 opacity-0 z-50">
+        <div id="toastSpinner" class="hidden"><i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i></div>
+        <div id="toastIcon" class="text-emerald-400"><i data-lucide="check-circle" class="w-5 h-5"></i></div>
+        <span id="toastMessage">Report Generated Successfully!</span>
+    </div>
+
+    <script>
+        // UPDATE DISPLAYED MONTH
+        function updateMonthDisplay() {
+            const input = document.getElementById('reportMonth');
+            const date = new Date(input.value + '-01');
+            const monthName = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+            document.querySelectorAll('.month-display').forEach(el => {
+                el.innerText = monthName;
+            });
+        }
+
+        // SIMULATE PDF DOWNLOAD
+        function simulateDownload(id) {
+            const btn = document.getElementById(`btn-${id}`);
+            const originalContent = btn.innerHTML;
+
+            // UI state: Loading
+            btn.disabled = true;
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin-fast"></i> Generating...`;
+            lucide.createIcons();
+
+            showToast('Preparing your PDF report...', true);
+
+            // Simulate server delay
+            setTimeout(() => {
+                // UI state: Done
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+                lucide.createIcons();
+
+                showToast('Report downloaded successfully!', false);
+
+                // Alert simulation (as in the React code)
+                // alert('Note: This is a standalone UI preview. In the actual app, this downloads a generated PDF from the backend.');
+            }, 2000);
+        }
+
+        // TOAST LOGIC
+        function showToast(message, isLoading) {
+            const toast = document.getElementById('toast');
+            const spinner = document.getElementById('toastSpinner');
+            const icon = document.getElementById('toastIcon');
+            const msgEl = document.getElementById('toastMessage');
+
+            msgEl.innerText = message;
+
+            if (isLoading) {
+                spinner.classList.remove('hidden');
+                icon.classList.add('hidden');
+                toast.classList.add('bg-gray-800');
+            } else {
+                spinner.classList.add('hidden');
+                icon.classList.remove('hidden');
+                toast.classList.remove('bg-gray-800');
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            if (!isLoading) {
+                setTimeout(() => {
+                    toast.classList.add('translate-y-20', 'opacity-0');
+                    toast.classList.remove('translate-y-0', 'opacity-100');
+                }, 3000);
+            }
+        }
+
+        // INITIALIZATION
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            updateMonthDisplay();
+        });
+    </script>
+</body>
+
+</html>

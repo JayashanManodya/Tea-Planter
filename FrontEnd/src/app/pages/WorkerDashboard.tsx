@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { StatCard } from '@/app/components/StatCard';
-import { CheckCircle2, Clock, Scale, Calendar, Loader2, Building2 } from 'lucide-react';
+import { CheckCircle2, Clock, Scale, Calendar, Loader2, Building2, QrCode, X } from 'lucide-react';
 import { useUser, useAuth } from '@clerk/clerk-react';
 import { api } from '@/lib/api';
+import { QRCodeSVG } from 'qrcode.react';
+import { toast } from 'sonner';
 
 interface Plantation {
     id: number;
@@ -19,6 +21,8 @@ interface DashboardData {
     totalHarvestWeight: number;
     monthlyEarnings: number;
     attendanceDays: number;
+    qrCode?: string;
+    workerId?: number;
 }
 
 interface Task {
@@ -48,6 +52,8 @@ export function WorkerDashboard() {
     const [harvests, setHarvests] = useState<Harvest[]>([]);
     const [loading, setLoading] = useState(true);
     const [isUpdatingTask, setIsUpdatingTask] = useState(false);
+    const [showQrModal, setShowQrModal] = useState(false);
+    const [isGeneratingQr, setIsGeneratingQr] = useState(false);
 
     useEffect(() => {
         fetchPlantations();
@@ -158,6 +164,14 @@ export function WorkerDashboard() {
                         </select>
                     </div>
                 )}
+
+                <button
+                    onClick={() => setShowQrModal(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-orange-100 text-orange-700 hover:bg-orange-200 rounded-lg font-bold transition-colors"
+                >
+                    <QrCode className="w-5 h-5" />
+                    My QR Code
+                </button>
             </div>
 
             {/* Stats Grid */}
@@ -294,6 +308,132 @@ export function WorkerDashboard() {
                     </table>
                 </div>
             </div>
+
+            {/* QR Code Modal */}
+            {showQrModal && dashboardData && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden">
+                        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-orange-50">
+                            <h2 className="text-xl font-bold text-orange-900 flex items-center gap-2">
+                                <QrCode className="w-6 h-6" />
+                                My Attendance QR
+                            </h2>
+                            <button
+                                onClick={() => setShowQrModal(false)}
+                                className="text-gray-400 hover:text-gray-600 transition-colors"
+                            >
+                                <X className="w-6 h-6" />
+                            </button>
+                        </div>
+                        <div className="p-8 flex flex-col items-center gap-6">
+                            {dashboardData.qrCode ? (
+                                <div className="p-4 bg-white rounded-xl shadow-inner border border-gray-100">
+                                    <QRCodeSVG
+                                        id="worker-qr"
+                                        value={dashboardData.qrCode}
+                                        size={200}
+                                        level="H"
+                                        includeMargin={true}
+                                    />
+                                </div>
+                            ) : (
+                                <div className="text-center space-y-4">
+                                    <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
+                                        <QrCode className="w-10 h-10 text-gray-300" />
+                                    </div>
+                                    <p className="text-gray-600 text-sm">You don't have a QR code assigned yet.</p>
+                                    <button
+                                        onClick={async () => {
+                                            if (!dashboardData.workerId) return;
+                                            setIsGeneratingQr(true);
+                                            try {
+                                                const token = await getToken();
+                                                const updatedWorker = await api.generateWorkerQr(dashboardData.workerId, token || undefined);
+                                                setDashboardData({ ...dashboardData, qrCode: updatedWorker.qrCode });
+                                                toast.success('QR Code generated successfully!');
+                                            } catch (error) {
+                                                toast.error('Failed to generate QR code');
+                                            } finally {
+                                                setIsGeneratingQr(false);
+                                            }
+                                        }}
+                                        disabled={isGeneratingQr}
+                                        className="px-6 py-2 bg-orange-600 text-white rounded-lg font-bold hover:bg-orange-700 transition-colors disabled:opacity-50"
+                                    >
+                                        {isGeneratingQr ? 'Generating...' : 'Generate My QR Code'}
+                                    </button>
+                                </div>
+                            )}
+                            {dashboardData.qrCode && (
+                                <div className="text-center">
+                                    <p className="text-sm text-gray-500 mb-4">Show this QR code to marked attendance</p>
+                                    <button
+                                        onClick={() => {
+                                            const svg = document.getElementById('worker-qr');
+                                            if (!svg) {
+                                                toast.error("Could not find QR code element");
+                                                return;
+                                            }
+
+                                            const canvas = document.createElement("canvas");
+                                            const ctx = canvas.getContext("2d");
+                                            if (!ctx) return;
+
+                                            const svgData = new XMLSerializer().serializeToString(svg);
+                                            const img = new Image();
+                                            const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+                                            const url = URL.createObjectURL(svgBlob);
+
+                                            img.onload = () => {
+                                                // High resolution scaling
+                                                const scale = 4;
+                                                // QRCodeSVG uses width/height attributes if provided
+                                                const baseWidth = (svg as any).width?.baseVal?.value || 200;
+                                                const baseHeight = (svg as any).height?.baseVal?.value || 200;
+                                                
+                                                canvas.width = baseWidth * scale;
+                                                canvas.height = baseHeight * scale;
+                                                
+                                                ctx.fillStyle = "white"; // White background for reliability
+                                                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                                                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                                                
+                                                const pngUrl = canvas.toDataURL("image/png");
+                                                const downloadLink = document.createElement("a");
+                                                downloadLink.href = pngUrl;
+                                                downloadLink.download = `QR-${user?.firstName || 'Worker'}.png`;
+                                                document.body.appendChild(downloadLink);
+                                                downloadLink.click();
+                                                document.body.removeChild(downloadLink);
+                                                URL.revokeObjectURL(url);
+                                                toast.success("QR Code downloaded as PNG");
+                                            };
+                                            
+                                            img.onerror = () => {
+                                                toast.error("Failed to convert QR code to PNG");
+                                                URL.revokeObjectURL(url);
+                                            };
+                                            
+                                            img.src = url;
+                                        }}
+                                        className="text-orange-600 font-bold hover:underline"
+                                    >
+                                        Download QR (PNG)
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-center">
+                            <button
+                                onClick={() => setShowQrModal(false)}
+                                className="px-8 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg font-bold hover:bg-gray-50 transition-colors"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

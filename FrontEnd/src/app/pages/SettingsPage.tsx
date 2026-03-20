@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useLanguage, Language } from '@/contexts/LanguageContext';
 import { useUser, useAuth } from "@clerk/clerk-react";
-import { Globe, User, Bell, Shield, Sprout, MapPin, Maximize } from 'lucide-react';
+import { Globe, User, Bell, Shield, Sprout, MapPin, Maximize, QrCode, Download } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
+import { toast } from 'sonner';
 import { api } from '@/lib/api';
 
 export function SettingsPage() {
@@ -162,6 +164,11 @@ export function SettingsPage() {
 
       {/* Personal Profile Settings */}
       <PersonalProfile />
+
+      {/* Worker QR Settings (Only for workers) */}
+      {(userRole.toLowerCase() === 'worker' || userRole.toLowerCase() === 'clerk') && (
+        <WorkerQRSettings />
+      )}
 
       {plantation && (
         <PlantationCard plantation={plantation} loading={loadingPlantation} />
@@ -781,3 +788,149 @@ function PersonalProfile() {
   );
 }
 
+function WorkerQRSettings() {
+  const { user } = useUser();
+  const { getToken } = useAuth();
+  const [plantations, setPlantations] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  useEffect(() => {
+    const fetchWorkerData = async () => {
+      if (!user?.id) return;
+      try {
+        const token = await getToken();
+        // Fetch plantations where this user is a worker
+        const data = await api.getWorkerPlantations(user.id, token || undefined);
+        setPlantations(data);
+      } catch (err) {
+        console.error('Failed to fetch worker plantations:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchWorkerData();
+  }, [user?.id]);
+
+  const handleGenerate = async (workerId: number) => {
+    setIsGenerating(true);
+    try {
+      const token = await getToken();
+      await api.generateWorkerQr(workerId, token || undefined);
+      toast.success('QR Code generated successfully!');
+      // Refresh data
+      const updatedData = await api.getWorkerPlantations(user?.id || '', token || undefined);
+      setPlantations(updatedData);
+    } catch (err: any) {
+      toast.error('Failed to generate QR code: ' + err.message);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const downloadQR = (qrCode: string, name: string) => {
+    const svg = document.getElementById(`qr-${qrCode}`);
+    if (!svg) {
+      toast.error("Could not find QR code element for download");
+      return;
+    }
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const img = new Image();
+    // Wrap in a Blob and create a URL
+    const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(svgBlob);
+
+    img.onload = () => {
+      // Scale up for high resolution
+      const scale = 4;
+      canvas.width = (svg as any).width.baseVal.value * scale;
+      canvas.height = (svg as any).height.baseVal.value * scale;
+      
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      
+      const pngUrl = canvas.toDataURL("image/png");
+      const downloadLink = document.createElement("a");
+      downloadLink.href = pngUrl;
+      downloadLink.download = `QR-Attendance-${name}.png`;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      URL.revokeObjectURL(url);
+      toast.success("QR Code downloaded as PNG");
+    };
+
+    img.onerror = () => {
+      toast.error("Failed to convert QR code to PNG");
+      URL.revokeObjectURL(url);
+    };
+
+    img.src = url;
+  };
+
+  if (loading) return null;
+  if (plantations.length === 0) return null;
+
+  return (
+    <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm mt-6">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="p-2 rounded-lg bg-orange-100">
+          <QrCode className="w-5 h-5 text-orange-700" />
+        </div>
+        <div>
+          <h3 className="font-semibold text-gray-900 text-left">Attendance QR Codes</h3>
+          <p className="text-sm text-gray-600 text-left">Generate and download your unique QR codes for attendance marking.</p>
+        </div>
+      </div>
+
+      <div className="space-y-6">
+        {plantations.map((p) => (
+          <div key={p.id} className="p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col md:flex-row items-center gap-6">
+            <div className="flex-1 text-left">
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Plantation / Estate</p>
+              <h4 className="font-bold text-gray-900 text-lg">{p.name}</h4>
+              <p className="text-sm text-gray-500">{p.location}</p>
+              <div className="mt-4">
+                {!p.qrCode ? (
+                  <button
+                    onClick={() => handleGenerate(p.workerId)}
+                    disabled={isGenerating}
+                    className="px-4 py-2 bg-orange-600 text-white rounded-lg text-sm font-bold hover:bg-orange-700 disabled:opacity-50 transition-colors"
+                  >
+                    {isGenerating ? 'Generating...' : 'Generate My QR Code'}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => downloadQR(p.qrCode, p.name)}
+                    className="flex items-center gap-2 text-orange-600 font-bold text-sm hover:underline"
+                  >
+                    <Download className="w-4 h-4" />
+                    Download QR Code (PNG)
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {p.qrCode && (
+              <div className="p-3 bg-white rounded-lg shadow-sm border border-gray-200">
+                <QRCodeSVG
+                  id={`qr-${p.qrCode}`}
+                  value={p.qrCode}
+                  size={120}
+                  level="H"
+                  includeMargin={true}
+                />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

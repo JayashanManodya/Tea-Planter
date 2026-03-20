@@ -63,12 +63,20 @@ export const api = {
         method: 'DELETE',
         headers: getHeaders(token)
     }).then(res => res.ok),
+    generateWorkerQr: (id: string | number, token?: string) => fetch(`${API_BASE_URL}/workforce/workers/${id}/generate-qr`, {
+        method: 'POST',
+        headers: getHeaders(token)
+    }).then(handleResponse),
 
     // Attendance
     getAttendance: (plantationId?: string | number, token?: string) =>
         fetch(`${API_BASE_URL}/workforce/attendance${plantationId ? `?plantationId=${plantationId}` : ''}`, {
             headers: getHeaders(token)
         }).then(handleResponse),
+    scanQrAttendance: (qrCode: string, plantationId: string | number, token?: string) => fetch(`${API_BASE_URL}/workforce/attendance/scan?qrCode=${qrCode}&plantationId=${plantationId}`, {
+        method: 'POST',
+        headers: getHeaders(token)
+    }).then(handleResponse),
     checkIn: (workerId: string | number, token?: string) => fetch(`${API_BASE_URL}/workforce/attendance/check-in/${workerId}`, {
         method: 'POST',
         headers: getHeaders(token)

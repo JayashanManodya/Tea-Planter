@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useUser, useAuth } from '@clerk/clerk-react';
-import { Calendar as CalendarIcon, CheckCircle2, XCircle, Loader2, Clock, Plus } from 'lucide-react';
+import { Calendar as CalendarIcon, CheckCircle2, XCircle, Loader2, Clock, Plus, QrCode } from 'lucide-react';
 import { api } from '@/lib/api';
+import { Html5Qrcode } from 'html5-qrcode';
+import { toast } from 'sonner';
 
 interface AttendanceRecord {
   id: number;
@@ -30,6 +32,96 @@ export function AttendancePage() {
     status: 'PRESENT',
     remarks: ''
   });
+  const [showScanner, setShowScanner] = useState(false);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+  const scannerRef = useRef<Html5Qrcode | null>(null);
+  const isProcessingScan = useRef(false);
+
+  const startScanner = async () => {
+    if (!window.isSecureContext && window.location.hostname !== 'localhost') {
+      toast.error("Camera access requires a secure (HTTPS) connection or localhost.");
+      return;
+    }
+
+    setShowScanner(true);
+    setCameraError(null);
+    isProcessingScan.current = false;
+    
+    setTimeout(async () => {
+      try {
+        const scanner = new Html5Qrcode("qr-reader");
+        scannerRef.current = scanner;
+        
+        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+        
+        // Prefer back camera on mobile
+        await scanner.start(
+          { facingMode: "environment" },
+          config,
+          onScanSuccess,
+          onScanFailure
+        );
+      } catch (err: any) {
+        console.error("Camera start error:", err);
+        setCameraError(err.message || "Could not access camera. Please ensure you have granted permission.");
+        toast.error("Camera access failed. Please check permissions.");
+      }
+    }, 300);
+  };
+
+  const stopScanner = async () => {
+    if (scannerRef.current) {
+      try {
+        if (scannerRef.current.isScanning) {
+          await scannerRef.current.stop();
+        }
+      } catch (error) {
+        console.error("Failed to stop scanner: ", error);
+      }
+      scannerRef.current = null;
+    }
+    setShowScanner(false);
+  };
+
+  const onScanSuccess = async (decodedText: string) => {
+    if (isProcessingScan.current) return;
+    isProcessingScan.current = true;
+    
+    console.log("QR Scanned (Processing):", decodedText);
+    
+    // Stop scanner first to avoid more scans from hardware
+    await stopScanner();
+    
+    const token = await getToken();
+    const promise = api.scanQrAttendance(decodedText, plantationId!, token || undefined);
+    
+    toast.promise(promise, {
+      loading: 'Marking attendance...',
+      success: (data) => {
+        console.log("Attendance API Success:", data);
+        fetchData();
+        isProcessingScan.current = false;
+        return `Attendance marked: ${data.worker.user?.name || 'Worker'} (${data.checkOut ? 'Check-out' : 'Check-in'})`;
+      },
+      error: (err) => {
+        console.error("Attendance API Error:", err);
+        isProcessingScan.current = false;
+        return `Failed: ${err.message}`;
+      }
+    });
+  };
+
+  const onScanFailure = (error: any) => {
+    // Suppress
+  };
+
+  useEffect(() => {
+    return () => {
+      if (scannerRef.current && scannerRef.current.isScanning) {
+        scannerRef.current.stop().catch(e => console.error(e));
+      }
+    };
+  }, []);
 
   const fetchData = async () => {
     setLoading(true);
@@ -134,23 +226,32 @@ export function AttendancePage() {
           <h1 className="text-2xl font-bold text-gray-900">Attendance & HR Module</h1>
           <p className="text-gray-600 mt-1">Track daily attendance and manage leave</p>
         </div>
-        <button
-          onClick={() => {
-            setEditingRecord(null);
-            setFormData({
-              workerId: '',
-              checkIn: new Date().toISOString().slice(0, 16),
-              checkOut: '',
-              status: 'PRESENT',
-              remarks: ''
-            });
-            setShowModal(true);
-          }}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
-        >
-          <Clock className="w-5 h-5" />
-          Record Attendance
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={startScanner}
+            className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
+          >
+            <QrCode className="w-5 h-5" />
+            Scan QR
+          </button>
+          <button
+            onClick={() => {
+              setEditingRecord(null);
+              setFormData({
+                workerId: '',
+                checkIn: new Date().toISOString().slice(0, 16),
+                checkOut: '',
+                status: 'PRESENT',
+                remarks: ''
+              });
+              setShowModal(true);
+            }}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
+          >
+            <Clock className="w-5 h-5" />
+            Record Attendance
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -169,7 +270,7 @@ export function AttendancePage() {
         <div className="bg-white rounded-lg border border-gray-200 p-4">
           <p className="text-sm text-gray-600 mb-1">Attendance Rate</p>
           <p className="text-2xl font-bold text-gray-900">
-            {((presentCount / attendance.length) * 100).toFixed(0)}%
+            {attendance.length > 0 ? ((presentCount / attendance.length) * 100).toFixed(0) : 0}%
           </p>
         </div>
       </div>
@@ -189,62 +290,95 @@ export function AttendancePage() {
             </tr>
           </thead>
           <tbody>
-            {attendance.map((record) => {
-              return (
-                <tr key={record.id} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="py-3 px-4 text-sm font-medium text-gray-900">{record.worker.user?.name || 'Unnamed Worker'}</td>
-                  <td className="py-3 px-4 text-sm text-gray-900">{new Date(record.checkIn).toLocaleString()}</td>
-                  <td className="py-3 px-4 text-sm text-gray-900">{record.checkOut ? new Date(record.checkOut).toLocaleString() : '-'}</td>
-                  <td className="py-3 px-4">
-                    <div className="flex items-center gap-2">
-                      {record.status === 'PRESENT' && (
-                        <>
-                          <CheckCircle2 className="w-4 h-4 text-green-600" />
-                          <span className="text-sm font-medium text-green-600">Present</span>
-                        </>
-                      )}
-                      {record.status === 'HALF_DAY' && (
-                        <>
-                          <Clock className="w-4 h-4 text-blue-600" />
-                          <span className="text-sm font-medium text-blue-600">Half Day</span>
-                        </>
-                      )}
-                      {record.status === 'ABSENT' && (
-                        <>
-                          <XCircle className="w-4 h-4 text-red-600" />
-                          <span className="text-sm font-medium text-red-600">Absent</span>
-                        </>
-                      )}
-                      {record.status === 'ON_LEAVE' && (
-                        <>
-                          <CalendarIcon className="w-4 h-4 text-orange-600" />
-                          <span className="text-sm font-medium text-orange-600">On Leave</span>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                  <td className="py-3 px-4 text-right">
-                    <div className="flex justify-end gap-2">
-                      <button
-                        onClick={() => handleEdit(record)}
-                        className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(record.id)}
-                        className="text-red-600 hover:text-red-700 text-sm font-medium"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
+            {attendance.map((record) => (
+              <tr key={record.id} className="border-b border-gray-100 hover:bg-gray-50">
+                <td className="py-3 px-4 text-sm font-medium text-gray-900">{record.worker.user?.name || 'Unnamed Worker'}</td>
+                <td className="py-3 px-4 text-sm text-gray-900">{new Date(record.checkIn).toLocaleString()}</td>
+                <td className="py-3 px-4 text-sm text-gray-900">{record.checkOut ? new Date(record.checkOut).toLocaleString() : '-'}</td>
+                <td className="py-3 px-4">
+                  <div className="flex items-center gap-2">
+                    {record.status === 'PRESENT' && (
+                      <>
+                        <CheckCircle2 className="w-4 h-4 text-green-600" />
+                        <span className="text-sm font-medium text-green-600">Present</span>
+                      </>
+                    )}
+                    {record.status === 'HALF_DAY' && (
+                      <>
+                        <Clock className="w-4 h-4 text-blue-600" />
+                        <span className="text-sm font-medium text-blue-600">Half Day</span>
+                      </>
+                    )}
+                    {record.status === 'ABSENT' && (
+                      <>
+                        <XCircle className="w-4 h-4 text-red-600" />
+                        <span className="text-sm font-medium text-red-600">Absent</span>
+                      </>
+                    )}
+                    {record.status === 'ON_LEAVE' && (
+                      <>
+                        <CalendarIcon className="w-4 h-4 text-orange-600" />
+                        <span className="text-sm font-medium text-orange-600">On Leave</span>
+                      </>
+                    )}
+                  </div>
+                </td>
+                <td className="py-3 px-4 text-right">
+                  <div className="flex justify-end gap-2">
+                    <button
+                      onClick={() => handleEdit(record)}
+                      className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(record.id)}
+                      className="text-red-600 hover:text-red-700 text-sm font-medium"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
+
+      {/* QR Scanner Modal */}
+      {showScanner && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-[60] backdrop-blur-md animate-in fade-in duration-300">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-green-50">
+              <h2 className="text-xl font-bold text-green-900 flex items-center gap-2">
+                <QrCode className="w-6 h-6" />
+                Scan Worker QR
+              </h2>
+              <button
+                onClick={stopScanner}
+                className="text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-full"
+              >
+                <Plus className="w-6 h-6 rotate-45" />
+              </button>
+            </div>
+            <div className="p-6">
+              <div id="qr-reader" className="w-full rounded-xl overflow-hidden border-2 border-dashed border-green-200 bg-gray-50 aspect-square"></div>
+              <p className="text-center text-sm text-gray-500 mt-4 font-medium">
+                Position the worker's QR code within the frame to scan
+              </p>
+            </div>
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-center">
+              <button
+                onClick={stopScanner}
+                className="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-semibold transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Record Attendance Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
@@ -343,9 +477,7 @@ export function AttendancePage() {
                       <Loader2 className="w-4 h-4 animate-spin" />
                       Saving...
                     </>
-                  ) : (
-                    editingRecord ? 'Update Record' : 'Record Attendance'
-                  )}
+                  ) : editingRecord ? 'Update Record' : 'Record Attendance'}
                 </button>
               </div>
             </form>

@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn, useAuth, useUser } from "@clerk/clerk-react";
 import { LanguageProvider } from '@/contexts/LanguageContext';
-import { LoginPage } from './pages/LoginPage';
 import { LandingPage } from './pages/LandingPage';
 import { DashboardLayout } from './components/DashboardLayout';
 import { WorkerLayout } from './components/WorkerLayout';
@@ -63,13 +62,11 @@ function AppRoutes() {
   const userRole = (user?.publicMetadata?.role as 'owner' | 'clerk' | 'worker') || 'worker';
 
   const getHomeRoute = () => {
-    if (!isSignedIn) return '/login';
     return userRole === 'worker' ? '/worker-dashboard' : '/dashboard';
   };
 
   return (
     <Routes>
-      <Route path="/login" element={isSignedIn ? <Navigate to={getHomeRoute()} /> : <LoginPage />} />
       <Route path="/" element={isSignedIn ? <Navigate to={getHomeRoute()} /> : <LandingPage />} />
 
       {/* Worker Pages - With WorkerLayout */}

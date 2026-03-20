@@ -322,70 +322,6 @@ export function LandingPage() {
 
                 </div>
 
-                {/* PRICING SECTION: Reflecting Actual Capabilities */}
-                <div className="mt-40 mb-20 text-center">
-                    <h2 className="text-4xl md:text-6xl font-bold mb-16 tracking-tight">Scale Your <span className="text-[#C8FF4C] drop-shadow-sm px-2">Legacy.</span></h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-
-                        {/* PLAN 1 */}
-                        <div className="bg-white rounded-[3.5rem] p-10 border border-black/5 shadow-sm hover:shadow-2xl transition-all duration-500 group">
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Essential</p>
-                            <h4 className="text-3xl font-bold mb-6">Seedling</h4>
-                            <div className="mb-8 p-6 bg-[#F4F8F5] rounded-3xl">
-                                <span className="text-5xl font-black">$49</span>
-                                <span className="text-gray-400 text-sm font-medium"> / Month</span>
-                            </div>
-                            <ul className="space-y-4 mb-10">
-                                {['Up to 50 Workers', 'Harvest Tracking', 'Email Reporting', 'Standard Support'].map((f, i) => (
-                                    <li key={i} className="flex items-center gap-3 text-sm text-gray-600 font-medium">
-                                        <CheckCircle2 className="w-4 h-4 text-green-500" /> {f}
-                                    </li>
-                                ))}
-                            </ul>
-                            <button onClick={handleLogin} className="w-full py-5 border border-black/10 rounded-full font-bold text-sm hover:bg-black hover:text-white transition-colors text-center">Get Started</button>
-                        </div>
-
-                        {/* PLAN 2 (Featured) */}
-                        <div className="bg-black rounded-[3.5rem] p-10 shadow-2xl relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 px-6 py-2 bg-[#C8FF4C] text-black text-[10px] font-black uppercase tracking-tighter rounded-bl-3xl">Most Popular</div>
-                            <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-4">Complete Solution</p>
-                            <h4 className="text-3xl font-bold text-white mb-6">Estate Pro</h4>
-                            <div className="mb-8 p-6 bg-white/5 rounded-3xl border border-white/10">
-                                <span className="text-5xl font-black text-white">$149</span>
-                                <span className="text-white/40 text-sm font-medium"> / Month</span>
-                            </div>
-                            <ul className="space-y-4 mb-10">
-                                {['Unlimited Workers', 'AI Disease Scanner', 'Factory Supply Logistics', 'Financial Dashboards', 'PDF Performance Reports'].map((f, i) => (
-                                    <li key={i} className="flex items-center gap-3 text-sm text-white/80 font-medium">
-                                        <CheckCircle2 className="w-4 h-4 text-[#C8FF4C]" /> {f}
-                                    </li>
-                                ))}
-                            </ul>
-                            <button onClick={handleLogin} className="w-full py-5 bg-[#C8FF4C] text-black rounded-full font-extrabold text-sm hover:scale-[1.02] transition-transform text-center">Get Pro Access</button>
-                        </div>
-
-                        {/* PLAN 3 */}
-                        <div className="bg-white rounded-[3.5rem] p-10 border border-black/5 shadow-sm hover:shadow-2xl transition-all duration-500">
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Enterprise</p>
-                            <h4 className="text-3xl font-bold mb-6">Canopy</h4>
-                            <div className="mb-8 p-6 bg-[#F4F8F5] rounded-3xl">
-                                <span className="text-5xl font-black">Custom</span>
-                            </div>
-                            <ul className="space-y-4 mb-10">
-                                {['Multi-Estate Monitoring', 'Custom API Integration', 'White-label Support', 'Historical Data Export', 'Dedicated Account Manager'].map((f, i) => (
-                                    <li key={i} className="flex items-center gap-3 text-sm text-gray-600 font-medium">
-                                        <CheckCircle2 className="w-4 h-4 text-green-500" /> {f}
-                                    </li>
-                                ))}
-                            </ul>
-                            <button onClick={handleLogin} className="w-full py-5 border border-black/10 rounded-full font-bold text-sm hover:bg-black hover:text-white transition-colors text-center">Contact Sales</button>
-                        </div>
-
-                    </div>
-
-                    {/* Aesthetic Detail: Bottom Wave/Overlay */}
-                    <div className="absolute -bottom-1 left-0 right-0 h-24 bg-gradient-to-t from-[#E8F0E9] to-transparent pointer-events-none" />
-                </div>
 
                 {/* Footer with branding alignment */}
                 <div className="mt-12 mb-8 px-4 flex flex-col md:flex-row justify-between items-center text-black/40 text-sm font-medium">
@@ -398,7 +334,7 @@ export function LandingPage() {
                             <a key={item} href="#" className="hover:text-black transition-colors">{item}</a>
                         ))}
                     </div>
-                    <p className="mt-4 md:mt-0">© {new Date().getFullYear()} Jayashan Online. Built in Nuwara Eliya.</p>
+                    <p className="mt-4 md:mt-0">© 2026 Tea Planter</p>
                 </div>
             </div>
         </div>
