@@ -4,6 +4,7 @@ import { Calendar as CalendarIcon, CheckCircle2, XCircle, Loader2, Clock, Plus, 
 import { api } from '@/lib/api';
 import { Html5Qrcode } from 'html5-qrcode';
 import { toast } from 'sonner';
+import './AttendancePage.css';
 
 interface AttendanceRecord {
   id: number;
@@ -298,25 +299,40 @@ export function AttendancePage() {
                 <td className="py-3 px-4 text-sm text-gray-900">{record.checkOut ? new Date(record.checkOut).toLocaleString() : '-'}</td>
                 <td className="py-3 px-4">
                   <div className="flex items-center gap-2">
-                    {record.status === 'PRESENT' && (
-                      <>
-                        <CheckCircle2 className="w-4 h-4 text-green-600" />
-                        <span className="text-sm font-medium text-green-600">Present</span>
-                      </>
+                    {record.status?.toUpperCase() === 'PRESENT' && (
+                      <div className="flex items-center gap-2">
+                        {!record.checkOut ? (
+                          <>
+                            <div className="relative flex h-3 w-3">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                            </div>
+                            <span className="text-sm font-semibold text-green-600">Working</span>
+                          </>
+                        ) : (
+                          <>
+                            <div className="flex -space-x-1">
+                              <CheckCircle2 className="w-4 h-4 text-green-600" />
+                              <CheckCircle2 className="w-4 h-4 text-green-600 -ml-2" />
+                            </div>
+                            <span className="text-sm font-bold text-green-700">Completed</span>
+                          </>
+                        )}
+                      </div>
                     )}
-                    {record.status === 'HALF_DAY' && (
+                    {(record.status?.toUpperCase() === 'HALF_DAY' || record.status?.toUpperCase() === 'PARTIAL') && (
                       <>
                         <Clock className="w-4 h-4 text-blue-600" />
                         <span className="text-sm font-medium text-blue-600">Half Day</span>
                       </>
                     )}
-                    {record.status === 'ABSENT' && (
+                    {record.status?.toUpperCase() === 'ABSENT' && (
                       <>
                         <XCircle className="w-4 h-4 text-red-600" />
                         <span className="text-sm font-medium text-red-600">Absent</span>
                       </>
                     )}
-                    {record.status === 'ON_LEAVE' && (
+                    {record.status?.toUpperCase() === 'ON_LEAVE' && (
                       <>
                         <CalendarIcon className="w-4 h-4 text-orange-600" />
                         <span className="text-sm font-medium text-orange-600">On Leave</span>
