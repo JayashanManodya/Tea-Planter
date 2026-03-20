@@ -201,7 +201,7 @@ export function HarvestPage() {
       toast.success('Record deleted');
     } catch (error) {
       console.error('Failed to delete harvest:', error);
-      toast.error('Failed to delete record.');
+      toast.error(`Failed to delete record: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 

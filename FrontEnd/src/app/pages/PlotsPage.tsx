@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Plus, Search, MapPin, Edit2, Trash2, Loader2 } from 'lucide-react';
+import { Plus, Search, MapPin, Edit2, Trash2, Loader2, X, AlertCircle } from 'lucide-react';
 import { useUser, useAuth } from '@clerk/clerk-react';
 import { api } from '@/lib/api';
 
@@ -49,6 +49,10 @@ export function PlotsPage() {
   const [selectedPlotDetails, setSelectedPlotDetails] = useState<Plot | null>(null);
   const [soilTests, setSoilTests] = useState<SoilTest[]>([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
+  
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [plotToDelete, setPlotToDelete] = useState<Plot | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const [filterStatus, setFilterStatus] = useState<string>('ALL');
   const [filterClone, setFilterClone] = useState<string>('ALL');
@@ -155,15 +159,31 @@ export function PlotsPage() {
     );
   };
 
-  const handleDelete = async (plot: Plot) => {
-    if (!confirm(`Are you sure you want to delete ${plot.blockId}?`)) return;
+  const handleDelete = (plot: Plot) => {
+    setPlotToDelete(plot);
+    setDeleteError(null);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!plotToDelete) return;
+    setIsSubmitting(true);
     try {
       const token = await getToken();
-      await api.deletePlot(plot.id, token || undefined);
+      await api.deletePlot(plotToDelete.id, token || undefined);
+      setShowDeleteModal(false);
+      setPlotToDelete(null);
       fetchPlots();
     } catch (error) {
       console.error('Failed to delete plot:', error);
-      alert('Failed to delete plot.');
+      const msg = error instanceof Error ? error.message : 'Unknown error';
+      if (msg.includes('referenced from table "harvests"')) {
+        setDeleteError('Cannot delete this plot because it has associated harvest records. Please delete the harvests first or move them to another plot.');
+      } else {
+        setDeleteError(`Failed to delete plot: ${msg}`);
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -713,6 +733,69 @@ export function PlotsPage() {
               >
                 Close
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[60] backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-red-50">
+              <h2 className="text-xl font-bold text-red-900 text-left">Confirm Deletion</h2>
+              <button 
+                onClick={() => setShowDeleteModal(false)} 
+                className="text-gray-400 hover:text-gray-600 p-1"
+                disabled={isSubmitting}
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-4 text-left">
+              <div className="flex items-center gap-3 text-red-600 bg-red-50 p-4 rounded-lg border border-red-100">
+                <div className="p-2 bg-red-100 rounded-full">
+                  <Trash2 className="w-5 h-5" />
+                </div>
+                <p className="text-sm font-bold">Are you sure you want to delete plot <span className="underline decoration-2 underline-offset-2">{plotToDelete?.blockId}</span>?</p>
+              </div>
+              
+              <p className="text-sm text-gray-500 leading-relaxed text-left">
+                This action is permanent and cannot be undone. All mapping data and environmental records for this plot will be lost from the registry.
+              </p>
+
+              {deleteError && (
+                <div className="p-4 bg-red-100 border-l-4 border-red-500 rounded text-red-800 text-xs font-semibold flex gap-3 items-start animate-in slide-in-from-top-2 duration-300 text-left">
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                  <span>{deleteError}</span>
+                </div>
+              )}
+
+              <div className="flex gap-3 pt-4 border-t border-gray-100">
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteModal(false)}
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-bold hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-red-200"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Deleting...
+                    </>
+                  ) : (
+                    'Delete Plot'
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>

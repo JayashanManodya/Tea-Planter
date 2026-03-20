@@ -275,7 +275,7 @@ export function FinancialPage() {
       fetchData();
     } catch (error) {
       console.error('Failed to delete income:', error);
-      alert('Failed to delete income record.');
+      alert(`Failed to delete income record: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
@@ -349,7 +349,7 @@ export function FinancialPage() {
       alert('Payroll updated successfully!');
     } catch (error) {
       console.error('Failed to update payroll:', error);
-      alert('Failed to update payroll.');
+      alert(`Failed to update payroll: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -365,7 +365,7 @@ export function FinancialPage() {
       alert('Payroll record deleted.');
     } catch (error) {
       console.error('Failed to delete payroll:', error);
-      alert('Failed to delete payroll record.');
+      alert(`Failed to delete payroll record: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 

@@ -58,11 +58,11 @@ export const api = {
     deactivateWorker: (id: string | number, token?: string) => fetch(`${API_BASE_URL}/workforce/workers/${id}`, {
         method: 'DELETE',
         headers: getHeaders(token)
-    }).then(res => res.ok),
+    }).then(handleResponse),
     deleteWorker: (id: string | number, token?: string) => fetch(`${API_BASE_URL}/workforce/workers/${id}/permanent`, {
         method: 'DELETE',
         headers: getHeaders(token)
-    }).then(res => res.ok),
+    }).then(handleResponse),
     generateWorkerQr: (id: string | number, token?: string) => fetch(`${API_BASE_URL}/workforce/workers/${id}/generate-qr`, {
         method: 'POST',
         headers: getHeaders(token)
@@ -112,7 +112,7 @@ export const api = {
     deleteTask: (id: string | number, token?: string) => fetch(`${API_BASE_URL}/tasks/${id}`, {
         method: 'DELETE',
         headers: getHeaders(token)
-    }).then(res => res.ok),
+    }).then(handleResponse),
     getTasksByWorker: (workerId: string | number, token?: string) => fetch(`${API_BASE_URL}/tasks/worker/${workerId}`, {
         headers: getHeaders(token)
     }).then(handleResponse),
@@ -133,7 +133,7 @@ export const api = {
     deleteAttendance: (id: number | string, token?: string) => fetch(`${API_BASE_URL}/workforce/attendance/${id}`, {
         method: 'DELETE',
         headers: getHeaders(token)
-    }).then(res => res.ok),
+    }).then(handleResponse),
     getLeavesByWorker: (workerId: string | number, token?: string) => fetch(`${API_BASE_URL}/workforce/leaves/worker/${workerId}`, {
         headers: getHeaders(token)
     }).then(handleResponse),
@@ -159,7 +159,7 @@ export const api = {
     deletePlot: (id: string | number, token?: string) => fetch(`${API_BASE_URL}/registry/plots/${id}`, {
         method: 'DELETE',
         headers: getHeaders(token)
-    }).then(res => res.ok),
+    }).then(handleResponse),
     getSoilTestsByPlot: (plotId: string | number, token?: string) => fetch(`${API_BASE_URL}/registry/plots/${plotId}/soil-tests`, {
         headers: getHeaders(token)
     }).then(handleResponse),
@@ -186,7 +186,7 @@ export const api = {
     deleteHarvest: (id: number | string, token?: string) => fetch(`${API_BASE_URL}/harvests/${id}`, {
         method: 'DELETE',
         headers: getHeaders(token)
-    }).then(res => res.ok),
+    }).then(handleResponse),
 
     // Inventory
     getInventoryItems: (plantationId?: string | number, token?: string) =>
@@ -206,7 +206,7 @@ export const api = {
     deleteInventoryItem: (id: number | string, token?: string) => fetch(`${API_BASE_URL}/inventory/items/${id}`, {
         method: 'DELETE',
         headers: getHeaders(token)
-    }).then(res => res.ok),
+    }).then(handleResponse),
     recordStockEntry: (itemId: number, quantity: number, type: string, unitPrice?: number, token?: string) =>
         fetch(`${API_BASE_URL}/inventory/stock-entry?itemId=${itemId}&quantity=${quantity}&type=${type}${unitPrice ? `&unitPrice=${unitPrice}` : ''}`, {
             method: 'POST',
@@ -224,7 +224,7 @@ export const api = {
     deleteStockEntry: (id: number | string, token?: string) => fetch(`${API_BASE_URL}/inventory/stock-entries/${id}`, {
         method: 'DELETE',
         headers: getHeaders(token)
-    }).then(res => res.ok),
+    }).then(handleResponse),
 
     // Task Rates
     getTaskRates: (token?: string) => fetch(`${API_BASE_URL}/task-rates`, {
@@ -243,7 +243,7 @@ export const api = {
     deleteTaskRate: (id: string | number, token?: string) => fetch(`${API_BASE_URL}/task-rates/${id}`, {
         method: 'DELETE',
         headers: getHeaders(token)
-    }).then(res => res.ok),
+    }).then(handleResponse),
 
     // Financial
     getInventoryExpenses: (month: string, plantationId?: string | number, token?: string) => {
@@ -278,7 +278,7 @@ export const api = {
     deletePayroll: (id: string | number, token?: string) => fetch(`${API_BASE_URL}/financial/payroll/${id}`, {
         method: 'DELETE',
         headers: getHeaders(token)
-    }).then(res => res.ok),
+    }).then(handleResponse),
     getPayrollPreview: (workerId: string | number, month: string, token?: string) =>
         fetch(`${API_BASE_URL}/financial/payroll/preview?workerId=${workerId}&month=${month}`, {
             headers: getHeaders(token)
@@ -306,7 +306,7 @@ export const api = {
     deleteIncome: (id: string | number, token?: string) => fetch(`${API_BASE_URL}/financial/incomes/${id}`, {
         method: 'DELETE',
         headers: getHeaders(token)
-    }).then(res => res.ok),
+    }).then(handleResponse),
 
     // Factories
     getFactories: (plantationId?: string | number, token?: string) =>
@@ -326,7 +326,7 @@ export const api = {
     deleteFactory: (id: string | number, token?: string) => fetch(`${API_BASE_URL}/factories/${id}`, {
         method: 'DELETE',
         headers: getHeaders(token)
-    }).then(res => res.ok),
+    }).then(handleResponse),
 
     // Deliveries
     getDeliveries: (month?: string, plantationId?: string | number, token?: string) => {
@@ -350,7 +350,7 @@ export const api = {
     deleteDelivery: (id: string | number, token?: string) => fetch(`${API_BASE_URL}/factories/deliveries/${id}`, {
         method: 'DELETE',
         headers: getHeaders(token)
-    }).then(res => res.ok),
+    }).then(handleResponse),
     // Plantations
     createPlantation: (data: any, clerkId: string, token?: string) =>
         fetch(`${API_BASE_URL}/plantations?clerkId=${clerkId}`, {

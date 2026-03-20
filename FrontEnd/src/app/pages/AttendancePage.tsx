@@ -205,7 +205,7 @@ export function AttendancePage() {
       fetchData();
     } catch (error) {
       console.error('Failed to delete attendance:', error);
-      alert('Failed to delete record.');
+      alert(`Failed to delete record: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 

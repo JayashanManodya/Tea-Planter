@@ -209,7 +209,7 @@ export function InventoryPage() {
       fetchInventory();
     } catch (error) {
       console.error('Failed to delete item:', error);
-      alert('Failed to delete item.');
+      alert(`Failed to delete item: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
@@ -240,7 +240,7 @@ export function InventoryPage() {
       fetchInventory();
     } catch (error) {
       console.error('Failed to update log:', error);
-      alert('Failed to update stock log.');
+      alert(`Failed to update stock log: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -254,7 +254,7 @@ export function InventoryPage() {
       fetchInventory();
     } catch (error) {
       console.error('Failed to delete log:', error);
-      alert('Failed to delete log entry.');
+      alert(`Failed to delete log entry: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
