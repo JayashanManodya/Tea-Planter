@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { DollarSign, TrendingUp, TrendingDown, Download, Loader2, Info, Activity, Plus, ChevronRight, Edit2, Trash2, AlertCircle, Package, CheckCircle } from 'lucide-react';
+import { DollarSign, TrendingUp, TrendingDown, Download, Loader2, Info, Activity, Plus, ChevronRight, Edit2, Trash2, AlertCircle, Package, CheckCircle, Search, Filter, ArrowUpDown, Calendar } from 'lucide-react';
 import { useUser, useAuth } from '@clerk/clerk-react';
 import { api } from '@/lib/api';
 import { PieChart, Pie, Cell, Tooltip as RechartsTooltip, ResponsiveContainer, Legend } from 'recharts';
@@ -109,6 +109,14 @@ export function FinancialPage() {
     weight: '',
     deliveryDate: new Date().toISOString().split('T')[0]
   });
+
+  // Search & Filter States
+  const [incomeSearchTerm, setIncomeSearchTerm] = useState('');
+  const [incomeSortBy, setIncomeSortBy] = useState<string>('date-desc');
+
+  const [payrollSearchTerm, setPayrollSearchTerm] = useState('');
+  const [payrollFilterStatus, setPayrollFilterStatus] = useState<string>('ALL');
+  const [payrollSortBy, setPayrollSortBy] = useState<string>('name-asc');
 
   const fetchData = async () => {
     setLoading(true);
@@ -379,6 +387,51 @@ export function FinancialPage() {
     }
   };
 
+  const filteredIncomes = useMemo(() => {
+    let result = [...incomes];
+
+    if (incomeSearchTerm) {
+      const term = incomeSearchTerm.toLowerCase();
+      result = result.filter(i =>
+        i.factory?.name?.toLowerCase().includes(term) ||
+        i.description?.toLowerCase().includes(term)
+      );
+    }
+
+    result.sort((a, b) => {
+      if (incomeSortBy === 'date-desc') return (b.date.year * 12 + b.date.month) - (a.date.year * 12 + a.date.month);
+      if (incomeSortBy === 'amount-desc') return (b.netAmount || 0) - (a.netAmount || 0);
+      if (incomeSortBy === 'amount-asc') return (a.netAmount || 0) - (b.netAmount || 0);
+      return 0;
+    });
+
+    return result;
+  }, [incomes, incomeSearchTerm, incomeSortBy]);
+
+  const filteredPayrolls = useMemo(() => {
+    let result = [...payrolls];
+
+    if (payrollSearchTerm) {
+      const term = payrollSearchTerm.toLowerCase();
+      result = result.filter(p =>
+        p.worker?.user?.name?.toLowerCase().includes(term)
+      );
+    }
+
+    if (payrollFilterStatus !== 'ALL') {
+      result = result.filter(p => p.status === payrollFilterStatus);
+    }
+
+    result.sort((a, b) => {
+      if (payrollSortBy === 'name-asc') return (a.worker?.user?.name || '').localeCompare(b.worker?.user?.name || '');
+      if (payrollSortBy === 'amount-desc') return (b.netPay || 0) - (a.netPay || 0);
+      if (payrollSortBy === 'status') return a.status.localeCompare(b.status);
+      return 0;
+    });
+
+    return result;
+  }, [payrolls, payrollSearchTerm, payrollFilterStatus, payrollSortBy]);
+
   const totalPayroll = useMemo(() =>
     payrolls.reduce((sum, p) => sum + (p.netPay || 0), 0),
     [payrolls]);
@@ -496,13 +549,39 @@ export function FinancialPage() {
             <h3 className="text-lg font-semibold text-gray-900">Factory Paysheets (Monthly)</h3>
             <button
               onClick={() => setShowIncomeModal(true)}
-              className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+              className="text-sm text-purple-600 hover:text-purple-700 font-medium whitespace-nowrap"
             >
               + Record Paysheet
             </button>
           </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 mb-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search factory..."
+                value={incomeSearchTerm}
+                onChange={(e) => setIncomeSearchTerm(e.target.value)}
+                className="w-full pl-9 pr-4 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 outline-none"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <ArrowUpDown className="w-4 h-4 text-gray-400" />
+              <select
+                value={incomeSortBy}
+                onChange={(e) => setIncomeSortBy(e.target.value)}
+                className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-purple-500 outline-none"
+              >
+                <option value="date-desc">Newest First</option>
+                <option value="amount-desc">Highest Amount</option>
+                <option value="amount-asc">Lowest Amount</option>
+              </select>
+            </div>
+          </div>
+
           <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-            {incomes.map((income) => (
+            {filteredIncomes.map((income) => (
               <div key={income.id} className="p-4 bg-gray-50 rounded-lg border border-gray-100">
                 <div className="flex justify-between items-start mb-2">
                   <div>
@@ -542,7 +621,7 @@ export function FinancialPage() {
                 </div>
               </div>
             ))}
-            {incomes.length === 0 && (
+            {filteredIncomes.length === 0 && (
               <p className="text-center py-4 text-gray-500 text-sm">No monthly paysheets found.</p>
             )}
           </div>
@@ -600,8 +679,60 @@ export function FinancialPage() {
             Total payout: <span className="font-bold text-purple-600">LKR {totalPayroll.toLocaleString()}</span>
           </div>
         </div>
+
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search by worker name..."
+              value={payrollSearchTerm}
+              onChange={(e) => setPayrollSearchTerm(e.target.value)}
+              className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+            />
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Filter className="w-4 h-4 text-gray-400" />
+              <select
+                value={payrollFilterStatus}
+                onChange={(e) => setPayrollFilterStatus(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-purple-500 outline-none"
+              >
+                <option value="ALL">All Status</option>
+                <option value="PENDING">Pending</option>
+                <option value="APPROVED">Approved</option>
+                <option value="PAID">Paid</option>
+              </select>
+            </div>
+            <div className="flex items-center gap-2">
+              <ArrowUpDown className="w-4 h-4 text-gray-400" />
+              <select
+                value={payrollSortBy}
+                onChange={(e) => setPayrollSortBy(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-purple-500 outline-none"
+              >
+                <option value="name-asc">Name (A-Z)</option>
+                <option value="amount-desc">Net Pay (High-Low)</option>
+                <option value="status">Status</option>
+              </select>
+            </div>
+            { (payrollSearchTerm || payrollFilterStatus !== 'ALL') && (
+              <button 
+                onClick={() => {
+                  setPayrollSearchTerm('');
+                  setPayrollFilterStatus('ALL');
+                }}
+                className="text-xs text-red-600 font-bold hover:text-red-700"
+              >
+                CLEAR FILTERS
+              </button>
+            )}
+          </div>
+        </div>
+
         <div className="space-y-3">
-          {payrolls.map((payroll) => (
+          {filteredPayrolls.map((payroll) => (
             <div key={payroll.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-lg gap-4">
               <div className="flex flex-col">
                 <span className="font-bold text-gray-900">{payroll.worker?.user?.name || 'Unknown Worker'}</span>
@@ -666,9 +797,9 @@ export function FinancialPage() {
               </div>
             </div>
           ))}
-          {payrolls.length === 0 && (
+          {filteredPayrolls.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-gray-500">No payroll records have been generated yet.</p>
+              <p className="text-gray-500">No payroll records found for the current filters.</p>
             </div>
           )}
         </div>
