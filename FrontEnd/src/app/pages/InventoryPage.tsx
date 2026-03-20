@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Package, AlertTriangle, Plus, Loader2, Edit2, Trash2, Info, Activity } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Package, AlertTriangle, Plus, Loader2, Edit2, Trash2, Info, Activity, Search, Filter, ArrowUpDown, Calendar } from 'lucide-react';
 import { useUser, useAuth } from '@clerk/clerk-react';
 import { api } from '@/lib/api';
 
@@ -48,6 +48,16 @@ export function InventoryPage() {
     quantity: '',
     unitPrice: ''
   });
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterCategory, setFilterCategory] = useState<string>('ALL');
+  const [filterStockStatus, setFilterStockStatus] = useState<string>('ALL');
+  const [sortBy, setSortBy] = useState<string>('name');
+
+  const [logSearchTerm, setLogSearchTerm] = useState('');
+  const [logFilterType, setLogFilterType] = useState<string>('ALL');
+  const [logFilterMonth, setLogFilterMonth] = useState<string>('ALL');
+  const [logSortBy, setLogSortBy] = useState<string>('date-desc');
 
   const fetchInventory = async () => {
     setLoading(true);
@@ -248,6 +258,58 @@ export function InventoryPage() {
     }
   };
 
+  const filteredInventory = useMemo(() => {
+    let result = inventory.filter((item) => {
+      const searchStr = searchTerm.toLowerCase();
+      const matchesSearch =
+        item.name.toLowerCase().includes(searchStr) ||
+        item.category.toLowerCase().includes(searchStr);
+
+      const matchesCategory = filterCategory === 'ALL' || item.category === filterCategory;
+
+      const isLowStock = item.currentStock < item.reorderLevel;
+      const matchesStockStatus =
+        filterStockStatus === 'ALL' ||
+        (filterStockStatus === 'LOW' && isLowStock) ||
+        (filterStockStatus === 'IN_STOCK' && !isLowStock);
+
+      return matchesSearch && matchesCategory && matchesStockStatus;
+    });
+
+    // Apply Sorting
+    return [...result].sort((a, b) => {
+      if (sortBy === 'name') return a.name.localeCompare(b.name);
+      if (sortBy === 'category') return a.category.localeCompare(b.category);
+      if (sortBy === 'stock-level') return a.currentStock - b.currentStock;
+      return 0;
+    });
+  }, [inventory, searchTerm, filterCategory, filterStockStatus, sortBy]);
+
+  const filteredLogs = useMemo(() => {
+    return logs.filter((log) => {
+      const searchStr = logSearchTerm.toLowerCase();
+      const matchesSearch =
+        log.item.name.toLowerCase().includes(searchStr) ||
+        log.type.toLowerCase().includes(searchStr);
+
+      const matchesType = logFilterType === 'ALL' || log.type === logFilterType;
+
+      const matchesMonth = logFilterMonth === 'ALL' || log.entryDate.startsWith(logFilterMonth);
+
+      return matchesSearch && matchesType && matchesMonth;
+    });
+
+    // Apply Sorting for Logs
+    return [...result].sort((a, b) => {
+      if (logSortBy === 'date-desc') return new Date(b.entryDate).getTime() - new Date(a.entryDate).getTime();
+      if (logSortBy === 'date-asc') return new Date(a.entryDate).getTime() - new Date(b.entryDate).getTime();
+      if (logSortBy === 'qty-desc') return b.quantity - a.quantity;
+      if (logSortBy === 'qty-asc') return a.quantity - b.quantity;
+      if (logSortBy === 'item-name') return a.item.name.localeCompare(b.item.name);
+      return 0;
+    });
+  }, [logs, logSearchTerm, logFilterType, logFilterMonth, logSortBy]);
+
   const lowStockItems = inventory.filter(item => item.currentStock < item.reorderLevel);
   const categories = Array.from(new Set(inventory.map(item => item.category))).length;
 
@@ -266,22 +328,79 @@ export function InventoryPage() {
           <h1 className="text-2xl font-bold text-gray-900">Inventory & Input Control</h1>
           <p className="text-gray-600 mt-1">Manage fertilizers, chemicals, and equipment</p>
         </div>
-        <button
-          onClick={() => {
-            setEditingItem(null);
-            setFormData({
-              name: '',
-              category: 'Fertilizer',
-              unit: 'kg',
-              reorderLevel: ''
-            });
-            setShowModal(true);
-          }}
-          className="flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-medium"
-        >
-          <Plus className="w-5 h-5" />
-          Add Item
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={() => {
+              setEditingItem(null);
+              setFormData({
+                name: '',
+                category: 'Fertilizer',
+                unit: 'kg',
+                reorderLevel: ''
+              });
+              setShowModal(true);
+            }}
+            className="flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-medium transition-colors"
+          >
+            <Plus className="w-5 h-5" />
+            Add Item
+          </button>
+        </div>
+      </div>
+
+      {/* Item Filters */}
+      <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm space-y-4">
+        <div className="flex flex-col lg:flex-row gap-4">
+          <div className="flex-1 relative">
+            <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Search items by name or category..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all"
+            />
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Filter className="w-4 h-4 text-gray-400" />
+              <select
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-orange-500 outline-none"
+              >
+                <option value="ALL">All Categories</option>
+                {Array.from(new Set(inventory.map(i => i.category))).map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+
+            <select
+              value={filterStockStatus}
+              onChange={(e) => setFilterStockStatus(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-orange-500 outline-none"
+            >
+              <option value="ALL">All Stock Status</option>
+              <option value="IN_STOCK">In Stock</option>
+              <option value="LOW">Low Stock</option>
+            </select>
+
+            <div className="flex items-center gap-2 border-l pl-3 ml-2 border-gray-200">
+              <ArrowUpDown className="w-4 h-4 text-gray-400" />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-orange-500 outline-none"
+              >
+                <option value="name">Name (A-Z)</option>
+                <option value="category">Category</option>
+                <option value="stock-level">Stock Level (Low-High)</option>
+              </select>
+            </div>
+          </div>
+        </div>
       </div>
 
       {lowStockItems.length > 0 && (
@@ -329,7 +448,7 @@ export function InventoryPage() {
             </tr>
           </thead>
           <tbody>
-            {inventory.map((item) => {
+            {filteredInventory.map((item) => {
               const isLowStock = item.currentStock < item.reorderLevel;
               return (
                 <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50">
@@ -726,6 +845,60 @@ export function InventoryPage() {
         </div>
 
         <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+          <div className="p-4 border-b border-gray-200 bg-gray-50/50 flex flex-col md:flex-row gap-4">
+            <div className="flex-1 relative">
+              <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Search logs by item name..."
+                value={logSearchTerm}
+                onChange={(e) => setLogSearchTerm(e.target.value)}
+                className="w-full pl-9 pr-4 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-gray-400 outline-none"
+              />
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-gray-400" />
+                <input
+                  type="month"
+                  value={logFilterMonth === 'ALL' ? '' : logFilterMonth}
+                  onChange={(e) => setLogFilterMonth(e.target.value || 'ALL')}
+                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-gray-400 outline-none"
+                />
+                {logFilterMonth !== 'ALL' && (
+                  <button
+                    onClick={() => setLogFilterMonth('ALL')}
+                    className="text-xs text-red-600 hover:text-red-700 font-bold"
+                  >
+                    CLEAR
+                  </button>
+                )}
+              </div>
+              <select
+                value={logFilterType}
+                onChange={(e) => setLogFilterType(e.target.value)}
+                className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-gray-400 outline-none"
+              >
+                <option value="ALL">All Types</option>
+                <option value="PURCHASE">Purchase Only</option>
+                <option value="USAGE">Usage Only</option>
+              </select>
+
+              <div className="flex items-center gap-2 border-l pl-3 border-gray-200">
+                <ArrowUpDown className="w-4 h-4 text-gray-400" />
+                <select
+                  value={logSortBy}
+                  onChange={(e) => setLogSortBy(e.target.value)}
+                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-gray-400 outline-none"
+                >
+                  <option value="date-desc">Newest First</option>
+                  <option value="date-asc">Oldest First</option>
+                  <option value="qty-desc">Quantity (High-Low)</option>
+                  <option value="item-name">Item Name (A-Z)</option>
+                </select>
+              </div>
+            </div>
+          </div>
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
@@ -738,7 +911,7 @@ export function InventoryPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {logs.map((log) => (
+              {filteredLogs.map((log) => (
                 <tr key={log.id} className="hover:bg-gray-50 transition-colors">
                   <td className="py-3 px-4 text-sm text-gray-600">
                     {new Date(log.entryDate).toLocaleString()}
