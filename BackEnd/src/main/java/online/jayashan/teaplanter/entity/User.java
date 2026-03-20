@@ -40,6 +40,7 @@ public class User {
     private String accountNumber;
     private String accountHolderName;
     private String emergencyContact;
+    private String profileImageUrl;
 
     @ManyToOne
     @JoinColumn(name = "plantation_id")

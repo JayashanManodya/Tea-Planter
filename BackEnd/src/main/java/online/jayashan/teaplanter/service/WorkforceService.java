@@ -186,10 +186,19 @@ public class WorkforceService {
 
     public Worker updateWorker(Long id, Worker workerDetails) {
         Worker worker = getWorkerById(id);
-        worker.setWorkerFunctions(workerDetails.getWorkerFunctions());
-        worker.setUser(workerDetails.getUser());
-        worker.setAssignedBlock(workerDetails.getAssignedBlock());
-        worker.setStatus(workerDetails.getStatus());
+        
+        // Safety: Only update fields that can be changed through the profile edit
+        // Do NOT overwrite user or plantation relationships as they are fixed on assignment
+        if (workerDetails.getWorkerFunctions() != null) {
+            worker.setWorkerFunctions(workerDetails.getWorkerFunctions());
+        }
+        if (workerDetails.getAssignedBlock() != null) {
+            worker.setAssignedBlock(workerDetails.getAssignedBlock());
+        }
+        if (workerDetails.getStatus() != null) {
+            worker.setStatus(workerDetails.getStatus());
+        }
+        
         return workerRepository.save(worker);
     }
 

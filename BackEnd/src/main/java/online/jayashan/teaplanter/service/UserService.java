@@ -42,6 +42,7 @@ public class UserService {
 
                     user.setEmail(finalEmail);
                     user.setPassword("CLERK_MANAGED");
+                    // Sync profile photo if available (from external sync callers)
                     return userRepository.save(user);
                 })
                 .orElseGet(() -> {
@@ -94,6 +95,8 @@ public class UserService {
                             fullName = "User "
                                     + (clerkId.length() > 4 ? clerkId.substring(clerkId.length() - 4) : clerkId);
                         }
+                        
+                        String profileImageUrl = (String) clerkUser.get("image_url");
 
                         // Internal sync logic
                         String optimizedEmail = email != null ? email.toLowerCase() : clerkId + "@clerk.missing.email";
@@ -116,6 +119,8 @@ public class UserService {
                                     if (!isNewNamePlaceholder || isCurrentNamePlaceholder) {
                                         user.setName(finalSyncName);
                                     }
+                                    
+                                    user.setProfileImageUrl(profileImageUrl);
 
                                     // Only update email if it's different and not already taken by another user
                                     if (!user.getEmail().equals(finalSyncEmail)) {
@@ -149,6 +154,7 @@ public class UserService {
                                             .clerkId(clerkId)
                                             .name(finalSyncName)
                                             .email(finalSyncEmail)
+                                            .profileImageUrl(profileImageUrl)
                                             .password("CLERK_MANAGED")
                                             .roles(new java.util.HashSet<>(java.util.List.of(Role.WORKER)))
                                             .build();

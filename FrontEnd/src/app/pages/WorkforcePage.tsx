@@ -7,7 +7,8 @@ import { toast } from 'sonner';
 
 interface Worker {
   id: number;
-  roles: string; // Comma-separated
+  workerFunctions: string; // Comma-separated: Harvester, Pruner, etc.
+  qrCode?: string;
   joinDate: string;
   assignedBlock: string;
   status: 'Active' | 'On Leave' | 'Inactive';
@@ -24,6 +25,7 @@ interface Worker {
     accountNumber?: string;
     accountHolderName?: string;
     emergencyContact?: string;
+    profileImageUrl?: string;
   };
 }
 
@@ -155,14 +157,21 @@ export function WorkforcePage() {
     try {
       const token = await getToken();
       if (editingWorker) {
-        await api.updateWorker(editingWorker.id, formData, token || undefined);
+        // Build a lean payload to avoid accidental relationship overwriting (fixes Unnamed Worker issue)
+        const submissionData = {
+          workerFunctions: formData.roles.join(', '),
+          assignedBlock: formData.assignedBlock,
+          status: formData.status,
+          joinDate: formData.joinDate
+        };
+        await api.updateWorker(editingWorker.id, submissionData, token || undefined);
       } else {
         // Find if this is a registration for an existing user
         if (formData.userId) {
           // If userId exists, it means we are assigning from registered users
           await api.assignWorker(
             parseInt(formData.userId),
-            'Worker', // Default function for now, could be dynamic
+            formData.roles.join(', ') || 'Worker', // Use selected roles or fallback to 'Worker'
             plantationId ? parseInt(plantationId) : 1,
             formData.workerPin,
             token || undefined
@@ -209,7 +218,7 @@ export function WorkforcePage() {
     setEditingWorker(worker);
     setFormData({
       userId: worker.user?.id?.toString() || '',
-      roles: worker.roles ? worker.roles.split(', ') : [],
+      roles: worker.workerFunctions ? worker.workerFunctions.split(', ') : [],
       assignedBlock: worker.assignedBlock || '',
       status: worker.status,
       joinDate: worker.joinDate,
@@ -288,11 +297,16 @@ export function WorkforcePage() {
       const matchesSearch =
         (worker.user?.name || '').toLowerCase().includes(searchStr) ||
         (worker.user?.email || '').toLowerCase().includes(searchStr) ||
-        (worker.roles || '').toLowerCase().includes(searchStr) ||
+        (worker.workerFunctions || '').toLowerCase().includes(searchStr) ||
         (worker.assignedBlock || '').toLowerCase().includes(searchStr);
 
       const matchesStatus = filterStatus === 'ALL' || worker.status === filterStatus;
-      const matchesRole = filterRole === 'ALL' || (worker.roles || '').includes(filterRole);
+      
+      // Robust Role Filtering (case-insensitive and handles multiple roles)
+      const workerRoles = (worker.workerFunctions || '').toLowerCase();
+      const targetRole = filterRole.toLowerCase();
+      const matchesRole = filterRole === 'ALL' || workerRoles.includes(targetRole);
+      
       const matchesBlock = filterBlock === 'ALL' || worker.assignedBlock === filterBlock;
 
       return matchesSearch && matchesStatus && matchesRole && matchesBlock;
@@ -390,7 +404,7 @@ export function WorkforcePage() {
               className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none"
             >
               <option value="ALL">All Roles</option>
-              {['Harvester', 'Pruner', 'Supervisor', 'Driver', 'Maintenance', 'Security'].map(r => (
+              {['Harvester', 'Pruner', 'Supervisor', 'Driver', 'Maintenance', 'Field Worker', 'Security'].map(r => (
                 <option key={r} value={r}>{r}</option>
               ))}
             </select>
@@ -463,9 +477,17 @@ export function WorkforcePage() {
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => handleViewDetails(worker)}
-                      className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-semibold hover:bg-blue-200 transition-colors"
+                      className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold hover:bg-blue-200 transition-all overflow-hidden border-2 border-white shadow-md flex-shrink-0"
                     >
-                      {(worker.user?.name || 'W').charAt(0)}
+                      {worker.user?.profileImageUrl ? (
+                        <img 
+                          src={worker.user.profileImageUrl} 
+                          alt={worker.user.name} 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-lg">{(worker.user?.name || 'W').charAt(0)}</span>
+                      )}
                     </button>
                     <div>
                       <button
@@ -495,7 +517,7 @@ export function WorkforcePage() {
                 </td>
                 <td className="py-3 px-4">
                   <div className="flex flex-wrap gap-1">
-                    {worker.roles ? worker.roles.split(', ').map(r => (
+                    {worker.workerFunctions ? worker.workerFunctions.split(', ').map(r => (
                       <span key={r} className="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded font-medium border border-blue-100">
                         {r}
                       </span>
@@ -813,7 +835,7 @@ export function WorkforcePage() {
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">Roles (Can select multiple) *</label>
                   <div className="grid grid-cols-3 gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    {['Harvester', 'Pruner', 'Supervisor', 'Driver', 'Maintenance', 'Security'].map(role => (
+                    {['Harvester', 'Pruner', 'Supervisor', 'Driver', 'Maintenance', 'Field Worker', 'Security'].map(role => (
                       <label key={role} className="flex items-center gap-2 cursor-pointer group">
                         <input
                           type="checkbox"
@@ -1020,12 +1042,20 @@ export function WorkforcePage() {
             <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
               <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-blue-50">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
-                    {(selectedWorkerForTask.user?.name || 'W').charAt(0)}
+                  <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-2xl overflow-hidden border-2 border-white shadow-md">
+                    {selectedWorkerForTask.user?.profileImageUrl ? (
+                      <img 
+                        src={selectedWorkerForTask.user.profileImageUrl} 
+                        alt={selectedWorkerForTask.user.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      (selectedWorkerForTask.user?.name || 'W').charAt(0)
+                    )}
                   </div>
                   <div>
                     <h2 className="text-xl font-bold text-blue-900">{selectedWorkerForTask.user?.name || 'Unnamed Worker'}</h2>
-                    <p className="text-xs text-blue-600 font-medium">{selectedWorkerForTask.roles}</p>
+                    <p className="text-xs text-blue-600 font-medium">{selectedWorkerForTask.workerFunctions}</p>
                   </div>
                 </div>
                 <button
