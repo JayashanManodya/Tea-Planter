@@ -42,7 +42,8 @@ disease-scanner/__pycache__/
 disease-scanner/venv/
 disease-scanner/.venv/
 disease-scanner/*.py[cod]
-disease-scanner/*.pt
+# disease-scanner/*.pt
+disease-scanner/!best.pt
 disease-scanner/.pytest_cache/
 disease-scanner/.coverage
 disease-scanner/htmlcov/

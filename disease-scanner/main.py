@@ -20,7 +20,12 @@ from recommendations import get_recommendation
 
 # Load environment variables (relative to this script)
 BASE_DIR = Path(__file__).parent
-load_dotenv(BASE_DIR / "env.disease-scanner")
+ENV_FILE = BASE_DIR / "env.disease-scanner"
+if ENV_FILE.exists():
+    load_dotenv(ENV_FILE)
+else:
+    # On Railway, variables are provided directly via environment
+    print("Environment file not found. Using system environment variables.")
 
 app = FastAPI(
     title="Tea Leaf Disease Detector API",

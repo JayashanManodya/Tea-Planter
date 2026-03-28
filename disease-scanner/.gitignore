@@ -1,0 +1,24 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+venv/
+.venv/
+env/
+venv.bak/
+.env.bak/
+
+
+# Environment configurations
+env.disease-scanner
+
+# Model weights (large files)
+# best.pt - 18MB, keeping it commented out in case you want to include it.
+!best.pt
+
+# Others
+.pytest_cache/
+.coverage
+htmlcov/
