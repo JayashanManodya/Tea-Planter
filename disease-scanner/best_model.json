@@ -1,0 +1,22 @@
+{
+  "run_label": "Run 1 -- Baseline (YOLOv8n, Detect)",
+  "weight_path": "best.pt",
+  "task": "detect",
+  "model": "yolov8n.pt",
+  "accuracy": 0.980,
+  "map50": 0.980,
+  "map50_95": 0.959,
+  "best_epoch": 44,
+  "epochs_trained": 54,
+  "imgsz": 640,
+  "nc": 6,
+  "classes": [
+    "Algal Leaf Spot",
+    "Brown Blight",
+    "Gray Blight",
+    "Healthy",
+    "Helopeltis",
+    "Red Leaf Spot"
+  ],
+  "note": "Training stopped at epoch 54 -- weights from best epoch (44) saved automatically by YOLO"
+}

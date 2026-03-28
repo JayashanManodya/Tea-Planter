@@ -31,8 +31,18 @@ build/
 
 ### VS Code ###
 .vscode/
-.env
-FrontEnd/.env.local
-FrontEnd/.env.local
-FrontEnd/.env.local
-FrontEnd/.env.local
+### Custom Environment Files ###
+BackEnd/env.BackEnd
+FrontEnd/env.FrontEnd
+disease-scanner/env.disease-scanner
+.env*
+
+### Disease Scanner Python ###
+disease-scanner/__pycache__/
+disease-scanner/venv/
+disease-scanner/.venv/
+disease-scanner/*.py[cod]
+disease-scanner/*.pt
+disease-scanner/.pytest_cache/
+disease-scanner/.coverage
+disease-scanner/htmlcov/
