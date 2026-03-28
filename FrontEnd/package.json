@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "dev": "vite"
+    "dev": "vite",
+    "start": "npx serve -s dist -l $PORT"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.60.0",
