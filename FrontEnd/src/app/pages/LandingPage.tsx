@@ -7,7 +7,6 @@ import {
     Droplets, Plus, Zap, CheckCircle2, MapPin, Globe, Shield, Sparkles
 } from 'lucide-react';
 
-
 export function LandingPage() {
     const { openSignIn } = useClerk();
     const { isSignedIn, user } = useUser();
@@ -32,9 +31,9 @@ export function LandingPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#D7E4DC] dark:bg-gray-950 font-sans text-gray-900 dark:text-gray-100 p-4 md:p-8 transition-colors duration-500">
+        <div className="min-h-screen bg-[#D7E4DC] font-sans text-gray-900 p-4 md:p-8">
             {/* Main Content Container mirroring the inner rounded card of the reference */}
-            <div className="max-w-[1600px] mx-auto bg-[#E8F0E9] dark:bg-gray-900 rounded-[2.5rem] md:rounded-[4rem] min-h-[calc(100vh-4rem)] relative overflow-hidden shadow-2xl border border-white/40 dark:border-white/5 transition-colors duration-500">
+            <div className="max-w-[1600px] mx-auto bg-[#E8F0E9] rounded-[2.5rem] md:rounded-[4rem] min-h-[calc(100vh-4rem)] relative overflow-hidden shadow-2xl border border-white/40">
 
                 {/* Floating Pill Navigation */}
                 <div className="absolute top-8 left-1/2 -translate-x-1/2 z-50 w-[90%] md:auto">
@@ -78,22 +77,22 @@ export function LandingPage() {
                                 AI-Driven Plantation Excellence
                             </div>
 
-                            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-bold text-[#1A1A1A] dark:text-white leading-[1.05] tracking-tight mb-8">
+                            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-bold text-[#1A1A1A] leading-[1.05] tracking-tight mb-8">
                                 Harvesting <br />
-                                <span className="text-[#888888] dark:text-gray-400">the Future.</span>
+                                <span className="text-[#888888]">the Future.</span>
                             </h1>
 
-                            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-xl mb-12 leading-relaxed">
+                            <p className="text-lg md:text-xl text-gray-600 max-w-xl mb-12 leading-relaxed">
                                 The intelligent platform for the modern Ceylon Tea industry.
                                 Master your yields, empower your workers, and monitor every
                                 leaf with surgical precision from a single digital cockpit.
                             </p>
 
                             <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-                                <button onClick={handleLogin} className="w-full sm:w-auto px-10 py-5 bg-black dark:bg-white dark:text-black text-white rounded-full font-bold text-lg flex items-center justify-center gap-3 hover:scale-105 transition-transform shadow-2xl">
+                                <button onClick={handleLogin} className="w-full sm:w-auto px-10 py-5 bg-black text-white rounded-full font-bold text-lg flex items-center justify-center gap-3 hover:scale-105 transition-transform shadow-2xl">
                                     Launch Your Estate <ArrowRight className="w-5 h-5" />
                                 </button>
-                                <button className="w-full sm:w-auto px-10 py-5 bg-white dark:bg-black/20 text-black dark:text-white border border-black/5 dark:border-white/10 rounded-full font-bold text-lg hover:bg-white/60 transition-colors">
+                                <button className="w-full sm:w-auto px-10 py-5 bg-white text-black border border-black/5 rounded-full font-bold text-lg hover:bg-white/60 transition-colors">
                                     Watch Demo
                                 </button>
                             </div>
@@ -159,7 +158,7 @@ export function LandingPage() {
                         <Sparkles className="w-3 h-3 text-[#C8FF4C]" />
                         Neural Intelligence Layer
                     </div>
-                    <h2 className="text-4xl md:text-7xl font-bold mb-16 tracking-tight text-[#1A1A1A] dark:text-white">The <span className="text-[#888888] dark:text-gray-400">AI Core.</span></h2>
+                    <h2 className="text-4xl md:text-7xl font-bold mb-16 tracking-tight">The <span className="text-[#888888]">AI Core.</span></h2>
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 text-left">
 

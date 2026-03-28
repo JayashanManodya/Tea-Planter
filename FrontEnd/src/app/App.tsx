@@ -1,8 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn, useAuth, useUser } from "@clerk/clerk-react";
-import { ThemeProvider } from 'next-themes';
 import { LanguageProvider } from '@/contexts/LanguageContext';
-import { MuiThemeProvider } from '@/contexts/MuiThemeProvider';
 import { LandingPage } from './pages/LandingPage';
 import { DashboardLayout } from './components/DashboardLayout';
 import { WorkerLayout } from './components/WorkerLayout';
@@ -180,14 +178,10 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <MuiThemeProvider>
-        <BrowserRouter>
-          <LanguageProvider>
-            <AppRoutes />
-          </LanguageProvider>
-        </BrowserRouter>
-      </MuiThemeProvider>
-    </ThemeProvider>
+    <BrowserRouter>
+      <LanguageProvider>
+        <AppRoutes />
+      </LanguageProvider>
+    </BrowserRouter>
   );
 }

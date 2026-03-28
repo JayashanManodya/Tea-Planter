@@ -12,25 +12,25 @@ interface StatCardProps {
 }
 
 const colorClasses = {
-  green: 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400',
-  blue: 'bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400',
-  orange: 'bg-orange-100 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400',
-  purple: 'bg-purple-100 dark:bg-purple-950/30 text-purple-700 dark:text-purple-400',
-  red: 'bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-400',
+  green: 'bg-green-100 text-green-700',
+  blue: 'bg-blue-100 text-blue-700',
+  orange: 'bg-orange-100 text-orange-700',
+  purple: 'bg-purple-100 text-purple-700',
+  red: 'bg-red-100 text-red-700',
 };
 
 export function StatCard({ title, value, icon: Icon, trend, color = 'green' }: StatCardProps) {
   return (
-    <div className="bg-card rounded-lg border border-border p-6 hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between mb-4">
-        <p className="text-sm font-medium text-muted-foreground">{title}</p>
+        <p className="text-sm font-medium text-gray-600">{title}</p>
         <div className={`p-2 rounded-lg ${colorClasses[color]}`}>
           <Icon className="w-5 h-5" />
         </div>
       </div>
 
       <div className="flex items-end justify-between">
-        <p className="text-2xl font-bold text-foreground">{value}</p>
+        <p className="text-2xl font-bold text-gray-900">{value}</p>
 
         {trend && (
           <span

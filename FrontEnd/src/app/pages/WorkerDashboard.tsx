@@ -146,17 +146,17 @@ export function WorkerDashboard() {
             {/* Header with Plantation Selector */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-                    <p className="text-muted-foreground mt-1">Welcome back, {user?.firstName || 'Worker'}</p>
+                    <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+                    <p className="text-gray-600 mt-1">Welcome back, {user?.firstName || 'Worker'}</p>
                 </div>
 
                 {plantations.length > 0 && (
                     <div className="flex items-center gap-2">
-                        <Building2 className="w-5 h-5 text-muted-foreground" />
+                        <Building2 className="w-5 h-5 text-gray-400" />
                         <select
                             value={selectedPlantation || ''}
                             onChange={(e) => setSelectedPlantation(Number(e.target.value))}
-                            className="px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 outline-none font-medium bg-card text-foreground"
+                            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none font-medium"
                         >
                             {plantations.map(p => (
                                 <option key={p.id} value={p.id}>{p.name}</option>
@@ -167,7 +167,7 @@ export function WorkerDashboard() {
 
                 <button
                     onClick={() => setShowQrModal(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-orange-100 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 hover:bg-orange-200 dark:hover:bg-orange-900/50 rounded-lg font-bold transition-all shadow-sm"
+                    className="flex items-center gap-2 px-4 py-2 bg-orange-100 text-orange-700 hover:bg-orange-200 rounded-lg font-bold transition-colors"
                 >
                     <QrCode className="w-5 h-5" />
                     My QR Code
@@ -205,8 +205,8 @@ export function WorkerDashboard() {
             )}
 
             {/* My Tasks */}
-            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-                <h2 className="text-lg font-semibold text-foreground mb-4 text-left">My Tasks</h2>
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">My Tasks</h2>
                 <div className="space-y-3">
                     {tasks.length === 0 ? (
                         <p className="text-center text-gray-500 py-8">No tasks assigned</p>
@@ -214,15 +214,15 @@ export function WorkerDashboard() {
                         tasks.slice(0, 5).map((task) => (
                             <div
                                 key={task.id}
-                                className={`p-4 rounded-lg border text-left ${task.status === 'COMPLETED'
-                                    ? 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800/20'
-                                    : 'bg-card border-border'
+                                className={`p-4 rounded-lg border ${task.status === 'COMPLETED'
+                                    ? 'bg-green-50 border-green-200'
+                                    : 'bg-white border-gray-200'
                                     }`}
                             >
                                 <div className="flex items-start justify-between">
                                     <div className="flex-1">
                                         <div className="flex items-center gap-2 mb-2">
-                                            <h3 className="font-medium text-foreground">{task.title}</h3>
+                                            <h3 className="font-medium text-gray-900">{task.title}</h3>
                                             <span
                                                 className={`text-xs px-2 py-0.5 rounded-full ${task.priority === 'HIGH'
                                                     ? 'bg-red-100 text-red-700'
@@ -239,13 +239,13 @@ export function WorkerDashboard() {
                                                 </span>
                                             )}
                                         </div>
-                                        <p className="text-sm text-muted-foreground">
-                                            <span className="font-medium text-foreground">Date:</span> {new Date(task.taskDate).toLocaleDateString()}
+                                        <p className="text-sm text-gray-600">
+                                            <span className="font-medium">Date:</span> {new Date(task.taskDate).toLocaleDateString()}
                                         </p>
 
                                         {task.description && (
-                                            <div className="bg-muted/30 rounded-lg p-3 mt-4 border-l-4 border-green-500/20 text-left">
-                                                <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed break-words font-medium">
+                                            <div className="bg-gray-50 rounded-lg p-3 mt-4 border-l-4 border-green-500/20 text-left">
+                                                <p className="text-sm text-gray-600 whitespace-pre-wrap leading-relaxed break-words">
                                                     {task.description}
                                                 </p>
                                             </div>
@@ -276,15 +276,15 @@ export function WorkerDashboard() {
             </div>
 
             {/* My Harvest Records */}
-            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-                <h2 className="text-lg font-semibold text-foreground mb-4 text-left">My Harvest Records (This Month)</h2>
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">My Harvest Records (This Month)</h2>
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
-                            <tr className="border-b border-border">
-                                <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">Date</th>
-                                <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">Block</th>
-                                <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">Weight (kg)</th>
+                            <tr className="border-b border-gray-200">
+                                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Date</th>
+                                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Block</th>
+                                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Weight (kg)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -296,14 +296,14 @@ export function WorkerDashboard() {
                                 </tr>
                             ) : (
                                 harvests.slice(0, 10).map((harvest) => (
-                                    <tr key={harvest.id} className="border-b border-border/50 hover:bg-muted/10 transition-colors">
-                                        <td className="py-3 px-4 text-sm text-muted-foreground">
+                                    <tr key={harvest.id} className="border-b border-gray-100">
+                                        <td className="py-3 px-4 text-sm text-gray-900">
                                             {new Date(harvest.harvestDate).toLocaleDateString()}
                                         </td>
-                                        <td className="py-3 px-4 text-sm text-muted-foreground font-medium">
+                                        <td className="py-3 px-4 text-sm text-gray-900">
                                             {harvest.plot?.blockId || 'General'}
                                         </td>
-                                        <td className="py-3 px-4 text-sm font-bold text-foreground">
+                                        <td className="py-3 px-4 text-sm font-medium text-gray-900">
                                             {harvest.netWeight.toFixed(1)} kg
                                         </td>
                                     </tr>
@@ -316,23 +316,23 @@ export function WorkerDashboard() {
 
             {/* QR Code Modal */}
             {showQrModal && dashboardData && (
-                <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-card rounded-2xl shadow-xl w-full max-w-sm overflow-hidden border border-border">
-                        <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-orange-50 dark:bg-orange-950/30">
-                            <h2 className="text-xl font-bold text-orange-900 dark:text-orange-400 flex items-center gap-2">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden">
+                        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-orange-50">
+                            <h2 className="text-xl font-bold text-orange-900 flex items-center gap-2">
                                 <QrCode className="w-6 h-6" />
                                 My Attendance QR
                             </h2>
                             <button
                                 onClick={() => setShowQrModal(false)}
-                                className="text-muted-foreground hover:text-foreground transition-colors"
+                                className="text-gray-400 hover:text-gray-600 transition-colors"
                             >
-                                <Plus className="w-6 h-6 rotate-45" />
+                                <X className="w-6 h-6" />
                             </button>
                         </div>
                         <div className="p-8 flex flex-col items-center gap-6">
                             {dashboardData.qrCode ? (
-                                <div className="p-4 bg-white rounded-xl shadow-inner border border-border">
+                                <div className="p-4 bg-white rounded-xl shadow-inner border border-gray-100">
                                     <QRCodeSVG
                                         id="worker-qr"
                                         value={dashboardData.qrCode}
@@ -343,10 +343,10 @@ export function WorkerDashboard() {
                                 </div>
                             ) : (
                                 <div className="text-center space-y-4">
-                                    <div className="w-20 h-20 bg-muted/50 rounded-full flex items-center justify-center mx-auto">
-                                        <QrCode className="w-10 h-10 text-muted-foreground/30" />
+                                    <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
+                                        <QrCode className="w-10 h-10 text-gray-300" />
                                     </div>
-                                    <p className="text-muted-foreground text-sm">You don't have a QR code assigned yet.</p>
+                                    <p className="text-gray-600 text-sm">You don't have a QR code assigned yet.</p>
                                     <button
                                         onClick={async () => {
                                             if (!dashboardData.workerId) return;

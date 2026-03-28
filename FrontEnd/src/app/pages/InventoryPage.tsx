@@ -325,8 +325,8 @@ export function InventoryPage() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Inventory & Input Control</h1>
-          <p className="text-muted-foreground mt-1 text-left">Manage fertilizers, chemicals, and equipment</p>
+          <h1 className="text-2xl font-bold text-gray-900">Inventory & Input Control</h1>
+          <p className="text-gray-600 mt-1">Manage fertilizers, chemicals, and equipment</p>
         </div>
         <div className="flex gap-3">
           <button
@@ -340,7 +340,7 @@ export function InventoryPage() {
               });
               setShowModal(true);
             }}
-            className="flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-bold transition-all shadow-sm shadow-orange-100 dark:shadow-none"
+            className="flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-medium transition-colors"
           >
             <Plus className="w-5 h-5" />
             Add Item
@@ -349,26 +349,26 @@ export function InventoryPage() {
       </div>
 
       {/* Item Filters */}
-      <div className="bg-card rounded-xl border border-border p-4 shadow-sm space-y-4">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm space-y-4">
         <div className="flex flex-col lg:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="w-5 h-5 text-muted-foreground/50 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search items by name or category..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all bg-card text-foreground"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all"
             />
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-muted-foreground/50" />
+              <Filter className="w-4 h-4 text-gray-400" />
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="px-3 py-2 border border-border rounded-lg text-sm font-medium focus:ring-2 focus:ring-orange-500 outline-none bg-card text-foreground"
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-orange-500 outline-none"
               >
                 <option value="ALL">All Categories</option>
                 {Array.from(new Set(inventory.map(i => i.category))).map(c => (
@@ -380,19 +380,19 @@ export function InventoryPage() {
             <select
               value={filterStockStatus}
               onChange={(e) => setFilterStockStatus(e.target.value)}
-              className="px-3 py-2 border border-border rounded-lg text-sm font-medium focus:ring-2 focus:ring-orange-500 outline-none bg-card text-foreground"
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-orange-500 outline-none"
             >
               <option value="ALL">All Stock Status</option>
               <option value="IN_STOCK">In Stock</option>
               <option value="LOW">Low Stock</option>
             </select>
 
-            <div className="flex items-center gap-2 border-l pl-3 ml-2 border-border">
-              <ArrowUpDown className="w-4 h-4 text-muted-foreground/50" />
+            <div className="flex items-center gap-2 border-l pl-3 ml-2 border-gray-200">
+              <ArrowUpDown className="w-4 h-4 text-gray-400" />
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-2 border border-border rounded-lg text-sm font-medium focus:ring-2 focus:ring-orange-500 outline-none bg-card text-foreground"
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-orange-500 outline-none"
               >
                 <option value="name">Name (A-Z)</option>
                 <option value="category">Category</option>
@@ -404,97 +404,97 @@ export function InventoryPage() {
       </div>
 
       {lowStockItems.length > 0 && (
-        <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/30 rounded-lg p-4 shadow-sm animate-in slide-in-from-top-2 duration-300">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 shadow-sm animate-in slide-in-from-top-2 duration-300">
           <div className="flex items-center gap-2 mb-3">
-            <AlertTriangle className="w-5 h-5 text-red-700 dark:text-red-400" />
-            <h3 className="font-bold text-red-900 dark:text-red-400 text-left">Low Stock Alert</h3>
+            <AlertTriangle className="w-5 h-5 text-red-700" />
+            <h3 className="font-semibold text-red-900">Low Stock Alert</h3>
           </div>
           <div className="space-y-2">
-            <p className="text-sm text-red-800 dark:text-red-300 font-medium text-left">
+            <p className="text-sm text-red-800 font-medium">
               The following {lowStockItems.length} item(s) are below their minimum stock thresholds:
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
               {lowStockItems.map(item => (
-                <div key={item.id} className="bg-white/50 dark:bg-red-900/10 border border-red-100 dark:border-red-800/20 rounded-md p-2 flex items-center justify-between group hover:bg-white dark:hover:bg-red-900/20 transition-colors">
-                  <span className="text-xs font-bold text-foreground truncate pr-2" title={item.name}>{item.name}</span>
+                <div key={item.id} className="bg-white/50 border border-red-100 rounded-md p-2 flex items-center justify-between group hover:bg-white transition-colors">
+                  <span className="text-xs font-bold text-gray-900 truncate pr-2" title={item.name}>{item.name}</span>
                   <div className="flex items-center gap-1 flex-shrink-0">
-                    <span className="text-[10px] font-bold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 px-1.5 py-0.5 rounded text-left">
+                    <span className="text-[10px] font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded">
                       {item.currentStock} {item.unit}
                     </span>
-                    <span className="text-[9px] text-muted-foreground font-medium">/ Min: {item.reorderLevel}</span>
+                    <span className="text-[9px] text-gray-400 font-medium">/ Min: {item.reorderLevel}</span>
                   </div>
                 </div>
               ))}
             </div>
-            <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider pt-1 text-left">Please reorder these supplies soon to avoid operational delays.</p>
+            <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider pt-1">Please reorder these supplies soon to avoid operational delays.</p>
           </div>
         </div>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-card rounded-lg border border-border p-4 shadow-sm">
-          <p className="text-sm text-muted-foreground mb-1 font-medium text-left">Total Items</p>
-          <p className="text-2xl font-bold text-foreground text-left">{inventory.length}</p>
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <p className="text-sm text-gray-600 mb-1">Total Items</p>
+          <p className="text-2xl font-bold text-gray-900">{inventory.length}</p>
         </div>
-        <div className="bg-card rounded-lg border border-border p-4 shadow-sm">
-          <p className="text-sm text-muted-foreground mb-1 font-medium text-left">Categories</p>
-          <p className="text-2xl font-bold text-foreground text-left">{categories}</p>
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <p className="text-sm text-gray-600 mb-1">Categories</p>
+          <p className="text-2xl font-bold text-gray-900">{categories}</p>
         </div>
-        <div className="bg-card rounded-lg border border-border p-4 shadow-sm">
-          <p className="text-sm text-muted-foreground mb-1 font-medium text-left">Low Stock</p>
-          <p className="text-2xl font-bold text-red-600 text-left">{lowStockItems.length}</p>
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <p className="text-sm text-gray-600 mb-1">Low Stock</p>
+          <p className="text-2xl font-bold text-red-600">{lowStockItems.length}</p>
         </div>
-        <div className="bg-card rounded-lg border border-border p-4 shadow-sm">
-          <p className="text-sm text-muted-foreground mb-1 font-medium text-left">Last Updated</p>
-          <p className="text-sm font-bold text-foreground text-left">Today</p>
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <p className="text-sm text-gray-600 mb-1">Last Updated</p>
+          <p className="text-sm font-medium text-gray-900">Today</p>
         </div>
       </div>
 
-      <div className="bg-card rounded-lg border border-border overflow-hidden shadow-sm">
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         <table className="w-full">
-          <thead>
-            <tr className="border-b border-border bg-muted/30">
-              <th className="text-left py-3 px-4 text-sm font-bold text-foreground">Item</th>
-              <th className="text-left py-3 px-4 text-sm font-bold text-foreground">Category</th>
-              <th className="text-left py-3 px-4 text-sm font-bold text-foreground">Quantity</th>
-              <th className="text-left py-3 px-4 text-sm font-bold text-foreground">Min Stock</th>
-              <th className="text-left py-3 px-4 text-sm font-bold text-foreground">Status</th>
-              <th className="text-left py-3 px-4 text-sm font-bold text-foreground">Last Updated</th>
-              <th className="text-left py-3 px-4 text-sm font-bold text-foreground">Actions</th>
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Item</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Category</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Quantity</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Min Stock</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Status</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Last Updated</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredInventory.map((item) => {
               const isLowStock = item.currentStock < item.reorderLevel;
               return (
-                <tr key={item.id} className="border-b border-border/50 hover:bg-muted/10 transition-colors">
+                <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50">
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
-                        <Package className="w-5 h-5 text-orange-700 dark:text-orange-400" />
+                      <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                        <Package className="w-5 h-5 text-orange-700" />
                       </div>
-                      <span className="font-bold text-foreground">{item.name}</span>
+                      <span className="font-medium text-gray-900">{item.name}</span>
                     </div>
                   </td>
-                  <td className="py-3 px-4 text-sm text-muted-foreground font-medium">{item.category}</td>
-                  <td className="py-3 px-4 text-sm font-bold text-foreground">
+                  <td className="py-3 px-4 text-sm text-gray-600">{item.category}</td>
+                  <td className="py-3 px-4 text-sm font-semibold text-gray-900">
                     {item.currentStock} {item.unit}
                   </td>
-                  <td className="py-3 px-4 text-sm text-muted-foreground font-medium">
+                  <td className="py-3 px-4 text-sm text-gray-600">
                     {item.reorderLevel} {item.unit}
                   </td>
                   <td className="py-3 px-4">
                     {isLowStock ? (
-                      <span className="inline-flex items-center text-xs px-2 py-1 rounded-full bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-400 font-bold">
+                      <span className="inline-flex items-center text-xs px-2 py-1 rounded-full bg-red-100 text-red-700">
                         Low Stock
                       </span>
                     ) : (
-                      <span className="inline-flex items-center text-xs px-2 py-1 rounded-full bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400 font-bold">
+                      <span className="inline-flex items-center text-xs px-2 py-1 rounded-full bg-green-100 text-green-700">
                         In Stock
                       </span>
                     )}
                   </td>
-                  <td className="py-3 px-4 text-sm text-muted-foreground font-medium">{new Date().toLocaleDateString()}</td>
+                  <td className="py-3 px-4 text-sm text-gray-600">{new Date().toLocaleDateString()}</td>
                   <td className="py-3 px-4">
                     <div className="flex gap-2">
                       <button
@@ -543,15 +543,15 @@ export function InventoryPage() {
       </div>
       {/* Add/Edit Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-          <div className="bg-card rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200 border border-border">
-            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-orange-50 dark:bg-orange-950/30">
-              <h2 className="text-xl font-bold text-orange-900 dark:text-orange-400">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-orange-50">
+              <h2 className="text-xl font-bold text-orange-900">
                 {editingItem ? 'Edit Inventory Item' : 'Add New Inventory Item'}
               </h2>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
                 disabled={isSubmitting}
               >
                 <Plus className="w-6 h-6 rotate-45" />
@@ -560,24 +560,24 @@ export function InventoryPage() {
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-bold text-muted-foreground mb-1 uppercase tracking-tighter text-left">Item Name *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Item Name *</label>
                 <input
                   required
                   type="text"
                   placeholder="e.g. Zinc Fertilizer"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none bg-muted/50 text-foreground"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-muted-foreground mb-1 uppercase tracking-tighter text-left">Category</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Category</label>
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none bg-muted/50 text-foreground"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                   >
                     <option>Fertilizer</option>
                     <option>Pesticide</option>
@@ -587,11 +587,11 @@ export function InventoryPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-muted-foreground mb-1 uppercase tracking-tighter text-left">Unit</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Unit</label>
                   <select
                     value={formData.unit}
                     onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none bg-muted/50 text-foreground"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                   >
                     <option>kg</option>
                     <option>liters</option>
@@ -604,7 +604,7 @@ export function InventoryPage() {
 
               <div className="grid grid-cols-2 gap-4 pb-4">
                 <div>
-                  <label className="block text-sm font-bold text-muted-foreground mb-1 uppercase tracking-tighter text-left">Reorder Level *</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Reorder Level *</label>
                   <input
                     required
                     type="number"
@@ -612,24 +612,24 @@ export function InventoryPage() {
                     placeholder="0.00"
                     value={formData.reorderLevel}
                     onChange={(e) => setFormData({ ...formData, reorderLevel: e.target.value })}
-                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none bg-muted/50 text-foreground"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                   />
                 </div>
               </div>
 
-              <div className="flex gap-3 pt-4 border-t border-border mt-6">
+              <div className="flex gap-3 pt-4 border-t border-gray-100">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg font-bold hover:bg-muted transition-all transition-colors disabled:opacity-50"
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg font-bold hover:bg-orange-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-orange-100 dark:shadow-none"
+                  className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg font-medium hover:bg-orange-700 transition-colors flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <>
@@ -648,13 +648,13 @@ export function InventoryPage() {
 
       {/* Restock Modal */}
       {showRestockModal && selectedItem && (
-        <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-          <div className="bg-card rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200 border border-border">
-            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-blue-50 dark:bg-blue-950/30">
-              <h2 className="text-xl font-bold text-blue-900 dark:text-blue-400">Restock: {selectedItem.name}</h2>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-blue-50">
+              <h2 className="text-xl font-bold text-blue-900">Restock: {selectedItem.name}</h2>
               <button
                 onClick={() => setShowRestockModal(false)}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
                 disabled={isSubmitting}
               >
                 <Plus className="w-6 h-6 rotate-45" />
@@ -664,7 +664,7 @@ export function InventoryPage() {
             <form onSubmit={handleRestock} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-muted-foreground mb-1 uppercase tracking-tighter text-left">Quantity Added *</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Quantity Added *</label>
                   <input
                     required
                     type="number"
@@ -672,11 +672,11 @@ export function InventoryPage() {
                     placeholder={`0.00 ${selectedItem.unit}`}
                     value={stockFormData.quantity}
                     onChange={(e) => setStockFormData({ ...stockFormData, quantity: e.target.value })}
-                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-muted/50 text-foreground"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-muted-foreground mb-1 uppercase tracking-tighter text-left">Unit Price (LKR) *</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Unit Price (LKR) *</label>
                   <input
                     required
                     type="number"
@@ -684,40 +684,33 @@ export function InventoryPage() {
                     placeholder="0.00"
                     value={stockFormData.unitPrice}
                     onChange={(e) => setStockFormData({ ...stockFormData, unitPrice: e.target.value })}
-                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-muted/50 text-foreground font-mono"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                   />
                 </div>
               </div>
 
-              <div className="bg-blue-100/50 dark:bg-blue-900/20 p-3 rounded-lg flex gap-2 border border-blue-200/50 dark:border-blue-800/30">
-                <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-                <p className="text-[10px] text-blue-800 dark:text-blue-300 uppercase font-bold tracking-tight text-left leading-relaxed">
+              <div className="bg-blue-50 p-3 rounded-lg flex gap-2">
+                <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                <p className="text-[10px] text-blue-700 uppercase font-bold tracking-tight">
                   This purchase will be recorded as a financial expense for the current month.
                 </p>
               </div>
 
-              <div className="flex gap-3 pt-4 border-t border-border mt-6">
+              <div className="flex gap-3 pt-4 border-t border-gray-100">
                 <button
                   type="button"
                   onClick={() => setShowRestockModal(false)}
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg font-bold hover:bg-muted transition-all transition-colors disabled:opacity-50"
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-blue-100 dark:shadow-none"
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    'Confirm Restock'
-                  )}
+                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm Restock'}
                 </button>
               </div>
             </form>
@@ -727,13 +720,13 @@ export function InventoryPage() {
 
       {/* Use Modal */}
       {showUseModal && selectedItem && (
-        <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-          <div className="bg-card rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200 border border-border">
-            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-green-50 dark:bg-green-950/30">
-              <h2 className="text-xl font-bold text-green-900 dark:text-green-400">Use Stock: {selectedItem.name}</h2>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-green-50">
+              <h2 className="text-xl font-bold text-green-900">Use Stock: {selectedItem.name}</h2>
               <button
                 onClick={() => setShowUseModal(false)}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
                 disabled={isSubmitting}
               >
                 <Plus className="w-6 h-6 rotate-45" />
@@ -742,7 +735,7 @@ export function InventoryPage() {
 
             <form onSubmit={handleUse} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-bold text-muted-foreground mb-1 uppercase tracking-tighter text-left">Quantity Used *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Quantity Used *</label>
                 <div className="relative">
                   <input
                     required
@@ -752,35 +745,28 @@ export function InventoryPage() {
                     max={selectedItem.currentStock}
                     value={stockFormData.quantity}
                     onChange={(e) => setStockFormData({ ...stockFormData, quantity: e.target.value })}
-                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-muted/50 text-foreground font-mono"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                   />
-                  <span className="absolute right-3 top-2 text-[10px] text-muted-foreground font-bold uppercase">{selectedItem.unit}</span>
+                  <span className="absolute right-3 top-2 text-xs text-gray-400 font-bold uppercase">{selectedItem.unit}</span>
                 </div>
-                <p className="mt-1 text-[10px] text-muted-foreground font-medium text-left">Available: {selectedItem.currentStock} {selectedItem.unit}</p>
+                <p className="mt-1 text-[10px] text-gray-500">Available: {selectedItem.currentStock} {selectedItem.unit}</p>
               </div>
 
-              <div className="flex gap-3 pt-4 border-t border-border mt-6">
+              <div className="flex gap-3 pt-4 border-t border-gray-100">
                 <button
                   type="button"
                   onClick={() => setShowUseModal(false)}
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg font-bold hover:bg-muted transition-all transition-colors disabled:opacity-50"
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-green-100 dark:shadow-none"
+                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    'Confirm Usage'
-                  )}
+                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm Usage'}
                 </button>
               </div>
             </form>
@@ -790,13 +776,13 @@ export function InventoryPage() {
 
       {/* Edit Log Modal */}
       {showLogEditModal && editingLog && (
-        <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-          <div className="bg-card rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200 border border-border">
-            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-orange-50 dark:bg-orange-950/30">
-              <h2 className="text-xl font-bold text-orange-900 dark:text-orange-400">Edit {editingLog.type} Log</h2>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-orange-50">
+              <h2 className="text-xl font-bold text-orange-900">Edit {editingLog.type} Log</h2>
               <button
                 onClick={() => setShowLogEditModal(false)}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
                 disabled={isSubmitting}
               >
                 <Plus className="w-6 h-6 rotate-45" />
@@ -804,67 +790,60 @@ export function InventoryPage() {
             </div>
 
             <form onSubmit={handleUpdateLog} className="p-6 space-y-4">
-              <div className="p-3 bg-muted/50 rounded-lg border border-border mb-2">
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider text-left">Item</p>
-                <p className="text-sm font-bold text-foreground text-left">{editingLog.item.name}</p>
+              <div className="p-3 bg-gray-50 rounded-lg border border-gray-100 mb-2">
+                <p className="text-xs font-bold text-gray-500 uppercase">Item</p>
+                <p className="text-sm font-medium text-gray-900">{editingLog.item.name}</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-muted-foreground mb-1 uppercase tracking-tighter text-left">Quantity *</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Quantity *</label>
                   <input
                     required
                     type="number"
                     step="0.01"
                     value={stockFormData.quantity}
                     onChange={(e) => setStockFormData({ ...stockFormData, quantity: e.target.value })}
-                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none bg-muted/50 text-foreground font-mono"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                   />
                 </div>
                 {editingLog.type === 'PURCHASE' && (
                   <div>
-                    <label className="block text-sm font-bold text-muted-foreground mb-1 uppercase tracking-tighter text-left">Unit Price (LKR) *</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Unit Price (LKR) *</label>
                     <input
                       required
                       type="number"
                       step="0.01"
                       value={stockFormData.unitPrice}
                       onChange={(e) => setStockFormData({ ...stockFormData, unitPrice: e.target.value })}
-                      className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none bg-muted/50 text-foreground font-mono"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                     />
                   </div>
                 )}
               </div>
 
-              <div className="bg-orange-100/50 dark:bg-orange-900/20 p-3 rounded-lg flex gap-2 border border-orange-200/50 dark:border-orange-800/30">
-                <Info className="w-4 h-4 text-orange-600 dark:text-orange-400 flex-shrink-0 mt-0.5" />
-                <p className="text-[10px] text-orange-800 dark:text-orange-300 font-bold uppercase text-left leading-relaxed">
+              <div className="bg-orange-50 p-3 rounded-lg flex gap-2">
+                <Info className="w-4 h-4 text-orange-600 flex-shrink-0 mt-0.5" />
+                <p className="text-[10px] text-orange-700 font-bold uppercase">
                   Adjusting this log will automatically calculate and update the current stock level for this item.
                 </p>
               </div>
 
-              <div className="flex gap-3 pt-4 border-t border-border mt-6">
+              <div className="flex gap-3 pt-4 border-t border-gray-100">
                 <button
                   type="button"
                   onClick={() => setShowLogEditModal(false)}
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg font-bold hover:bg-muted transition-all transition-colors disabled:opacity-50"
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg font-bold hover:bg-orange-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-orange-100 dark:shadow-none"
+                  className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg font-medium hover:bg-orange-700 transition-colors flex items-center justify-center gap-2"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    'Update Log'
-                  )}
+                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Update Log'}
                 </button>
               </div>
             </form>
@@ -875,32 +854,32 @@ export function InventoryPage() {
       {/* Stock History Section */}
       <div className="mt-12">
         <div className="flex items-center gap-2 mb-4">
-          <div className="p-2 bg-muted rounded-lg border border-border">
-            <Activity className="w-5 h-5 text-muted-foreground" />
+          <div className="p-2 bg-gray-100 rounded-lg">
+            <Activity className="w-5 h-5 text-gray-600" />
           </div>
-          <h2 className="text-xl font-bold text-foreground">Restock & Usage History</h2>
+          <h2 className="text-xl font-bold text-gray-900">Restock & Usage History</h2>
         </div>
 
-        <div className="bg-card rounded-lg border border-border overflow-hidden shadow-sm">
-          <div className="p-4 border-b border-border bg-muted/30 flex flex-col md:flex-row gap-4">
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+          <div className="p-4 border-b border-gray-200 bg-gray-50/50 flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="w-4 h-4 text-muted-foreground/50 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 placeholder="Search logs by item name..."
                 value={logSearchTerm}
                 onChange={(e) => setLogSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-4 py-1.5 border border-border rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none bg-card text-foreground"
+                className="w-full pl-9 pr-4 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-gray-400 outline-none"
               />
             </div>
             <div className="flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-muted-foreground/50" />
+                <Calendar className="w-4 h-4 text-gray-400" />
                 <input
                   type="month"
                   value={logFilterMonth === 'ALL' ? '' : logFilterMonth}
                   onChange={(e) => setLogFilterMonth(e.target.value || 'ALL')}
-                  className="px-3 py-1.5 border border-border rounded-lg text-sm font-medium focus:ring-2 focus:ring-orange-500 outline-none bg-card text-foreground"
+                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-gray-400 outline-none"
                 />
                 {logFilterMonth !== 'ALL' && (
                   <button
@@ -914,19 +893,19 @@ export function InventoryPage() {
               <select
                 value={logFilterType}
                 onChange={(e) => setLogFilterType(e.target.value)}
-                className="px-3 py-1.5 border border-border rounded-lg text-sm font-medium focus:ring-2 focus:ring-orange-500 outline-none bg-card text-foreground"
+                className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-gray-400 outline-none"
               >
                 <option value="ALL">All Types</option>
                 <option value="PURCHASE">Purchase Only</option>
                 <option value="USAGE">Usage Only</option>
               </select>
 
-              <div className="flex items-center gap-2 border-l pl-3 border-border">
-                <ArrowUpDown className="w-4 h-4 text-muted-foreground/50" />
+              <div className="flex items-center gap-2 border-l pl-3 border-gray-200">
+                <ArrowUpDown className="w-4 h-4 text-gray-400" />
                 <select
                   value={logSortBy}
                   onChange={(e) => setLogSortBy(e.target.value)}
-                  className="px-3 py-1.5 border border-border rounded-lg text-sm font-medium focus:ring-2 focus:ring-orange-500 outline-none bg-card text-foreground"
+                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-gray-400 outline-none"
                 >
                   <option value="date-desc">Newest First</option>
                   <option value="date-asc">Oldest First</option>
@@ -937,35 +916,35 @@ export function InventoryPage() {
             </div>
           </div>
           <table className="w-full">
-            <thead className="bg-muted/30 border-b border-border">
+            <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="text-left py-3 px-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">Date & Time</th>
-                <th className="text-left py-3 px-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">Type</th>
-                <th className="text-left py-3 px-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">Item</th>
-                <th className="text-left py-3 px-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">Qty</th>
-                <th className="text-left py-3 px-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">Value</th>
-                <th className="text-right py-3 px-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">Actions</th>
+                <th className="text-left py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date & Time</th>
+                <th className="text-left py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Type</th>
+                <th className="text-left py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Item</th>
+                <th className="text-left py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Qty</th>
+                <th className="text-left py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Value</th>
+                <th className="text-right py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border/50">
+            <tbody className="divide-y divide-gray-100">
               {filteredLogs.map((log) => (
-                <tr key={log.id} className="hover:bg-muted/10 transition-colors">
-                  <td className="py-3 px-4 text-sm text-muted-foreground font-medium">
+                <tr key={log.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="py-3 px-4 text-sm text-gray-600">
                     {new Date(log.entryDate).toLocaleString()}
                   </td>
                   <td className="py-3 px-4">
-                    <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase ${log.type === 'PURCHASE' ? 'bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400' :
-                      log.type === 'USAGE' ? 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400' :
-                        'bg-muted text-muted-foreground'
+                    <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase ${log.type === 'PURCHASE' ? 'bg-blue-100 text-blue-700' :
+                      log.type === 'USAGE' ? 'bg-green-100 text-green-700' :
+                        'bg-gray-100 text-gray-700'
                       }`}>
                       {log.type}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-sm font-bold text-foreground">{log.item.name}</td>
-                  <td className="py-3 px-4 text-sm font-bold text-foreground">
+                  <td className="py-3 px-4 text-sm font-medium text-gray-900">{log.item.name}</td>
+                  <td className="py-3 px-4 text-sm font-bold text-gray-900">
                     {log.type === 'USAGE' ? '-' : '+'}{log.quantity} {log.item.unit}
                   </td>
-                  <td className="py-3 px-4 text-sm text-muted-foreground font-medium">
+                  <td className="py-3 px-4 text-sm text-gray-600">
                     {log.type === 'PURCHASE' ? `LKR ${(log.unitPrice * log.quantity).toLocaleString()}` : '-'}
                   </td>
                   <td className="py-3 px-4 text-right">

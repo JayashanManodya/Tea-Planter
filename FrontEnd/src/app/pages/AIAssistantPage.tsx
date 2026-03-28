@@ -84,13 +84,13 @@ export function AIAssistantPage() {
   ];
 
   return (
-    <div className="p-6 h-[calc(100vh-96px)] flex flex-col bg-background text-foreground">
+    <div className="p-6 h-[calc(100vh-96px)] flex flex-col">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground">Estate Manager AI Assistant</h1>
-        <p className="text-muted-foreground mt-1">Ask questions and get intelligent recommendations</p>
+        <h1 className="text-2xl font-bold text-gray-900">Estate Manager AI Assistant</h1>
+        <p className="text-gray-600 mt-1">Ask questions and get intelligent recommendations</p>
       </div>
 
-      <div className="flex-1 bg-card rounded-lg border border-border flex flex-col overflow-hidden">
+      <div className="flex-1 bg-white rounded-lg border border-gray-200 flex flex-col overflow-hidden">
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {messages.map((message) => (
@@ -99,13 +99,13 @@ export function AIAssistantPage() {
               className={`flex gap-3 ${message.role === 'user' ? 'flex-row-reverse' : ''}`}
             >
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${message.role === 'user' ? 'bg-green-100 dark:bg-green-950/30' : 'bg-blue-100 dark:bg-blue-950/30'
+                className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${message.role === 'user' ? 'bg-green-100' : 'bg-blue-100'
                   }`}
               >
                 {message.role === 'user' ? (
-                  <User className="w-4 h-4 text-green-700 dark:text-green-400" />
+                  <User className="w-4 h-4 text-green-700" />
                 ) : (
-                  <Bot className="w-4 h-4 text-blue-700 dark:text-blue-400" />
+                  <Bot className="w-4 h-4 text-blue-700" />
                 )}
               </div>
 
@@ -115,13 +115,13 @@ export function AIAssistantPage() {
               >
                 <div
                   className={`inline-block px-4 py-3 rounded-lg ${message.role === 'user'
-                    ? 'bg-green-600 text-white shadow-sm'
-                    : 'bg-muted text-foreground border border-border/50'
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-100 text-gray-900'
                     }`}
                 >
                   <p className="text-sm whitespace-pre-line">{message.content}</p>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-xs text-gray-500 mt-1">
                   {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </p>
               </div>
@@ -130,13 +130,13 @@ export function AIAssistantPage() {
 
           {loading && (
             <div className="flex gap-3">
-              <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-950/30 flex items-center justify-center">
-                <Bot className="w-4 h-4 text-blue-700 dark:text-blue-400" />
+              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                <Bot className="w-4 h-4 text-blue-700" />
               </div>
-              <div className="flex items-center gap-2 px-4 py-3 bg-muted rounded-lg">
-                <div className="w-2 h-2 bg-foreground/30 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                <div className="w-2 h-2 bg-foreground/30 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                <div className="w-2 h-2 bg-foreground/30 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              <div className="flex items-center gap-2 px-4 py-3 bg-gray-100 rounded-lg">
+                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
               </div>
             </div>
           )}
@@ -146,8 +146,8 @@ export function AIAssistantPage() {
 
         {/* Quick Actions */}
         {messages.length === 1 && (
-          <div className="px-6 py-4 border-t border-border bg-muted/30">
-            <p className="text-sm font-medium text-foreground/70 mb-3">Quick Actions:</p>
+          <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+            <p className="text-sm font-medium text-gray-700 mb-3">Quick Actions:</p>
             <div className="flex flex-wrap gap-2">
               {quickActions.map((action, i) => {
                 const Icon = action.icon;
@@ -155,9 +155,9 @@ export function AIAssistantPage() {
                   <button
                     key={i}
                     onClick={() => setInput(action.label)}
-                    className="flex items-center gap-2 px-3 py-2 bg-card border border-border rounded-lg text-sm hover:bg-muted transition-colors text-foreground"
+                    className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm hover:bg-gray-100 transition-colors"
                   >
-                    <Icon className="w-4 h-4 text-muted-foreground" />
+                    <Icon className="w-4 h-4 text-gray-600" />
                     {action.label}
                   </button>
                 );
@@ -167,7 +167,7 @@ export function AIAssistantPage() {
         )}
 
         {/* Input Area */}
-        <div className="p-4 border-t border-border">
+        <div className="p-4 border-t border-gray-200">
           <div className="flex gap-3">
             <input
               type="text"
@@ -175,7 +175,7 @@ export function AIAssistantPage() {
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSend()}
               placeholder="Ask me anything about your plantation..."
-              className="flex-1 px-4 py-3 border border-border bg-card text-foreground rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
+              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               disabled={loading}
             />
             <button

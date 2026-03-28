@@ -476,129 +476,129 @@ export function FinancialPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400" />
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6 text-left">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="max-w-7xl mx-auto p-6 space-y-6">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-black text-foreground uppercase tracking-tight">Financial & Payroll</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Financial & Payroll Management</h1>
           <div className="flex items-center gap-2 mt-1">
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-70">Period:</p>
+            <p className="text-gray-600">Period:</p>
             <input
               type="month"
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="px-2 py-0.5 border border-border rounded text-[10px] font-black uppercase tracking-tight focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground"
+              className="px-2 py-0.5 border border-gray-300 rounded text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex gap-2">
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-black uppercase tracking-widest text-[10px] transition-all shadow-md shadow-blue-100 dark:shadow-none"
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-5 h-5" />
             Generate Payroll
           </button>
           <button 
             onClick={handleExport}
             disabled={isExporting}
-            className="flex items-center gap-2 px-4 py-2 border border-border bg-card hover:bg-muted text-foreground rounded-lg font-black uppercase tracking-widest text-[10px] disabled:opacity-50 transition-all shadow-sm"
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg font-medium outline-none disabled:opacity-50 transition-all"
           >
-            {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-            {isExporting ? 'Exporting...' : 'Export PDF'}
+            {isExporting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-5 h-5" />}
+            {isExporting ? 'Exporting...' : 'Export'}
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-        <div className="bg-card rounded-xl border border-border p-6 shadow-sm group hover:shadow-md transition-all">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 rounded-lg bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400 group-hover:scale-110 transition-transform">
-              <TrendingUp className="w-5 h-5" />
+            <div className="p-2 rounded-lg bg-green-100">
+              <TrendingUp className="w-5 h-5 text-green-700" />
             </div>
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-70">Total Revenue</p>
+            <p className="text-sm font-normal text-gray-600">Total Revenue</p>
           </div>
-          <p className="text-2xl font-black text-foreground uppercase tracking-tight">
+          <p className="text-2xl font-bold text-gray-900">
             LKR {totalRevenue.toLocaleString()}
           </p>
-          <p className="text-[10px] text-muted-foreground mt-2 font-medium italic">Total from factory labels</p>
+          <p className="text-sm text-gray-500 mt-2">Total from factory labels</p>
         </div>
 
-        <div className="bg-card rounded-xl border border-border p-6 shadow-sm group hover:shadow-md transition-all">
+        <div className="bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 rounded-lg bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-400 group-hover:scale-110 transition-transform">
-              <TrendingDown className="w-5 h-5" />
+            <div className="p-2 rounded-lg bg-red-100">
+              <TrendingDown className="w-5 h-5 text-red-700" />
             </div>
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-70">Labor Expenses</p>
+            <p className="text-sm font-normal text-gray-600">Labor Expenses</p>
           </div>
-          <p className="text-2xl font-black text-foreground uppercase tracking-tight">
+          <p className="text-2xl font-bold text-gray-900">
             LKR {totalPayroll.toLocaleString()}
           </p>
-          <p className="text-[10px] text-muted-foreground mt-2 font-medium italic">Sum of all net payrolls</p>
+          <p className="text-sm text-gray-500 mt-2">Sum of all net payrolls</p>
         </div>
 
-        <div className="bg-card rounded-xl border border-border p-6 shadow-sm group hover:shadow-md transition-all">
+        <div className="bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 group-hover:scale-110 transition-transform">
-              <Package className="w-5 h-5" />
+            <div className="p-2 rounded-lg bg-orange-100">
+              <Package className="w-5 h-5 text-orange-700" />
             </div>
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-70">Input Expenses</p>
+            <p className="text-sm font-normal text-gray-600">Input Expenses</p>
           </div>
-          <p className="text-2xl font-black text-foreground uppercase tracking-tight">
+          <p className="text-2xl font-bold text-gray-900">
             LKR {inventoryExpenses.toLocaleString()}
           </p>
-          <p className="text-[10px] text-muted-foreground mt-2 font-medium italic">Fertilizer, chemicals & stock</p>
+          <p className="text-sm text-gray-500 mt-2">Fertilizer, chemicals & stock</p>
         </div>
 
-        <div className="bg-card rounded-xl border border-border p-6 shadow-sm group hover:shadow-md transition-all">
+        <div className="bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 group-hover:scale-110 transition-transform">
-              <Activity className="w-5 h-5" />
+            <div className="p-2 rounded-lg bg-blue-100">
+              <Activity className="w-5 h-5 text-blue-700" />
             </div>
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-70">Net Profit</p>
+            <p className="text-sm font-normal text-gray-600">Net Profit</p>
           </div>
-          <p className={`text-2xl font-black uppercase tracking-tight ${netProfit >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+          <p className={`text-2xl font-bold ${netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
             LKR {netProfit.toLocaleString()}
           </p>
-          <p className="text-[10px] text-muted-foreground mt-2 font-medium italic">Revenue minus all expenses</p>
+          <p className="text-sm text-gray-500 mt-2">Revenue minus all expenses</p>
         </div>
       </div>
 
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-card rounded-xl border border-border p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-black text-foreground uppercase tracking-tight">Factory Paysheets</h3>
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">Factory Paysheets (Monthly)</h3>
             <button
               onClick={() => setShowIncomeModal(true)}
-              className="text-[10px] font-black text-blue-600 dark:text-blue-400 hover:text-blue-700 uppercase tracking-widest transition-all"
+              className="text-sm text-blue-600 hover:text-blue-700 font-medium whitespace-nowrap"
             >
               + Record Paysheet
             </button>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row gap-3 mb-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search factory..."
                 value={incomeSearchTerm}
                 onChange={(e) => setIncomeSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-muted/50 text-foreground text-xs font-black uppercase tracking-tight focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                className="w-full pl-9 pr-4 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
               />
             </div>
-            <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-lg border border-border">
-              <ArrowUpDown className="w-4 h-4 text-muted-foreground" />
+            <div className="flex items-center gap-2">
+              <ArrowUpDown className="w-4 h-4 text-gray-400" />
               <select
                 value={incomeSortBy}
                 onChange={(e) => setIncomeSortBy(e.target.value)}
-                className="bg-transparent text-[10px] font-black text-foreground uppercase tracking-tight outline-none"
+                className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none"
               >
                 <option value="date-desc">Newest First</option>
                 <option value="amount-desc">Highest Amount</option>
@@ -607,60 +607,56 @@ export function FinancialPage() {
             </div>
           </div>
 
-          <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+          <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
             {filteredIncomes.map((income) => (
-              <div key={income.id} className="p-4 bg-muted/30 rounded-lg border border-border hover:border-blue-500/30 transition-all group">
+              <div key={income.id} className="p-4 bg-gray-50 rounded-lg border border-gray-100">
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <p className="font-black text-foreground uppercase tracking-tight">{income.factory?.name}</p>
-                    <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-70">
-                      {new Date(0, (income.date?.month || 1) - 1).toLocaleString('default', { month: 'long' })} {income.date?.year}
-                    </p>
+                    <p className="font-bold text-gray-900">{income.factory?.name}</p>
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">{new Date(0, (income.date?.month || 1) - 1).toLocaleString('default', { month: 'long' })} {income.date?.year}</p>
                   </div>
                   <div className="text-right flex flex-col items-end">
-                    <p className="font-black text-green-600 dark:text-green-400 text-lg uppercase tracking-tight">LKR {income.netAmount?.toLocaleString()}</p>
-                    <div className="flex gap-2 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <p className="font-bold text-green-600 text-lg">LKR {income.netAmount?.toLocaleString()}</p>
+                    <div className="flex gap-2 mt-1">
                       <button
                         onClick={() => handleEditIncome(income)}
-                        className="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 rounded transition-colors"
+                        className="p-1 text-blue-600 hover:bg-blue-50 rounded transition-colors"
                         title="Edit"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => handleDeleteIncome(income.id)}
-                        className="p-1 text-red-600 dark:text-red-400 hover:bg-red-500/10 rounded transition-colors"
+                        className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
                         title="Delete"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
-                    <span className="text-[9px] text-muted-foreground font-black bg-muted px-2 py-0.5 rounded-full mt-2 uppercase tracking-tight">ID: #{income.id}</span>
+                    <span className="text-xs text-gray-400 bg-gray-200 px-2 py-0.5 rounded-full mt-1">Paysheet ID: #{income.id}</span>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-y-1 text-[10px] font-black uppercase tracking-widest border-t border-border pt-3 mt-2 opacity-80">
-                  <div className="text-muted-foreground">Gross Weight:</div>
-                  <div className="text-right text-foreground">{income.totalWeight} kg</div>
-                  <div className="text-muted-foreground">Price per Kg:</div>
-                  <div className="text-right text-foreground">LKR {income.pricePerKg}</div>
+                <div className="grid grid-cols-2 gap-y-1 text-xs border-t border-gray-200 pt-2 mt-2">
+                  <div className="text-gray-500">Gross Weight:</div>
+                  <div className="text-right font-medium">{income.totalWeight} kg</div>
+                  <div className="text-gray-500">Price per Kg:</div>
+                  <div className="text-right font-medium">LKR {income.pricePerKg}</div>
                   <div className="text-red-400">Transport:</div>
-                  <div className="text-right text-red-500">-(LKR {income.transportDeduction})</div>
+                  <div className="text-right font-medium text-red-500">-(LKR {income.transportDeduction})</div>
                   <div className="text-red-400">Other Cutouts:</div>
-                  <div className="text-right text-red-500">-(LKR {income.otherDeductions})</div>
+                  <div className="text-right font-medium text-red-500">-(LKR {income.otherDeductions})</div>
                 </div>
               </div>
             ))}
             {filteredIncomes.length === 0 && (
-              <div className="text-center py-20 bg-muted/10 rounded-xl border border-dashed border-border opacity-50">
-                  <p className="text-muted-foreground font-black uppercase tracking-widest text-[10px]">No monthly paysheets found.</p>
-              </div>
+              <p className="text-center py-4 text-gray-500 text-sm">No monthly paysheets found.</p>
             )}
           </div>
         </div>
 
-        <div className="bg-card rounded-xl border border-border p-6 shadow-sm flex flex-col">
+        <div className="bg-white rounded-xl shadow-sm p-6 flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-black text-foreground uppercase tracking-tight">Revenue Allocation</h3>
+            <h3 className="text-lg font-semibold text-gray-900">Profit Distribution</h3>
           </div>
 
           <div className="flex-1 h-[350px] min-h-[350px]">
@@ -688,47 +684,47 @@ export function FinancialPage() {
                   contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                 />
                 <Legend verticalAlign="bottom" height={36} iconType="circle" />
-                <text x="50%" y="48%" textAnchor="middle" dominantBaseline="middle" className="text-xl font-black fill-foreground tracking-tight">
+                <text x="50%" y="48%" textAnchor="middle" dominantBaseline="middle" className="text-xl font-bold fill-gray-900">
                   LKR {totalRevenue.toLocaleString()}
                 </text>
-                <text x="50%" y="55%" textAnchor="middle" dominantBaseline="middle" className="text-[10px] font-black fill-muted-foreground uppercase tracking-widest opacity-70">
+                <text x="50%" y="55%" textAnchor="middle" dominantBaseline="middle" className="text-xs font-medium fill-gray-400 uppercase tracking-wider">
                   Total Revenue
                 </text>
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <p className="text-center text-[10px] text-muted-foreground mt-4 uppercase tracking-[0.2em] font-black opacity-50">
-            Internal Financial Allocation Overview
+          <p className="text-center text-xs text-gray-400 mt-2 uppercase tracking-wider font-medium">
+            Revenue Allocation Overview
           </p>
         </div>
       </div>
 
-      <div className="bg-card rounded-xl border border-border p-6 shadow-sm">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-          <h3 className="text-lg font-black text-foreground uppercase tracking-tight">Payroll Records</h3>
-          <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-70">
-            Total payout: <span className="text-blue-600 dark:text-blue-400 font-black">LKR {totalPayroll.toLocaleString()}</span>
+      <div className="bg-white rounded-xl shadow-sm p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-gray-900">Payroll Records</h3>
+          <div className="text-sm text-gray-500">
+            Total payout: <span className="font-bold text-blue-600">LKR {totalPayroll.toLocaleString()}</span>
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
               placeholder="Search by worker name..."
               value={payrollSearchTerm}
               onChange={(e) => setPayrollSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-muted/50 text-foreground text-xs font-black uppercase tracking-tight focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+              className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-lg border border-border">
-              <Filter className="w-4 h-4 text-muted-foreground" />
+            <div className="flex items-center gap-2">
+              <Filter className="w-4 h-4 text-gray-400" />
               <select
                 value={payrollFilterStatus}
                 onChange={(e) => setPayrollFilterStatus(e.target.value)}
-                className="bg-transparent text-[10px] font-black text-foreground uppercase tracking-tight outline-none"
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none"
               >
                 <option value="ALL">All Status</option>
                 <option value="PENDING">Pending</option>
@@ -736,12 +732,12 @@ export function FinancialPage() {
                 <option value="PAID">Paid</option>
               </select>
             </div>
-            <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-lg border border-border">
-              <ArrowUpDown className="w-4 h-4 text-muted-foreground" />
+            <div className="flex items-center gap-2">
+              <ArrowUpDown className="w-4 h-4 text-gray-400" />
               <select
                 value={payrollSortBy}
                 onChange={(e) => setPayrollSortBy(e.target.value)}
-                className="bg-transparent text-[10px] font-black text-foreground uppercase tracking-tight outline-none"
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none"
               >
                 <option value="name-asc">Name (A-Z)</option>
                 <option value="amount-desc">Net Pay (High-Low)</option>
@@ -754,9 +750,9 @@ export function FinancialPage() {
                   setPayrollSearchTerm('');
                   setPayrollFilterStatus('ALL');
                 }}
-                className="text-[10px] text-red-600 dark:text-red-400 font-black uppercase tracking-widest hover:underline transition-all"
+                className="text-xs text-red-600 font-bold hover:text-red-700"
               >
-                Clear
+                CLEAR FILTERS
               </button>
             )}
           </div>
@@ -764,53 +760,52 @@ export function FinancialPage() {
 
         <div className="space-y-3">
           {filteredPayrolls.map((payroll) => (
-            <div key={payroll.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-muted/30 rounded-lg border border-border hover:border-blue-500/30 transition-all gap-4 group">
+            <div key={payroll.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-lg gap-4">
               <div className="flex flex-col">
-                <span className="font-black text-foreground uppercase tracking-tight">{payroll.worker?.user?.name || 'Unknown Worker'}</span>
-                <span className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-70">ID: #{payroll.id}</span>
+                <span className="font-bold text-gray-900">{payroll.worker?.user?.name || 'Unknown Worker'}</span>
+                <span className="text-xs text-gray-500 uppercase tracking-wider">Payroll ID: #{payroll.id}</span>
               </div>
-              <div className="grid grid-cols-2 md:flex md:items-center gap-4 md:gap-8 text-[10px] font-black uppercase tracking-widest">
+              <div className="grid grid-cols-2 sm:flex sm:items-center gap-4 sm:gap-8 text-sm">
                 <div className="flex flex-col">
-                  <span className="text-[9px] text-muted-foreground opacity-70 mb-1">Base Wage</span>
-                  <span className="text-foreground">LKR {(payroll.basicWage || 0).toLocaleString()}</span>
+                  <span className="text-xs text-gray-400 font-medium uppercase">Base Wage</span>
+                  <span className="text-gray-600">LKR {(payroll.basicWage || 0).toLocaleString()}</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[9px] text-green-700 dark:text-green-400 opacity-70 mb-1">Bonus</span>
-                  <span className="text-green-600 dark:text-green-400">LKR {(payroll.bonuses || 0).toLocaleString()}</span>
+                  <span className="text-xs text-green-400 font-medium uppercase">Bonus</span>
+                  <span className="text-green-600">LKR {(payroll.bonuses || 0).toLocaleString()}</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[9px] text-red-700 dark:text-red-400 opacity-70 mb-1">Deductions</span>
-                  <span className="text-red-600 dark:text-red-400">LKR {(payroll.deductions || 0).toLocaleString()}</span>
+                  <span className="text-xs text-red-400 font-medium uppercase">Deductions</span>
+                  <span className="text-red-600">LKR {(payroll.deductions || 0).toLocaleString()}</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[9px] text-blue-700 dark:text-blue-400 opacity-70 mb-1">Net Pay</span>
-                  <span className="text-foreground font-black">LKR {(payroll.netPay || 0).toLocaleString()}</span>
+                  <span className="text-xs text-blue-400 uppercase font-medium">Net Pay</span>
+                  <span className="font-bold text-gray-900">LKR {(payroll.netPay || 0).toLocaleString()}</span>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className={`px-2 py-1 rounded text-[9px] font-black uppercase tracking-[0.1em] border border-border ${
-                    payroll.status === 'PAID' ? 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400' :
-                    payroll.status === 'APPROVED' ? 'bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400' :
-                    'bg-orange-100 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400'
-                  }`}>
+                  <span className={`text-xs px-2 py-1 rounded-full font-bold ${payroll.status === 'PAID' ? 'bg-green-100 text-green-700' :
+                    payroll.status === 'APPROVED' ? 'bg-blue-100 text-blue-700' :
+                      'bg-orange-100 text-orange-700'
+                    }`}>
                     {payroll.status}
                   </span>
-                  <div className="flex items-center gap-1 border-l border-border pl-4 md:ml-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-1 border-l border-gray-200 pl-4 ml-4">
                     <button
                       onClick={() => {
                         setEditingPayroll(payroll);
                         setShowEditPayrollModal(true);
                       }}
-                      className="p-1 px-2 text-blue-600 dark:text-blue-400 hover:underline text-[9px] font-black uppercase"
+                      className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                       title="Edit Payroll"
                     >
-                      EDIT
+                      <Edit2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDeletePayroll(payroll.id)}
-                      className="p-1 px-2 text-red-600 dark:text-red-400 hover:underline text-[9px] font-black uppercase"
+                      className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                       title="Delete Payroll"
                     >
-                      DELETE
+                      <Trash2 className="w-4 h-4" />
                     </button>
                     {payroll.status !== 'PAID' && (
                       <button
@@ -818,8 +813,9 @@ export function FinancialPage() {
                           setSelectedPayrollForPayment(payroll);
                           setShowPaymentModal(true);
                         }}
-                        className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-[9px] font-black uppercase rounded transition-all shadow-sm ml-2"
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded-lg transition-all shadow-sm ml-2"
                       >
+                        <DollarSign className="w-3.5 h-3.5" />
                         PAY
                       </button>
                     )}
@@ -829,8 +825,8 @@ export function FinancialPage() {
             </div>
           ))}
           {filteredPayrolls.length === 0 && (
-            <div className="text-center py-20 bg-muted/10 rounded-xl border border-dashed border-border opacity-50">
-                <p className="text-muted-foreground font-black uppercase tracking-widest text-[10px]">No payroll records found for the current filters.</p>
+            <div className="text-center py-12">
+              <p className="text-gray-500">No payroll records found for the current filters.</p>
             </div>
           )}
         </div>
@@ -838,16 +834,16 @@ export function FinancialPage() {
 
       {/* Generate Payroll Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50 backdrop-blur-md">
-          <div className="bg-card rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200 text-left border border-border">
-            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-blue-50 dark:bg-blue-950/30">
-              <h2 className="text-xl font-black text-blue-900 dark:text-blue-400 uppercase tracking-tighter">Generate Payroll</h2>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-blue-50">
+              <h2 className="text-xl font-bold text-blue-900">Generate Payroll</h2>
               <button
                 onClick={() => {
                   setShowModal(false);
                   setPayrollPreview(null);
                 }}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
                 disabled={isSubmitting}
               >
                 <Plus className="w-6 h-6 rotate-45" />
@@ -856,12 +852,12 @@ export function FinancialPage() {
 
             <form onSubmit={handleGeneratePayroll} className="p-6 space-y-4">
               <div>
-                <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Select Worker *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Select Worker *</label>
                 <select
                   required
                   value={formData.workerId}
                   onChange={(e) => setFormData({ ...formData, workerId: e.target.value })}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground font-black uppercase tracking-tight"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 >
                   <option value="">Select Worker</option>
                   {workers.map(w => (
@@ -871,61 +867,61 @@ export function FinancialPage() {
               </div>
 
               <div>
-                <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Month *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Month *</label>
                 <input
                   required
                   type="month"
                   value={formData.month}
                   onChange={(e) => setFormData({ ...formData, month: e.target.value })}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground font-bold"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 />
               </div>
 
               {isPreviewLoading ? (
-                <div className="py-4 flex flex-col items-center justify-center gap-2 text-blue-600 dark:text-blue-400">
+                <div className="py-4 flex flex-col items-center justify-center gap-2 text-blue-600">
                   <Loader2 className="w-6 h-6 animate-spin" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">Calculating earnings...</span>
+                  <span className="text-xs font-medium">Calculating earnings...</span>
                 </div>
               ) : payrollPreview ? (
                 <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
-                  <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-xl border border-blue-100 dark:border-blue-900/30">
-                    <p className="text-[9px] text-blue-500 font-black uppercase tracking-[0.2em] mb-3">Earnings Summary</p>
+                  <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                    <p className="text-xs text-blue-500 font-medium uppercase tracking-wider mb-2">Earnings Summary</p>
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
-                          <TrendingUp className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
-                          <span className="text-[10px] font-black text-muted-foreground uppercase tracking-tight">Harvesting ({payrollPreview.harvestCount} records)</span>
+                          <TrendingUp className="w-3.5 h-3.5 text-green-600" />
+                          <span className="text-xs text-gray-600">Harvesting ({payrollPreview.harvestCount} records)</span>
                         </div>
-                        <span className="text-sm font-black text-foreground uppercase tracking-tight">LKR {payrollPreview.harvestEarnings.toLocaleString()}</span>
+                        <span className="text-sm font-bold text-gray-900">LKR {payrollPreview.harvestEarnings.toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
-                          <Activity className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-                          <span className="text-[10px] font-black text-muted-foreground uppercase tracking-tight">Tasks ({payrollPreview.taskCount} records)</span>
+                          <Activity className="w-3.5 h-3.5 text-blue-600" />
+                          <span className="text-xs text-gray-600">Tasks ({payrollPreview.taskCount} records)</span>
                         </div>
-                        <span className="text-sm font-black text-foreground uppercase tracking-tight">LKR {payrollPreview.taskEarnings.toLocaleString()}</span>
+                        <span className="text-sm font-bold text-gray-900">LKR {payrollPreview.taskEarnings.toLocaleString()}</span>
                       </div>
-                      <div className="pt-3 mt-3 border-t border-blue-200/50 dark:border-blue-800/30 flex justify-between items-center">
-                        <span className="text-[10px] font-black text-blue-900 dark:text-blue-300 uppercase tracking-widest">Calculated Base Wage</span>
-                        <span className="text-xl font-black text-blue-600 dark:text-blue-400 uppercase tracking-tight">LKR {payrollPreview.totalEarnings.toLocaleString()}</span>
+                      <div className="pt-2 mt-2 border-t border-blue-200 flex justify-between items-center">
+                        <span className="text-xs font-medium text-blue-900">Total Calculated Base Wage</span>
+                        <span className="text-lg font-black text-blue-600">LKR {payrollPreview.totalEarnings.toLocaleString()}</span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex gap-2 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-100 dark:border-blue-900/30">
-                    <Info className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
-                    <p className="text-[10px] text-blue-700 dark:text-blue-300 font-black uppercase tracking-tight leading-relaxed">
+                  <div className="flex gap-2 p-2 bg-blue-50 rounded-lg border border-blue-100">
+                    <Info className="w-4 h-4 text-blue-500 mt-0.5" />
+                    <p className="text-xs text-blue-700">
                       Bonuses and deductions can be added after generating the initial payroll record.
                     </p>
                   </div>
                 </div>
               ) : formData.workerId && (
-                <div className="p-4 bg-orange-50 dark:bg-orange-950/20 rounded-lg border border-orange-100 dark:border-orange-900/30 flex gap-2">
+                <div className="p-4 bg-orange-50 rounded-lg border border-orange-100 flex gap-2">
                   <AlertCircle className="w-5 h-5 text-orange-500" />
-                  <p className="text-[10px] text-orange-700 dark:text-orange-300 font-black uppercase tracking-tight">No earnings found for this worker in the selected month.</p>
+                  <p className="text-xs text-orange-700">No earnings found for this worker in the selected month.</p>
                 </div>
               )}
 
-              <div className="flex gap-3 pt-6 border-t border-border mt-6">
+              <div className="flex gap-3 pt-4 border-t border-gray-100">
                 <button
                   type="button"
                   onClick={() => {
@@ -933,14 +929,14 @@ export function FinancialPage() {
                     setPayrollPreview(null);
                   }}
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg font-black uppercase tracking-widest text-[10px] hover:bg-muted transition-all"
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting || (payrollPreview && payrollPreview.totalEarnings === 0)}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-black uppercase tracking-widest text-[10px] hover:bg-blue-700 transition-all flex items-center justify-center gap-2 disabled:bg-muted disabled:text-muted-foreground shadow-md shadow-blue-100 dark:shadow-none"
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 disabled:bg-gray-300"
                 >
                   {isSubmitting ? (
                     <>
@@ -959,13 +955,13 @@ export function FinancialPage() {
 
       {/* Add Factory Modal */}
       {showFactoryModal && (
-        <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50 backdrop-blur-md">
-          <div className="bg-card rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200 text-left border border-border">
-            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-blue-50 dark:bg-blue-950/30">
-              <h2 className="text-xl font-black text-blue-900 dark:text-blue-400 uppercase tracking-tighter">Register Factory</h2>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-blue-50">
+              <h2 className="text-xl font-bold text-blue-900">Register Factory</h2>
               <button
                 onClick={() => setShowFactoryModal(false)}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
                 disabled={isSubmitting}
               >
                 <Plus className="w-6 h-6 rotate-45" />
@@ -974,51 +970,51 @@ export function FinancialPage() {
 
             <form onSubmit={handleAddFactory} className="p-6 space-y-4">
               <div>
-                <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Factory Name *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Factory Name *</label>
                 <input
                   required
                   type="text"
                   value={factoryFormData.name}
                   onChange={(e) => setFactoryFormData({ ...factoryFormData, name: e.target.value })}
                   placeholder="e.g. Bogawantalawa Tea Factory"
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground font-bold tracking-tight"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Registration No</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Registration No</label>
                 <input
                   type="text"
                   value={factoryFormData.registerNo}
                   onChange={(e) => setFactoryFormData({ ...factoryFormData, registerNo: e.target.value })}
                   placeholder="e.g. TF-2024-001"
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground font-bold tracking-tight"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Current Price per Kg (LKR)</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Current Price per Kg (LKR)</label>
                 <input
                   type="number"
                   value={factoryFormData.pricePerKg}
                   onChange={(e) => setFactoryFormData({ ...factoryFormData, pricePerKg: e.target.value })}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground font-bold"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 />
               </div>
 
-              <div className="flex gap-3 pt-6 border-t border-border mt-6">
+              <div className="flex gap-3 pt-4 border-t border-gray-100">
                 <button
                   type="button"
                   onClick={() => setShowFactoryModal(false)}
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg font-black uppercase tracking-widest text-[10px] hover:bg-muted transition-all"
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-black uppercase tracking-widest text-[10px] hover:bg-blue-700 transition-all flex items-center justify-center gap-2 shadow-md shadow-blue-100 dark:shadow-none"
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Register'}
                 </button>
@@ -1030,13 +1026,13 @@ export function FinancialPage() {
 
       {/* Record Delivery Modal */}
       {showDeliveryModal && (
-        <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50 backdrop-blur-md">
-          <div className="bg-card rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200 text-left border border-border">
-            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-green-50 dark:bg-green-950/30">
-              <h2 className="text-xl font-black text-green-900 dark:text-green-400 uppercase tracking-tighter">Record Tea Delivery</h2>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-green-50">
+              <h2 className="text-xl font-bold text-green-900">Record Tea Delivery</h2>
               <button
                 onClick={() => setShowDeliveryModal(false)}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
                 disabled={isSubmitting}
               >
                 <Plus className="w-6 h-6 rotate-45" />
@@ -1045,12 +1041,12 @@ export function FinancialPage() {
 
             <form onSubmit={handleRecordDelivery} className="p-6 space-y-4">
               <div>
-                <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Factory *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Factory *</label>
                 <select
                   required
                   value={deliveryFormData.factoryId}
                   onChange={(e) => setDeliveryFormData({ ...deliveryFormData, factoryId: e.target.value })}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground font-black uppercase tracking-tight"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                 >
                   <option value="">Select Factory</option>
                   {factories.map(f => (
@@ -1060,48 +1056,48 @@ export function FinancialPage() {
               </div>
 
               <div>
-                <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Weight (kg) *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Weight (kg) *</label>
                 <input
                   required
                   type="number"
                   step="0.01"
                   value={deliveryFormData.weight}
                   onChange={(e) => setDeliveryFormData({ ...deliveryFormData, weight: e.target.value })}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground font-bold"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Date *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Date *</label>
                 <input
                   required
                   type="date"
                   value={deliveryFormData.deliveryDate}
                   onChange={(e) => setDeliveryFormData({ ...deliveryFormData, deliveryDate: e.target.value })}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground font-bold"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                 />
               </div>
 
-              <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg flex gap-3 border border-blue-100 dark:border-blue-900/30">
-                <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-                <p className="text-[10px] text-blue-700 dark:text-blue-300 font-black uppercase tracking-tight leading-relaxed">
+              <div className="bg-blue-50 p-3 rounded-lg flex gap-2">
+                <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                <p className="text-xs text-blue-700">
                   The total value will be calculated automatically based on the factory's current price per kg.
                 </p>
               </div>
 
-              <div className="flex gap-3 pt-6 border-t border-border mt-6">
+              <div className="flex gap-3 pt-4 border-t border-gray-100">
                 <button
                   type="button"
                   onClick={() => setShowDeliveryModal(false)}
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg font-black uppercase tracking-widest text-[10px] hover:bg-muted transition-all"
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg font-black uppercase tracking-widest text-[10px] hover:bg-green-700 transition-all flex items-center justify-center gap-2 shadow-md shadow-green-100 dark:shadow-none"
+                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Record Delivery'}
                 </button>
@@ -1113,10 +1109,10 @@ export function FinancialPage() {
 
       {/* Add Factory Paysheet Modal */}
       {showIncomeModal && (
-        <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50 backdrop-blur-md">
-          <div className="bg-card rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200 text-left border border-border">
-            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-blue-50 dark:bg-blue-950/30">
-              <h2 className="text-xl font-black text-blue-900 dark:text-blue-400 uppercase tracking-tighter">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-blue-50">
+              <h2 className="text-xl font-bold text-blue-900">
                 {editingIncome ? 'Edit Factory Paysheet' : 'Record Factory Paysheet'}
               </h2>
               <button
@@ -1124,7 +1120,7 @@ export function FinancialPage() {
                   setShowIncomeModal(false);
                   setEditingIncome(null);
                 }}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
                 disabled={isSubmitting}
               >
                 <Plus className="w-6 h-6 rotate-45" />
@@ -1133,12 +1129,12 @@ export function FinancialPage() {
 
             <form onSubmit={handleAddIncome} className="p-6 space-y-4">
               <div>
-                <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Select Factory *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Select Factory *</label>
                 <select
                   required
                   value={incomeFormData.factoryId}
                   onChange={(e) => setIncomeFormData({ ...incomeFormData, factoryId: e.target.value })}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground font-black uppercase tracking-tight"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 >
                   <option value="">Select Factory</option>
                   {factories.map(f => (
@@ -1149,57 +1145,57 @@ export function FinancialPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Gross Weight (kg) *</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Gross Weight (kg) *</label>
                   <input
                     required
                     type="number"
                     step="0.01"
                     value={incomeFormData.totalWeight}
                     onChange={(e) => setIncomeFormData({ ...incomeFormData, totalWeight: e.target.value })}
-                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground font-bold"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Rate per Kg (LKR) *</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Rate per Kg (LKR) *</label>
                   <input
                     required
                     type="number"
                     step="0.01"
                     value={incomeFormData.pricePerKg}
                     onChange={(e) => setIncomeFormData({ ...incomeFormData, pricePerKg: e.target.value })}
-                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground font-bold"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-black text-red-600 dark:text-red-400 uppercase tracking-[0.2em] mb-1">Transport Cut (LKR)</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1 text-red-500">Transport Cut (LKR)</label>
                   <input
                     type="number"
                     value={incomeFormData.transportDeduction}
                     onChange={(e) => setIncomeFormData({ ...incomeFormData, transportDeduction: e.target.value })}
-                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-red-500 outline-none bg-card text-foreground font-bold"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-black text-red-600 dark:text-red-400 uppercase tracking-[0.2em] mb-1">Other Cutouts (LKR)</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1 text-red-500">Other Cutouts (LKR)</label>
                   <input
                     type="number"
                     value={incomeFormData.otherDeductions}
                     onChange={(e) => setIncomeFormData({ ...incomeFormData, otherDeductions: e.target.value })}
-                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-red-500 outline-none bg-card text-foreground font-bold"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Month</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Month</label>
                   <select
                     value={incomeFormData.month}
                     onChange={(e) => setIncomeFormData({ ...incomeFormData, month: parseInt(e.target.value) })}
-                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground font-black uppercase tracking-tight"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                   >
                     {Array.from({ length: 12 }, (_, i) => (
                       <option key={i + 1} value={i + 1}>
@@ -1209,36 +1205,36 @@ export function FinancialPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Year</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Year</label>
                   <input
                     type="number"
                     value={incomeFormData.year}
                     onChange={(e) => setIncomeFormData({ ...incomeFormData, year: parseInt(e.target.value) })}
-                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground font-bold"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                   />
                 </div>
               </div>
 
-              <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg flex gap-3 border border-blue-100 dark:border-blue-900/30">
-                <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-                <p className="text-[10px] text-blue-700 dark:text-blue-300 font-black uppercase tracking-tight leading-relaxed">
+              <div className="bg-blue-50 p-3 rounded-lg flex gap-2">
+                <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                <p className="text-xs text-blue-700">
                   Gross amount and net amount will be calculated automatically based on the values above.
                 </p>
               </div>
 
-              <div className="flex gap-3 pt-6 border-t border-border mt-6">
+              <div className="flex gap-3 pt-4 border-t border-gray-100">
                 <button
                   type="button"
                   onClick={() => setShowIncomeModal(false)}
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg font-black uppercase tracking-widest text-[10px] hover:bg-muted transition-all"
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-black uppercase tracking-widest text-[10px] hover:bg-blue-700 transition-all flex items-center justify-center gap-2 shadow-md shadow-blue-100 dark:shadow-none"
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : (editingIncome ? 'Save Changes' : 'Record Paysheet')}
                 </button>
@@ -1249,13 +1245,13 @@ export function FinancialPage() {
       )}
       {/* Edit Payroll Modal */}
       {showEditPayrollModal && editingPayroll && (
-        <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50 backdrop-blur-md">
-          <div className="bg-card rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200 text-left border border-border">
-            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-orange-50 dark:bg-orange-950/30">
-              <h2 className="text-xl font-black text-orange-900 dark:text-orange-400 uppercase tracking-tighter">Edit Payroll: {editingPayroll.worker.user?.name || 'Unnamed Worker'}</h2>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-orange-50">
+              <h2 className="text-xl font-bold text-orange-900">Edit Payroll: {editingPayroll.worker.user?.name || 'Unnamed Worker'}</h2>
               <button
                 onClick={() => setShowEditPayrollModal(false)}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
                 disabled={isSubmitting}
               >
                 <Plus className="w-6 h-6 rotate-45" />
@@ -1263,53 +1259,53 @@ export function FinancialPage() {
             </div>
 
             <form onSubmit={handleUpdatePayroll} className="p-6 space-y-4">
-              <div className="bg-muted/50 p-4 rounded-xl flex flex-col gap-1 border border-border">
-                <span className="text-[9px] text-muted-foreground uppercase font-black tracking-widest opacity-70">Base Wage</span>
-                <span className="text-lg font-black text-foreground uppercase tracking-tight">LKR {editingPayroll.basicWage?.toLocaleString()}</span>
+              <div className="bg-gray-50 p-3 rounded-lg flex flex-col gap-1 border border-gray-100">
+                <span className="text-xs text-gray-400 uppercase font-medium">Base Wage</span>
+                <span className="text-lg font-bold text-gray-700">LKR {editingPayroll.basicWage?.toLocaleString()}</span>
               </div>
 
               <div>
-                <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Bonuses (LKR)</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Bonuses (LKR)</label>
                 <input
                   type="number"
                   value={editingPayroll.bonuses}
                   onChange={(e) => setEditingPayroll({ ...editingPayroll, bonuses: parseFloat(e.target.value) || 0 })}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none bg-card text-foreground font-bold"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Deductions (LKR)</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Deductions (LKR)</label>
                 <input
                   type="number"
                   value={editingPayroll.deductions}
                   onChange={(e) => setEditingPayroll({ ...editingPayroll, deductions: parseFloat(e.target.value) || 0 })}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none bg-card text-foreground font-bold"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                 />
               </div>
 
-              <div className="bg-orange-50 dark:bg-orange-950/20 p-4 rounded-xl border border-orange-100 dark:border-orange-900/30">
-                <div className="flex justify-between items-center text-orange-800 dark:text-orange-300">
-                  <span className="text-[10px] font-black uppercase tracking-widest">Calculated Net Pay</span>
-                  <span className="text-xl font-black uppercase tracking-tight">
+              <div className="bg-orange-50 p-3 rounded-lg border border-orange-100">
+                <div className="flex justify-between items-center text-orange-800">
+                  <span className="text-sm font-semibold uppercase tracking-wider">Calculated Net Pay</span>
+                  <span className="text-xl font-black">
                     LKR {((editingPayroll.basicWage || 0) + (editingPayroll.bonuses || 0) - (editingPayroll.deductions || 0)).toLocaleString()}
                   </span>
                 </div>
               </div>
 
-              <div className="flex gap-3 pt-6 border-t border-border mt-6">
+              <div className="flex gap-3 pt-4 border-t border-gray-100">
                 <button
                   type="button"
                   onClick={() => setShowEditPayrollModal(false)}
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg font-black uppercase tracking-widest text-[10px] hover:bg-muted transition-all"
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg font-black uppercase tracking-widest text-[10px] hover:bg-orange-700 transition-all flex items-center justify-center gap-2 shadow-md shadow-orange-100 dark:shadow-none"
+                  className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg font-medium hover:bg-orange-700 transition-colors flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Changes'}
                 </button>
@@ -1321,16 +1317,16 @@ export function FinancialPage() {
 
       {/* Payment Details Modal */}
       {showPaymentModal && selectedPayrollForPayment && (
-        <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50 backdrop-blur-md">
-          <div className="bg-card rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200 text-left border border-border">
-            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-green-50 dark:bg-green-950/30">
-              <h2 className="text-xl font-black text-green-900 dark:text-green-400 uppercase tracking-tighter">Payment Details</h2>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-green-50">
+              <h2 className="text-xl font-bold text-green-900">Payment Details</h2>
               <button
                 onClick={() => {
                   setShowPaymentModal(false);
                   setSelectedPayrollForPayment(null);
                 }}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
                 disabled={isSubmitting}
               >
                 <Plus className="w-6 h-6 rotate-45" />
@@ -1338,48 +1334,46 @@ export function FinancialPage() {
             </div>
 
             <div className="p-6 space-y-6">
-              <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-xl border border-border">
-                <div className="w-12 h-12 bg-green-100 dark:bg-green-950/50 rounded-full flex items-center justify-center text-green-700 dark:text-green-400 font-black text-xl uppercase">
+              <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-700 font-bold text-xl">
                   {(selectedPayrollForPayment.worker.user?.name || 'W').charAt(0)}
                 </div>
                 <div>
-                  <p className="font-black text-foreground text-lg uppercase tracking-tight">{selectedPayrollForPayment.worker.user?.name || 'Unnamed Worker'}</p>
-                  <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-70">ID: #{selectedPayrollForPayment.id}</p>
+                  <p className="font-bold text-gray-900 text-lg">{selectedPayrollForPayment.worker.user?.name || 'Unnamed Worker'}</p>
+                  <p className="text-xs text-gray-500 font-medium">Payroll ID: #{selectedPayrollForPayment.id}</p>
                 </div>
               </div>
 
               <div className="space-y-4">
-                <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-xl border border-blue-100 dark:border-blue-900/30">
-                  <h3 className="text-[9px] font-black text-blue-500 uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
+                <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                  <h3 className="text-xs font-medium text-blue-400 uppercase tracking-wider mb-2 flex items-center gap-2">
                     <TrendingUp className="w-3.5 h-3.5" />
                     Bank Information
                   </h3>
-                  <div className="text-[10px] text-blue-700 dark:text-blue-300 font-black uppercase tracking-widest space-y-1.5">
-                    <div><span className="opacity-50 mr-2">Bank:</span> {selectedPayrollForPayment.worker.user?.bankName || 'N/A'}</div>
-                    <div><span className="opacity-50 mr-2">Branch:</span> {selectedPayrollForPayment.worker.user?.branchName || 'N/A'}</div>
-                    <div><span className="opacity-50 mr-2">A/C No:</span> <span className="text-blue-900 dark:text-blue-100 font-mono tracking-tight">{selectedPayrollForPayment.worker.user?.accountNumber || 'N/A'}</span></div>
-                    <div><span className="opacity-50 mr-2">Holder:</span> {selectedPayrollForPayment.worker.user?.accountHolderName || 'N/A'}</div>
-                  </div>
+                  <p className="text-xs text-blue-700 space-y-1">
+                    <div><span className="font-normal text-blue-400 uppercase mr-2">Bank:</span> {selectedPayrollForPayment.worker.user?.bankName || 'N/A'}</div>
+                    <div><span className="font-normal text-blue-400 uppercase mr-2">Branch:</span> {selectedPayrollForPayment.worker.user?.branchName || 'N/A'}</div>
+                    <div><span className="font-normal text-blue-400 uppercase mr-2">A/C No:</span> <span className="font-mono text-blue-900">{selectedPayrollForPayment.worker.user?.accountNumber || 'N/A'}</span></div>
+                    <div><span className="font-normal text-blue-400 uppercase mr-2">Holder:</span> {selectedPayrollForPayment.worker.user?.accountHolderName || 'N/A'}</div>
+                  </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-muted/50 rounded-xl border border-border">
-                    <p className="text-[9px] text-muted-foreground font-black uppercase tracking-widest opacity-70 mb-1">Total Payout</p>
-                    <p className="text-lg font-black text-foreground uppercase tracking-tight">LKR {selectedPayrollForPayment.netPay.toLocaleString()}</p>
+                  <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
+                    <p className="text-xs text-gray-400 font-normal uppercase mb-1">Total Payout</p>
+                    <p className="text-lg font-black text-gray-900">LKR {selectedPayrollForPayment.netPay.toLocaleString()}</p>
                   </div>
-                  <div className="p-4 bg-muted/50 rounded-xl border border-border">
-                    <p className="text-[9px] text-muted-foreground font-black uppercase tracking-widest opacity-70 mb-1">Status</p>
-                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest border border-border inline-block mt-1 ${
-                      selectedPayrollForPayment.status === 'PAID' ? 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400' : 
-                      'bg-orange-100 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400'
-                    }`}>
+                  <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
+                    <p className="text-xs text-gray-400 font-normal uppercase mb-1">Status</p>
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${selectedPayrollForPayment.status === 'PAID' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                      }`}>
                       {selectedPayrollForPayment.status}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="flex gap-3 pt-6 border-t border-border mt-6">
+              <div className="flex gap-3 pt-6 border-t border-gray-100">
                 <button
                   type="button"
                   onClick={() => {
@@ -1387,7 +1381,7 @@ export function FinancialPage() {
                     setSelectedPayrollForPayment(null);
                   }}
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg font-black uppercase tracking-widest text-[10px] hover:bg-muted transition-all"
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
                 >
                   Close
                 </button>
@@ -1395,7 +1389,7 @@ export function FinancialPage() {
                   <button
                     onClick={() => handlePay(selectedPayrollForPayment)}
                     disabled={isSubmitting}
-                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg font-black uppercase tracking-widest text-[10px] hover:bg-green-700 transition-all flex items-center justify-center gap-2 shadow-md shadow-green-100 dark:shadow-none"
+                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-green-100"
                   >
                     {isSubmitting ? (
                       <Loader2 className="w-4 h-4 animate-spin" />

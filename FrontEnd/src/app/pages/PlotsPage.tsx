@@ -250,8 +250,8 @@ export function PlotsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Plot & Crop Registry</h1>
-          <p className="text-muted-foreground mt-1">Manage your plantation blocks and crop information</p>
+          <h1 className="text-2xl font-bold text-gray-900">Plot & Crop Registry</h1>
+          <p className="text-gray-600 mt-1">Manage your plantation blocks and crop information</p>
         </div>
         <button
           onClick={() => {
@@ -269,7 +269,7 @@ export function PlotsPage() {
             });
             setShowAddModal(true);
           }}
-          className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold transition-all shadow-sm shadow-green-200 dark:shadow-none"
+          className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
         >
           <Plus className="w-5 h-5" />
           Add Plot
@@ -277,23 +277,23 @@ export function PlotsPage() {
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-card rounded-lg border border-border p-4 space-y-4 shadow-sm">
+      <div className="bg-white rounded-lg border border-gray-200 p-4 space-y-4">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="w-5 h-5 text-muted-foreground/50 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search plots by ID, clone, or soil..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
             />
           </div>
           <div className="flex flex-wrap gap-2">
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-3 py-2 border border-border rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground"
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
             >
               <option value="ALL">All Status</option>
               <option value="Active">Active</option>
@@ -303,7 +303,7 @@ export function PlotsPage() {
             <select
               value={filterClone}
               onChange={(e) => setFilterClone(e.target.value)}
-              className="px-3 py-2 border border-border rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground"
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
             >
               <option value="ALL">All Clones</option>
               {Array.from(new Set(plots.map(p => p.teaClone).filter(Boolean))).map(c => (
@@ -313,19 +313,19 @@ export function PlotsPage() {
             <select
               value={filterSoil}
               onChange={(e) => setFilterSoil(e.target.value)}
-              className="px-3 py-2 border border-border rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground"
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
             >
               <option value="ALL">All Soil Types</option>
               {Array.from(new Set(plots.map(p => p.soilType).filter(Boolean))).map(s => (
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
-            <div className="flex items-center gap-2 border-l pl-2 ml-2 border-border">
-              <span className="text-sm text-muted-foreground font-medium">Sort:</span>
+            <div className="flex items-center gap-2 border-l pl-2 ml-2 border-gray-200">
+              <span className="text-sm text-gray-500 font-medium">Sort:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-2 border border-border rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground"
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
               >
                 <option value="blockId">Block ID</option>
                 <option value="acreage">Acreage (Highest)</option>
@@ -344,19 +344,19 @@ export function PlotsPage() {
         <>
           {/* Stats Summary */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-card rounded-lg border border-border p-4 shadow-sm">
-              <p className="text-sm text-muted-foreground mb-1 font-medium text-left">Total Plots</p>
-              <p className="text-2xl font-bold text-foreground text-left">{plots.length}</p>
+            <div className="bg-white rounded-lg border border-gray-200 p-4">
+              <p className="text-sm text-gray-600 mb-1">Total Plots</p>
+              <p className="text-2xl font-bold text-gray-900">{plots.length}</p>
             </div>
-            <div className="bg-card rounded-lg border border-border p-4 shadow-sm">
-              <p className="text-sm text-muted-foreground mb-1 font-medium text-left">Total Area</p>
-              <p className="text-2xl font-bold text-foreground text-left">
+            <div className="bg-white rounded-lg border border-gray-200 p-4">
+              <p className="text-sm text-gray-600 mb-1">Total Area</p>
+              <p className="text-2xl font-bold text-gray-900">
                 {plots.reduce((sum, p) => sum + p.acreage, 0).toFixed(1)} acres
               </p>
             </div>
-            <div className="bg-card rounded-lg border border-border p-4 shadow-sm">
-              <p className="text-sm text-muted-foreground mb-1 font-medium text-left">Active Plots</p>
-              <p className="text-2xl font-bold text-green-600 text-left">
+            <div className="bg-white rounded-lg border border-gray-200 p-4">
+              <p className="text-sm text-gray-600 mb-1">Active Plots</p>
+              <p className="text-2xl font-bold text-green-600">
                 {plots.filter(p => p.status === 'Active').length}
               </p>
             </div>
@@ -374,7 +374,7 @@ export function PlotsPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-900">{plot.blockId}</h3>
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${getStatusColor(plot.status)}`}>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${getStatusColor(plot.status)}`}>
                         {plot.status}
                       </span>
                     </div>
@@ -432,7 +432,7 @@ export function PlotsPage() {
                 {/* Actions */}
                 <button
                   onClick={() => handleViewDetails(plot)}
-                  className="w-full mt-4 px-4 py-2 bg-green-50 dark:bg-green-950/20 hover:bg-green-100 dark:hover:bg-green-900/30 text-green-700 dark:text-green-400 rounded-lg font-bold transition-all"
+                  className="w-full mt-4 px-4 py-2 bg-green-50 hover:bg-green-100 text-green-700 rounded-lg font-medium transition-colors"
                 >
                   View Details
                 </button>
@@ -441,9 +441,9 @@ export function PlotsPage() {
           </div>
 
           {filteredPlots.length === 0 && (
-            <div className="text-center py-12 bg-card rounded-lg border border-border">
-              <MapPin className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
-              <p className="text-muted-foreground font-medium">No plots found</p>
+            <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+              <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+              <p className="text-gray-600">No plots found</p>
             </div>
           )}
         </>
@@ -451,15 +451,15 @@ export function PlotsPage() {
 
       {/* Add Plot Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-          <div className="bg-card rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200 border border-border">
-            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-green-50 dark:bg-green-950/30">
-              <h2 className="text-xl font-bold text-green-900 dark:text-green-400">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-green-50">
+              <h2 className="text-xl font-bold text-green-900">
                 {editingPlot ? 'Edit Plantation Plot' : 'Add New Plantation Plot'}
               </h2>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
                 disabled={isSubmitting}
               >
                 <Plus className="w-6 h-6 rotate-45" />
@@ -467,175 +467,175 @@ export function PlotsPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Block ID *</label>
+                <input
+                  required
+                  type="text"
+                  placeholder="e.g. Block D-12"
+                  value={formData.blockId}
+                  onChange={(e) => setFormData({ ...formData, blockId: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none"
+                  disabled={editingPlot !== null}
+                />
+                {editingPlot && <p className="text-[10px] text-gray-400 mt-1">Block ID cannot be changed</p>}
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-muted-foreground mb-1 uppercase tracking-tighter">Block ID *</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Acreage (Acres) *</label>
                   <input
                     required
-                    type="text"
-                    placeholder="e.g. Block D-12"
-                    value={formData.blockId}
-                    onChange={(e) => setFormData({ ...formData, blockId: e.target.value })}
-                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none bg-muted/50 text-foreground"
-                    disabled={editingPlot !== null}
-                  />
-                  {editingPlot && <p className="text-[10px] text-muted-foreground mt-1 text-left">Block ID cannot be changed</p>}
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-bold text-muted-foreground mb-1 uppercase tracking-tighter text-left">Acreage (Acres) *</label>
-                    <input
-                      required
-                      type="number"
-                      step="0.1"
-                      placeholder="e.g. 5.5"
-                      value={formData.acreage}
-                      onChange={(e) => setFormData({ ...formData, acreage: e.target.value })}
-                      className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none bg-muted/50 text-foreground"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-bold text-muted-foreground mb-1 uppercase tracking-tighter text-left">Status</label>
-                    <select
-                      value={formData.status}
-                      onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
-                      className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none bg-muted/50 text-foreground"
-                    >
-                      <option value="Active">Active</option>
-                      <option value="Resting">Resting</option>
-                      <option value="Maintenance">Maintenance</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-bold text-muted-foreground mb-1 uppercase tracking-tighter text-left">Soil pH</label>
-                    <input
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      max="14"
-                      placeholder="e.g. 5.5"
-                      value={formData.soilPh}
-                      onChange={(e) => setFormData({ ...formData, soilPh: e.target.value })}
-                      className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none font-mono bg-muted/50 text-foreground"
-                    />
-                  </div>
-                  <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <label className="text-sm font-bold text-muted-foreground uppercase tracking-tighter">Location</label>
-                      <button
-                        type="button"
-                        onClick={handleUseMyLocation}
-                        className="text-[10px] text-green-600 font-bold hover:text-green-700 underline"
-                      >
-                        Use My Location
-                      </button>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <input
-                        type="number"
-                        step="0.000001"
-                        placeholder="Lat"
-                        value={formData.latitude}
-                        onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
-                        className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none font-mono text-xs bg-muted/50 text-foreground"
-                      />
-                      <input
-                        type="number"
-                        step="0.000001"
-                        placeholder="Lng"
-                        value={formData.longitude}
-                        onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
-                        className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none font-mono text-xs bg-muted/50 text-foreground"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-bold text-muted-foreground mb-1 uppercase tracking-tighter text-left">Tea Clone *</label>
-                  <input
-                    required
-                    type="text"
-                    placeholder="e.g. TRI-2025"
-                    value={formData.teaClone}
-                    onChange={(e) => setFormData({ ...formData, teaClone: e.target.value })}
-                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none bg-muted/50 text-foreground"
+                    type="number"
+                    step="0.1"
+                    placeholder="e.g. 5.5"
+                    value={formData.acreage}
+                    onChange={(e) => setFormData({ ...formData, acreage: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none"
                   />
                 </div>
-
                 <div>
-                  <label className="block text-sm font-bold text-muted-foreground mb-1 uppercase tracking-tighter text-left">Soil Type</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Status</label>
                   <select
-                    value={formData.soilType}
-                    onChange={(e) => setFormData({ ...formData, soilType: e.target.value })}
-                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none bg-muted/50 text-foreground"
+                    value={formData.status}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none"
                   >
-                    <option>Red-Yellow Podzolic Soils (RYP)</option>
-                    <option>Reddish Brown Latosolic Soils (RBL)</option>
-                    <option>Immature Brown Loams (IBL)</option>
-                    <option>Bog and Half Bog Soils</option>
-                    <option>Latosols and Regosols</option>
+                    <option value="Active">Active</option>
+                    <option value="Resting">Resting</option>
+                    <option value="Maintenance">Maintenance</option>
                   </select>
                 </div>
+              </div>
 
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-muted-foreground mb-1 uppercase tracking-tighter text-left">Planting Date</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Soil pH</label>
                   <input
-                    type="date"
-                    value={formData.plantingDate}
-                    onChange={(e) => setFormData({ ...formData, plantingDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none font-mono text-sm bg-muted/50 text-foreground"
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="14"
+                    placeholder="e.g. 5.5"
+                    value={formData.soilPh}
+                    onChange={(e) => setFormData({ ...formData, soilPh: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none font-mono"
                   />
                 </div>
-
-                <div className="flex gap-3 pt-4 border-t border-border mt-6">
-                  <button
-                    type="button"
-                    onClick={() => setShowAddModal(false)}
-                    disabled={isSubmitting}
-                    className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg font-bold hover:bg-muted transition-all transition-colors disabled:opacity-50"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-green-100 dark:shadow-none"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        Saving...
-                      </>
-                    ) : (
-                      editingPlot ? 'Update Plot' : 'Create Plot'
-                    )}
-                  </button>
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-sm font-semibold text-gray-700">Location</label>
+                    <button
+                      type="button"
+                      onClick={handleUseMyLocation}
+                      className="text-[10px] text-green-600 font-bold hover:text-green-700 underline"
+                    >
+                      Use My Location
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="number"
+                      step="0.000001"
+                      placeholder="Latitude"
+                      value={formData.latitude}
+                      onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none font-mono text-sm"
+                    />
+                    <input
+                      type="number"
+                      step="0.000001"
+                      placeholder="Longitude"
+                      value={formData.longitude}
+                      onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none font-mono text-sm"
+                    />
+                  </div>
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Tea Clone *</label>
+                <input
+                  required
+                  type="text"
+                  placeholder="e.g. TRI-2025"
+                  value={formData.teaClone}
+                  onChange={(e) => setFormData({ ...formData, teaClone: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Soil Type</label>
+                <select
+                  value={formData.soilType}
+                  onChange={(e) => setFormData({ ...formData, soilType: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none"
+                >
+                  <option>Red-Yellow Podzolic Soils (RYP)</option>
+                  <option>Reddish Brown Latosolic Soils (RBL)</option>
+                  <option>Immature Brown Loams (IBL)</option>
+                  <option>Bog and Half Bog Soils</option>
+                  <option>Latosols and Regosols</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Planting Date</label>
+                <input
+                  type="date"
+                  value={formData.plantingDate}
+                  onChange={(e) => setFormData({ ...formData, plantingDate: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none font-mono text-sm"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t border-gray-100 mt-6">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    editingPlot ? 'Update Plot' : 'Create Plot'
+                  )}
+                </button>
+              </div>
             </form>
           </div>
         </div>
       )}
       {/* Plot Details Modal */}
       {selectedPlotDetails && (
-        <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-          <div className="bg-card rounded-xl shadow-xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200 border border-border">
-            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-muted/50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                  <MapPin className="w-5 h-5 text-green-700 dark:text-green-400" />
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <MapPin className="w-5 h-5 text-green-700" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-foreground">{selectedPlotDetails.blockId}</h2>
-                  <p className="text-xs text-muted-foreground">Full Registry Details & History</p>
+                  <h2 className="text-xl font-bold text-gray-900">{selectedPlotDetails.blockId}</h2>
+                  <p className="text-xs text-gray-500">Full Registry Details & History</p>
                 </div>
               </div>
               <button
                 onClick={() => setSelectedPlotDetails(null)}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
               >
                 <Plus className="w-6 h-6 rotate-45" />
               </button>
@@ -645,47 +645,47 @@ export function PlotsPage() {
               {/* Basic Info Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
                 <div>
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Acreage</p>
-                  <p className="text-lg font-bold text-foreground">{selectedPlotDetails.acreage} ac</p>
+                  <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1">Acreage</p>
+                  <p className="text-lg font-bold text-gray-800">{selectedPlotDetails.acreage} ac</p>
                 </div>
                 <div>
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Tea Clone</p>
-                  <p className="text-lg font-bold text-foreground">{selectedPlotDetails.teaClone}</p>
+                  <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1">Tea Clone</p>
+                  <p className="text-lg font-bold text-gray-800">{selectedPlotDetails.teaClone}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Status</p>
+                  <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1">Status</p>
                   <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${getStatusColor(selectedPlotDetails.status)}`}>
                     {selectedPlotDetails.status}
                   </span>
                 </div>
                 <div>
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Planting Date</p>
-                  <p className="text-lg font-bold text-foreground">{selectedPlotDetails.plantingDate}</p>
+                  <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1">Planting Date</p>
+                  <p className="text-lg font-bold text-gray-800">{selectedPlotDetails.plantingDate}</p>
                 </div>
               </div>
 
               {/* Environmental Info */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-muted/50 p-4 rounded-xl border border-border">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 p-4 rounded-xl border border-gray-100">
                 <div className="space-y-3">
-                  <h4 className="text-sm font-bold text-foreground border-b border-border pb-2">Soil Characteristics</h4>
+                  <h4 className="text-sm font-bold text-gray-700 border-b border-gray-200 pb-2">Soil Characteristics</h4>
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-muted-foreground">Current pH recorded:</span>
-                    <span className="font-bold text-blue-600 dark:text-blue-400">{selectedPlotDetails.soilPh || 'N/A'}</span>
+                    <span className="text-gray-500">Current pH recorded:</span>
+                    <span className="font-bold text-blue-600">{selectedPlotDetails.soilPh || 'N/A'}</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-muted-foreground">Soil Type:</span>
-                    <span className="font-bold text-foreground">{selectedPlotDetails.soilType || 'N/A'}</span>
+                    <span className="text-gray-500">Soil Type:</span>
+                    <span className="font-bold text-gray-700">{selectedPlotDetails.soilType || 'N/A'}</span>
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <h4 className="text-sm font-bold text-foreground border-b border-border pb-2">Geographic Location</h4>
+                  <h4 className="text-sm font-bold text-gray-700 border-b border-gray-200 pb-2">Geographic Location</h4>
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-muted-foreground">Coordinates:</span>
-                    <span className="font-bold text-orange-600 dark:text-orange-400 font-mono">
+                    <span className="text-gray-500">Coordinates:</span>
+                    <span className="font-bold text-orange-600 font-mono">
                       {selectedPlotDetails.latitude ? `${selectedPlotDetails.latitude.toFixed(6)}, ${selectedPlotDetails.longitude?.toFixed(6)}` : 'N/A'}
                     </span>
                   </div>
-                  <div className="text-[10px] text-muted-foreground italic">
+                  <div className="text-[10px] text-gray-400 italic">
                     Coordinates used for localized weather forecasting and precision agricultural mapping.
                   </div>
                 </div>
@@ -726,10 +726,10 @@ export function PlotsPage() {
               </div>
             </div>
 
-            <div className="px-6 py-4 bg-muted/50 border-t border-border flex justify-end">
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end">
               <button
                 onClick={() => setSelectedPlotDetails(null)}
-                className="px-6 py-2 bg-card border border-border rounded-lg text-foreground font-bold hover:bg-muted transition-colors transition-all"
+                className="px-6 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 font-bold hover:bg-gray-100 transition-colors"
               >
                 Close
               </button>
@@ -740,16 +740,16 @@ export function PlotsPage() {
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-[60] backdrop-blur-sm">
-          <div className="bg-card rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200 border border-border">
-            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-red-50 dark:bg-red-950/30">
-              <h2 className="text-xl font-bold text-red-900 dark:text-red-400 text-left">Confirm Deletion</h2>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[60] backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-red-50">
+              <h2 className="text-xl font-bold text-red-900 text-left">Confirm Deletion</h2>
               <button 
                 onClick={() => setShowDeleteModal(false)} 
-                className="text-muted-foreground hover:text-foreground p-1 transition-colors"
+                className="text-gray-400 hover:text-gray-600 p-1"
                 disabled={isSubmitting}
               >
-                <Plus className="w-6 h-6 rotate-45" />
+                <X className="w-6 h-6" />
               </button>
             </div>
             
@@ -772,19 +772,19 @@ export function PlotsPage() {
                 </div>
               )}
 
-              <div className="flex gap-3 pt-4 border-t border-border mt-6">
+              <div className="flex gap-3 pt-4 border-t border-gray-100">
                 <button
                   type="button"
                   onClick={() => setShowDeleteModal(false)}
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg font-bold hover:bg-muted transition-colors transition-all"
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-bold hover:bg-gray-50 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={confirmDelete}
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-red-200 dark:shadow-none"
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-red-200"
                 >
                   {isSubmitting ? (
                     <>

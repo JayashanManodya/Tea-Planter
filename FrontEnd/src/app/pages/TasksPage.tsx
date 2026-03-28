@@ -271,7 +271,7 @@ export function TasksPage() {
     if (loading || !isLoaded) {
         return (
             <div className="flex items-center justify-center h-full">
-                <Loader2 className="w-8 h-8 animate-spin text-green-600 dark:text-green-400" />
+                <Loader2 className="w-8 h-8 animate-spin text-green-600" />
             </div>
         );
     }
@@ -280,14 +280,14 @@ export function TasksPage() {
         <div className="p-6 space-y-6 text-left">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-black text-foreground uppercase tracking-tight">Task Management</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">Task Management</h1>
                     <div className="flex items-center gap-2 mt-1">
-                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-70">Period:</p>
+                        <p className="text-sm font-medium text-gray-600">Period:</p>
                         <input
                             type="month"
                             value={selectedMonth}
                             onChange={(e) => setSelectedMonth(e.target.value)}
-                            className="px-2 py-0.5 border border-border rounded text-[10px] font-black uppercase tracking-tight focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground"
+                            className="px-2 py-0.5 border border-gray-300 rounded text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
                         />
                     </div>
                 </div>
@@ -304,41 +304,41 @@ export function TasksPage() {
                                 });
                                 setShowRateModal(true);
                             }}
-                            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-black uppercase tracking-widest text-[10px] transition-all shadow-md shadow-blue-100 dark:shadow-none"
+                            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
                         >
-                            <Settings2 className="w-4 h-4" />
-                            Manage Types
+                            <Settings2 className="w-5 h-5" />
+                            Manage Task Types
                         </button>
                         <button
                             onClick={() => setShowAssignModal(true)}
-                            className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-black uppercase tracking-widest text-[10px] transition-all shadow-md shadow-green-100 dark:shadow-none"
+                            className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
                         >
-                            <Plus className="w-4 h-4" />
+                            <Plus className="w-5 h-5" />
                             Assign Task
                         </button>
                     </div>
                 )}
             </div>
 
-            <div className="bg-card rounded-lg border border-border p-4 space-y-4 shadow-sm">
+            <div className="bg-white rounded-lg border border-gray-200 p-4 space-y-4">
                 <div className="flex flex-col md:flex-row gap-4">
                     <div className="flex-1 relative">
-                        <Search className="w-4 h-4 text-muted-foreground/50 absolute left-3 top-1/2 -translate-y-1/2" />
+                        <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                         <input
                             type="text"
                             placeholder="Search tasks, descriptions or workers..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground font-black uppercase tracking-tight text-xs"
+                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                         />
                     </div>
                     <div className="flex flex-wrap items-center gap-3">
-                        <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-lg border border-border">
-                            <Filter className="w-4 h-4 text-muted-foreground" />
+                        <div className="flex items-center gap-2">
+                            <Filter className="w-4 h-4 text-gray-400" />
                             <select
                                 value={statusFilter}
                                 onChange={(e) => setStatusFilter(e.target.value)}
-                                className="bg-transparent text-[10px] font-black uppercase tracking-tight outline-none text-foreground"
+                                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
                             >
                                 <option value="ALL">All Status</option>
                                 <option value="ASSIGNED">Assigned</option>
@@ -350,7 +350,7 @@ export function TasksPage() {
                         <select
                             value={priorityFilter}
                             onChange={(e) => setPriorityFilter(e.target.value)}
-                            className="px-3 py-2 border border-border rounded-lg text-[10px] font-black uppercase tracking-tight focus:ring-2 focus:ring-green-500 outline-none bg-muted text-foreground"
+                            className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
                         >
                             <option value="ALL">All Priorities</option>
                             <option value="HIGH">High Priority</option>
@@ -360,20 +360,20 @@ export function TasksPage() {
                         <select
                             value={blockFilter}
                             onChange={(e) => setBlockFilter(e.target.value)}
-                            className="px-3 py-2 border border-border rounded-lg text-[10px] font-black uppercase tracking-tight focus:ring-2 focus:ring-green-500 outline-none bg-muted text-foreground"
+                            className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
                         >
                             <option value="ALL">All Blocks</option>
                             {plots.map(p => (
                                 <option key={p.id} value={p.blockId}>{p.blockId}</option>
                             ))}
                         </select>
-                        <div className="h-8 w-px bg-border hidden md:block" />
-                        <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-lg border border-border">
-                            <ArrowUpDown className="w-4 h-4 text-muted-foreground" />
+                        <div className="h-8 w-px bg-gray-200 hidden md:block" />
+                        <div className="flex items-center gap-2">
+                            <ArrowUpDown className="w-4 h-4 text-gray-400" />
                             <select
                                 value={sortBy}
                                 onChange={(e) => setSortBy(e.target.value)}
-                                className="bg-transparent text-[10px] font-black uppercase tracking-tight outline-none text-foreground"
+                                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
                             >
                                 <option value="date-desc">Newest First</option>
                                 <option value="date-asc">Oldest First</option>
@@ -384,9 +384,9 @@ export function TasksPage() {
                 </div>
 
                 {(searchTerm || statusFilter !== 'ALL' || priorityFilter !== 'ALL' || blockFilter !== 'ALL') && (
-                    <div className="flex items-center justify-between pt-2 border-t border-border">
-                        <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-70">
-                            Found <span className="text-green-600 dark:text-green-400">{filteredTasks.length}</span> results
+                    <div className="flex items-center justify-between pt-2 border-t border-gray-50">
+                        <p className="text-xs text-gray-500">
+                            Found <span className="font-bold text-green-600">{filteredTasks.length}</span> results
                         </p>
                         <button
                             onClick={() => {
@@ -395,7 +395,7 @@ export function TasksPage() {
                                 setPriorityFilter('ALL');
                                 setBlockFilter('ALL');
                             }}
-                            className="text-[10px] font-black text-red-600 hover:text-red-700 uppercase tracking-widest transition-all"
+                            className="text-xs font-medium text-red-600 hover:text-red-700"
                         >
                             Clear all filters
                         </button>
@@ -405,86 +405,77 @@ export function TasksPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {filteredTasks.map((task) => (
-                    <div key={task.id} className="bg-card rounded-xl border border-border shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col group">
+                    <div key={task.id} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col">
                         <div className="p-5 flex-1">
                             <div className="flex justify-between items-start mb-3">
-                                <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-[0.1em] border border-border ${
-                                    task.status === 'COMPLETED' ? 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400' :
-                                    task.status === 'IN_PROGRESS' ? 'bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400' :
-                                    task.status === 'CANCELLED' ? 'bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-400' :
-                                    'bg-muted text-muted-foreground'
-                                }`}>
+                                <span className={`px-2 py-1 rounded-full text-[10px] font-bold border ${getStatusStyle(task.status)}`}>
                                     {task.status.replace('_', ' ')}
                                 </span>
-                                <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-[0.1em] ${
-                                    task.priority === 'HIGH' ? 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/20' :
-                                    task.priority === 'MEDIUM' ? 'text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/20' :
-                                    'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/20'
-                                }`}>
+                                <span className={`px-2 py-1 rounded text-[10px] font-bold ${getPriorityStyle(task.priority)}`}>
                                     {task.priority} PRIORITY
                                 </span>
                             </div>
 
-                            <h3 className="text-lg font-black text-foreground mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{task.title}</h3>
-                            <div className="flex items-center gap-2 text-[10px] font-black text-muted-foreground uppercase mb-3 tracking-widest opacity-70">
+                            <h3 className="text-lg font-bold text-gray-900 mb-2">{task.title}</h3>
+                            <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
                                 <Calendar className="w-3.5 h-3.5" />
                                 <span className="font-semibold">{new Date(task.taskDate).toLocaleDateString()}</span>
                             </div>
 
                             <div className="space-y-2 mt-auto">
-                                <div className="flex items-center gap-2 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                                <div className="flex items-center gap-2 text-xs text-gray-500">
                                     <User className="w-3.5 h-3.5" />
-                                    <span className="text-foreground">
+                                    <span className="font-medium text-gray-700">
                                         {task.assignedWorker?.user?.name || 'Unassigned'}
                                     </span>
                                 </div>
-                                <div className="flex items-center gap-2 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                                <div className="flex items-center gap-2 text-xs text-gray-500">
                                     <MapPin className="w-3.5 h-3.5" />
-                                    <span className="text-foreground">
+                                    <span className="font-medium text-gray-700">
                                         {task.plotId || 'General'}
                                     </span>
                                 </div>
                                 {task.taskCategory && (
-                                    <div className="flex items-center gap-2 text-[10px] font-black text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/20 px-2 py-1 rounded uppercase tracking-[0.1em] border border-blue-100/50 dark:border-blue-900/30">
+                                    <div className="flex items-center gap-2 text-xs text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded">
                                         {task.taskCategory}
                                         {task.paymentAmount && (
-                                            <span className="ml-auto text-green-700 dark:text-green-400">LKR {task.paymentAmount.toLocaleString()}</span>
+                                            <span className="ml-auto text-green-700">LKR {task.paymentAmount.toLocaleString()}</span>
                                         )}
                                     </div>
                                 )}
                             </div>
 
-                            <div className="bg-muted/30 rounded-lg p-3 mt-4 border-l-4 border-green-500/50 text-left">
-                                <p className="text-sm text-foreground font-bold tracking-tight opacity-80 whitespace-pre-wrap leading-relaxed break-words italic">
+                            <div className="bg-gray-50 rounded-lg p-3 mt-4 border-l-4 border-green-500/20 text-left">
+                                <p className="text-sm text-gray-600 whitespace-pre-wrap leading-relaxed break-words">
                                     {task.description || "No description provided."}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="px-5 py-2 flex justify-end gap-2 border-t border-border bg-muted/10">
+                        <div className="px-5 py-2 flex justify-end gap-2 border-t border-gray-50">
                             {userRole !== 'worker' && (
                                 <button
                                     onClick={() => openEditModal(task)}
-                                    className="p-1 px-2 text-blue-600 dark:text-blue-400 hover:underline transition-all flex items-center gap-1 text-[10px] font-black uppercase tracking-widest"
+                                    className="p-1 px-2 text-blue-600 hover:bg-blue-50 rounded transition-colors flex items-center gap-1 text-xs font-bold"
                                 >
-                                    <Edit2 className="w-3 h-3" />
+                                    <Edit2 className="w-3.5 h-3.5" />
                                     EDIT
                                 </button>
                             )}
                             {(task.status === 'ASSIGNED' || userRole === 'owner') && (
                                 <button
                                     onClick={() => handleDeleteTask(task.id)}
-                                    className="p-1 px-2 text-red-600 dark:text-red-400 hover:underline transition-all flex items-center gap-1 text-[10px] font-black uppercase tracking-widest"
+                                    className="p-1 px-2 text-red-600 hover:bg-red-50 rounded transition-colors flex items-center gap-1 text-xs font-bold"
                                 >
-                                    <Trash2 className="w-3 h-3" />
+                                    <Trash2 className="w-3.5 h-3.5" />
                                     DELETE
                                 </button>
                             )}
                         </div>
 
-                        <div className="bg-muted px-5 py-3 border-t border-border flex justify-between items-center gap-2">
+                        <div className="bg-gray-50 px-5 py-3 border-t border-gray-100 flex justify-between gap-2">
                             <select
-                                className="text-[10px] font-black uppercase tracking-widest bg-card border border-border rounded px-2 py-1 outline-none text-foreground"
+                                className="text-xs font-semibold bg-white border border-gray-200 rounded px-2 py-1 outline-none"
                                 value={task.status}
                                 onChange={(e) => handleUpdateStatus(task.id, e.target.value)}
                             >
@@ -496,7 +487,7 @@ export function TasksPage() {
                             <button
                                 onClick={() => handleUpdateStatus(task.id, 'COMPLETED')}
                                 disabled={task.status === 'COMPLETED'}
-                                className="text-[10px] font-black uppercase tracking-widest text-white bg-green-600 hover:bg-green-700 disabled:bg-muted disabled:text-muted-foreground px-4 py-1.5 rounded transition-all shadow-sm"
+                                className="text-xs font-bold text-white bg-green-600 hover:bg-green-700 disabled:bg-gray-300 px-3 py-1 rounded transition-colors"
                             >
                                 Mark Done
                             </button>
@@ -505,19 +496,19 @@ export function TasksPage() {
                 ))}
 
                 {filteredTasks.length === 0 && (
-                    <div className="col-span-full py-20 text-center bg-muted/10 rounded-xl border border-dashed border-border opacity-50">
-                        <Clock className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                        <p className="text-muted-foreground font-black uppercase tracking-widest text-xs">No tasks found matching your filters.</p>
+                    <div className="col-span-full py-12 text-center bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                        <Clock className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                        <p className="text-gray-500 font-medium">No tasks found matching your filters.</p>
                     </div>
                 )}
             </div>
 
             {/* Assign Task Modal */}
             {showAssignModal && (
-                <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50 backdrop-blur-md">
-                    <div className="bg-card rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200 text-left border border-border">
-                        <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-green-50 dark:bg-green-950/30">
-                            <h2 className="text-xl font-black text-green-900 dark:text-green-400 uppercase tracking-tighter">{editingTask ? 'Edit Task' : 'Assign New Task'}</h2>
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+                    <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200 text-left">
+                        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-green-50">
+                            <h2 className="text-xl font-bold text-green-900">{editingTask ? 'Edit Task' : 'Assign New Task'}</h2>
                             <button
                                 onClick={() => {
                                     setShowAssignModal(false);
@@ -532,7 +523,7 @@ export function TasksPage() {
                                         taskDate: new Date().toISOString().split('T')[0]
                                     });
                                 }}
-                                className="text-muted-foreground hover:text-foreground transition-colors"
+                                className="text-gray-400 hover:text-gray-600 transition-colors"
                                 disabled={isSubmitting}
                             >
                                 <Plus className="w-6 h-6 rotate-45" />
@@ -541,12 +532,12 @@ export function TasksPage() {
 
                         <form onSubmit={handleAssignTask} className="p-6 space-y-4">
                             <div>
-                                <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1 text-left">Worker *</label>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1 text-left">Worker *</label>
                                 <select
                                     required
                                     value={assignFormData.workerId}
                                     onChange={(e) => setAssignFormData({ ...assignFormData, workerId: e.target.value })}
-                                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground font-black uppercase tracking-tight"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                                 >
                                     <option value="">Select Worker</option>
                                     {workers.map(w => (
@@ -556,24 +547,24 @@ export function TasksPage() {
                             </div>
 
                             <div>
-                                <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1 text-left">Task Title *</label>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1 text-left">Task Title *</label>
                                 <input
                                     required
                                     type="text"
                                     placeholder="e.g. Pruning Block A"
                                     value={assignFormData.title}
                                     onChange={(e) => setAssignFormData({ ...assignFormData, title: e.target.value })}
-                                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground font-bold tracking-tight"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1 text-left">Task Category *</label>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1 text-left">Task Category *</label>
                                 <select
                                     required
                                     value={assignFormData.taskCategory}
                                     onChange={(e) => setAssignFormData({ ...assignFormData, taskCategory: e.target.value })}
-                                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground font-black uppercase tracking-tight"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                                 >
                                     <option value="">Select Category</option>
                                     {taskRates.map(rate => (
@@ -583,33 +574,33 @@ export function TasksPage() {
                             </div>
 
                             <div>
-                                <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1 text-left">Task Date *</label>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1 text-left">Task Date *</label>
                                 <input
                                     required
                                     type="date"
                                     value={assignFormData.taskDate}
                                     onChange={(e) => setAssignFormData({ ...assignFormData, taskDate: e.target.value })}
-                                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground font-bold"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1 text-left">Description</label>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1 text-left">Description</label>
                                 <textarea
                                     value={assignFormData.description}
                                     onChange={(e) => setAssignFormData({ ...assignFormData, description: e.target.value })}
-                                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 outline-none h-32 resize-none bg-card text-foreground font-bold"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none h-32 resize-none"
                                     placeholder="Add detailed instructions for the worker..."
                                 />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1 text-left">Priority</label>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-1 text-left">Priority</label>
                                     <select
                                         value={assignFormData.priority}
                                         onChange={(e) => setAssignFormData({ ...assignFormData, priority: e.target.value })}
-                                        className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground font-black uppercase tracking-tight"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                                     >
                                         <option value="LOW">Low</option>
                                         <option value="MEDIUM">Medium</option>
@@ -617,11 +608,11 @@ export function TasksPage() {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1 text-left">Plot / Block</label>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-1 text-left">Plot / Block</label>
                                     <select
                                         value={assignFormData.plotId}
                                         onChange={(e) => setAssignFormData({ ...assignFormData, plotId: e.target.value })}
-                                        className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground font-black uppercase tracking-tight"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                                     >
                                         <option value="">General / No Block</option>
                                         {plots.map(plot => (
@@ -631,19 +622,19 @@ export function TasksPage() {
                                 </div>
                             </div>
 
-                            <div className="flex gap-3 pt-6 border-t border-border mt-6">
+                            <div className="flex gap-3 pt-4 border-t border-gray-100">
                                 <button
                                     type="button"
                                     onClick={() => setShowAssignModal(false)}
                                     disabled={isSubmitting}
-                                    className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg font-black uppercase tracking-widest text-[10px] hover:bg-muted transition-all"
+                                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg font-black uppercase tracking-widest text-[10px] hover:bg-green-700 transition-all flex items-center justify-center gap-2 shadow-md shadow-green-100 dark:shadow-none"
+                                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
                                 >
                                     {isSubmitting ? (
                                         <>
@@ -662,51 +653,51 @@ export function TasksPage() {
 
             {/* Manage Task Types Modal */}
             {showRateModal && (
-                <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-[60] backdrop-blur-md">
-                    <div className="bg-card rounded-xl shadow-xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200 border border-border text-left">
-                        <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-blue-50 dark:bg-blue-950/30">
-                            <h2 className="text-xl font-black text-blue-900 dark:text-blue-400 uppercase tracking-tighter">Manage Task Types & Rates</h2>
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[60] backdrop-blur-sm">
+                    <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+                        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-blue-50">
+                            <h2 className="text-xl font-bold text-blue-900">Manage Task Types & Rates</h2>
                             <button
                                 onClick={() => setShowRateModal(false)}
-                                className="text-muted-foreground hover:text-foreground transition-colors"
+                                className="text-gray-400 hover:text-gray-600 transition-colors"
                             >
                                 <Plus className="w-6 h-6 rotate-45" />
                             </button>
                         </div>
 
-                        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Form Side */}
                             <form onSubmit={handleSaveRate} className="space-y-4">
-                                <h3 className="font-black text-foreground text-xs uppercase tracking-widest opacity-70 mb-4">{editingRate ? 'Edit Task Type' : 'Add New Task Type'}</h3>
+                                <h3 className="font-bold text-gray-900 text-sm text-left">{editingRate ? 'Edit Task Type' : 'Add New Task Type'}</h3>
                                 <div>
-                                    <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Task Name (Category) *</label>
+                                    <label className="block text-xs font-semibold text-gray-700 mb-1 text-left">Task Name (Category) *</label>
                                     <input
                                         required
                                         type="text"
                                         placeholder="e.g. PRUNING"
                                         value={rateFormData.category}
                                         onChange={(e) => setRateFormData({ ...rateFormData, category: e.target.value.toUpperCase() })}
-                                        className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground font-black uppercase tracking-tight"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none uppercase"
                                     />
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Rate (LKR) *</label>
+                                        <label className="block text-xs font-semibold text-gray-700 mb-1 text-left">Rate (LKR) *</label>
                                         <input
                                             required
                                             type="number"
                                             placeholder="e.g. 50"
                                             value={rateFormData.rate}
                                             onChange={(e) => setRateFormData({ ...rateFormData, rate: e.target.value })}
-                                            className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground font-bold"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Unit</label>
+                                        <label className="block text-xs font-semibold text-gray-700 mb-1 text-left">Unit</label>
                                         <select
                                             value={rateFormData.unit}
                                             onChange={(e) => setRateFormData({ ...rateFormData, unit: e.target.value })}
-                                            className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground font-black uppercase tracking-tight"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                                         >
                                             <option value="PER_KG">Per KG</option>
                                             <option value="PER_PROCESS">Per Process</option>
@@ -714,20 +705,20 @@ export function TasksPage() {
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Details (Description)</label>
+                                    <label className="block text-xs font-semibold text-gray-700 mb-1 text-left">Details (Description)</label>
                                     <textarea
                                         rows={2}
                                         placeholder="Add task details..."
                                         value={rateFormData.description}
                                         onChange={(e) => setRateFormData({ ...rateFormData, description: e.target.value })}
-                                        className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm bg-card text-foreground font-bold"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
                                     />
                                 </div>
-                                <div className="flex gap-2 pt-4">
+                                <div className="flex gap-2 pt-2">
                                     <button
                                         type="submit"
                                         disabled={isSubmitting}
-                                        className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-black uppercase tracking-widest text-[10px] hover:bg-blue-700 transition-all disabled:opacity-50"
+                                        className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-bold text-sm hover:bg-blue-700 transition-colors disabled:bg-blue-300"
                                     >
                                         {isSubmitting ? 'Saving...' : (editingRate ? 'Update Type' : 'Create Type')}
                                     </button>
@@ -738,7 +729,7 @@ export function TasksPage() {
                                                 setEditingRate(null);
                                                 setRateFormData({ category: '', rate: '', unit: 'PER_PROCESS', description: '' });
                                             }}
-                                            className="px-4 py-2 border border-border text-foreground rounded-lg font-black uppercase tracking-widest text-[10px] hover:bg-muted"
+                                            className="px-4 py-2 border border-gray-300 text-gray-600 rounded-lg font-bold text-sm hover:bg-gray-50"
                                         >
                                             Cancel
                                         </button>
@@ -748,17 +739,17 @@ export function TasksPage() {
 
                             {/* List Side */}
                             <div className="space-y-4">
-                                <h3 className="font-black text-foreground text-xs uppercase tracking-widest opacity-70 mb-4">Existing Task Types</h3>
-                                <div className="border border-border rounded-lg overflow-y-auto max-h-[300px] bg-muted/20">
+                                <h3 className="font-bold text-gray-900 text-sm text-left">Existing Task Types</h3>
+                                <div className="border border-gray-200 rounded-lg overflow-y-auto max-h-[300px]">
                                     {taskRates.map(rate => (
-                                        <div key={rate.id} className="p-4 border-b border-border/50 last:border-0 hover:bg-muted group transition-colors">
+                                        <div key={rate.id} className="p-3 border-b border-gray-100 last:border-0 hover:bg-gray-50 group">
                                             <div className="flex justify-between items-start">
                                                 <div className="text-left">
-                                                    <p className="font-black text-sm text-foreground uppercase tracking-tight">{rate.category}</p>
-                                                    <p className="text-xs text-green-700 dark:text-green-400 font-bold mt-1">LKR {rate.rate} / {rate.unit.replace('PER_', '')}</p>
-                                                    {rate.description && <p className="text-[10px] text-muted-foreground mt-2 font-medium italic">{rate.description}</p>}
+                                                    <p className="font-bold text-sm text-gray-900">{rate.category}</p>
+                                                    <p className="text-xs text-green-700 font-bold">LKR {rate.rate} / {rate.unit.replace('PER_', '')}</p>
+                                                    {rate.description && <p className="text-[10px] text-gray-500 mt-1">{rate.description}</p>}
                                                 </div>
-                                                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <button
                                                         onClick={() => {
                                                             setEditingRate(rate);
@@ -769,13 +760,13 @@ export function TasksPage() {
                                                                 description: rate.description || ''
                                                             });
                                                         }}
-                                                        className="p-1 px-2 text-blue-600 dark:text-blue-400 hover:underline text-[10px] font-black uppercase tracking-widest"
+                                                        className="p-1 px-2 text-blue-600 hover:bg-blue-50 rounded text-[10px] font-bold"
                                                     >
                                                         EDIT
                                                     </button>
                                                     <button
                                                         onClick={() => handleDeleteRate(rate.id)}
-                                                        className="p-1 px-2 text-red-600 dark:text-red-400 hover:underline text-[10px] font-black uppercase tracking-widest"
+                                                        className="p-1 px-2 text-red-600 hover:bg-red-50 rounded text-[10px] font-bold"
                                                     >
                                                         DELETE
                                                     </button>
@@ -784,7 +775,7 @@ export function TasksPage() {
                                         </div>
                                     ))}
                                     {taskRates.length === 0 && (
-                                        <div className="p-12 text-center text-muted-foreground text-xs font-black uppercase tracking-[0.2em] opacity-50">
+                                        <div className="p-8 text-center text-gray-400 text-sm">
                                             No task types defined yet.
                                         </div>
                                     )}

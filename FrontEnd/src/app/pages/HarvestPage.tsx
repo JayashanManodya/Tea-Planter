@@ -255,7 +255,7 @@ export function HarvestPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <Loader2 className="w-8 h-8 animate-spin text-green-600 dark:text-green-400" />
+        <Loader2 className="w-8 h-8 animate-spin text-green-600" />
       </div>
     );
   }
@@ -263,14 +263,14 @@ export function HarvestPage() {
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <div className="text-left">
-          <h1 className="text-2xl font-bold text-foreground">Harvest & Yield Tracker</h1>
-          <p className="text-muted-foreground mt-1">Monitor and record worker leaf yield</p>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Harvest & Yield Tracker</h1>
+          <p className="text-gray-600 mt-1">Monitor and record worker leaf yield</p>
         </div>
         <div className="flex gap-3">
           <button
             onClick={startScanner}
-            className="flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-bold uppercase tracking-wider text-xs transition-all shadow-md shadow-orange-100 dark:shadow-none"
+            className="flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-medium transition-colors"
           >
             <QrCode className="w-5 h-5" />
             Scan & Record
@@ -287,7 +287,7 @@ export function HarvestPage() {
               });
               setShowModal(true);
             }}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold uppercase tracking-wider text-xs transition-all shadow-md shadow-green-100 dark:shadow-none"
+            className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium"
           >
             <Plus className="w-5 h-5" />
             Record Harvest
@@ -296,38 +296,38 @@ export function HarvestPage() {
       </div>
 
       {/* Enhanced Filter Section */}
-      <div className="bg-card rounded-xl border border-border p-4 shadow-sm space-y-4">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm space-y-4">
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Search Bar */}
           <div className="flex-1 relative">
-            <Search className="w-5 h-5 text-muted-foreground/50 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search by worker name or block ID..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition-all bg-card text-foreground font-bold"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition-all"
             />
           </div>
 
           {/* Filter Dropdowns */}
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-muted-foreground" />
+              <Calendar className="w-4 h-4 text-gray-400" />
               <input
                 type="month"
                 value={selectedMonth}
                 onChange={(e) => setSelectedMonth(e.target.value)}
-                className="px-3 py-2 border border-border rounded-lg text-sm font-bold focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground"
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
               />
             </div>
 
             <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-muted-foreground" />
+              <Filter className="w-4 h-4 text-gray-400" />
               <select
                 value={selectedWorker}
                 onChange={(e) => setSelectedWorker(e.target.value)}
-                className="px-3 py-2 border border-border rounded-lg text-sm font-bold focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground"
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
               >
                 <option value="ALL">All Workers</option>
                 {workers.map(w => (
@@ -339,7 +339,7 @@ export function HarvestPage() {
             <select
               value={selectedPlot}
               onChange={(e) => setSelectedPlot(e.target.value)}
-              className="px-3 py-2 border border-border rounded-lg text-sm font-bold focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground"
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
             >
               <option value="ALL">All Blocks</option>
               {plots.map(p => (
@@ -347,12 +347,12 @@ export function HarvestPage() {
               ))}
             </select>
 
-            <div className="flex items-center gap-2 border-l pl-3 ml-2 border-border">
-              <ArrowUpDown className="w-4 h-4 text-muted-foreground" />
+            <div className="flex items-center gap-2 border-l pl-3 ml-2 border-gray-200">
+              <ArrowUpDown className="w-4 h-4 text-gray-400" />
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-2 border border-border rounded-lg text-sm font-bold focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground"
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
               >
                 <option value="date-desc">Newest First</option>
                 <option value="date-asc">Oldest First</option>
@@ -366,102 +366,82 @@ export function HarvestPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-card rounded-lg border border-border p-4 shadow-sm">
-          <p className="text-sm text-muted-foreground mb-1 font-bold uppercase tracking-widest text-left opacity-70">Today's Harvest</p>
-          <p className="text-2xl font-black text-foreground text-left">{todayTotal.toFixed(1)} kg</p>
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <p className="text-sm text-gray-600 mb-1">Today's Harvest</p>
+          <p className="text-2xl font-bold text-gray-900">{todayTotal.toFixed(1)} kg</p>
         </div>
-        <div className="bg-card rounded-lg border border-border p-4 shadow-sm">
-          <p className="text-sm text-muted-foreground mb-1 font-bold uppercase tracking-widest text-left opacity-70">Weekly Total</p>
-          <p className="text-2xl font-black text-foreground text-left">{weeklyTotal.toFixed(1)} kg</p>
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <p className="text-sm text-gray-600 mb-1">Weekly Total</p>
+          <p className="text-2xl font-bold text-gray-900">{weeklyTotal.toFixed(1)} kg</p>
         </div>
-        <div className="bg-card rounded-lg border border-border p-4 shadow-sm">
-          <p className="text-sm text-muted-foreground mb-1 font-bold uppercase tracking-widest text-left opacity-70">Total Records</p>
-          <p className="text-2xl font-black text-blue-600 dark:text-blue-400 text-left">{harvests.length}</p>
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <p className="text-sm text-gray-600 mb-1">Total Records</p>
+          <p className="text-2xl font-bold text-blue-600">{harvests.length}</p>
         </div>
-        <div className="bg-card rounded-lg border border-border p-4 shadow-sm">
-          <p className="text-sm text-muted-foreground mb-1 font-bold uppercase tracking-widest text-left opacity-70">Avg Net Weight</p>
-          <p className="text-2xl font-black text-green-600 dark:text-green-400 text-left">
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <p className="text-sm text-gray-600 mb-1">Average Net Weight</p>
+          <p className="text-2xl font-bold text-green-600">
             {harvests.length > 0 ? (harvests.reduce((s, h) => s + h.netWeight, 0) / harvests.length).toFixed(1) : 0} kg
           </p>
         </div>
       </div>
 
-      <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-        <h3 className="text-lg font-black text-foreground mb-6 uppercase tracking-widest text-left">Weekly Harvest Trend</h3>
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Weekly Harvest Trend</h3>
         <div className="h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={weeklyData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#888888" opacity={0.1} />
-              <XAxis 
-                dataKey="day" 
-                stroke="#888888" 
-                fontSize={12} 
-                tickLine={false} 
-                axisLine={false} 
-              />
-              <YAxis 
-                stroke="#888888" 
-                fontSize={12} 
-                tickLine={false} 
-                axisLine={false} 
-                tickFormatter={(value) => `${value}kg`}
-              />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: 'hsl(var(--card))', 
-                  borderColor: 'hsl(var(--border))',
-                  borderRadius: '8px',
-                  color: 'hsl(var(--foreground))'
-                }}
-                itemStyle={{ color: '#16a34a' }}
-              />
-              <Line type="monotone" dataKey="yield" stroke="#16a34a" strokeWidth={3} dot={{ r: 4, fill: '#16a34a' }} activeDot={{ r: 6 }} />
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="day" />
+              <YAxis />
+              <Tooltip />
+              <Line type="monotone" dataKey="yield" stroke="#16a34a" strokeWidth={2} />
             </LineChart>
           </ResponsiveContainer>
         </div>
       </div>
 
-      <div className="bg-card rounded-lg border border-border overflow-hidden shadow-sm">
-        <div className="p-4 border-b border-border bg-muted/30">
-          <h3 className="font-black text-foreground uppercase tracking-widest text-left">Recent Harvest Records</h3>
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="p-4 border-b border-gray-200">
+          <h3 className="font-semibold text-gray-900">Recent Harvest Records</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead>
-              <tr className="bg-muted/20">
-                <th className="text-left py-3 px-4 text-xs font-black text-muted-foreground uppercase tracking-wider border-b border-border">Date</th>
-                <th className="text-left py-3 px-4 text-xs font-black text-muted-foreground uppercase tracking-wider border-b border-border">Worker</th>
-                <th className="text-left py-3 px-4 text-xs font-black text-muted-foreground uppercase tracking-wider border-b border-border">Block</th>
-                <th className="text-left py-3 px-4 text-xs font-black text-muted-foreground uppercase tracking-wider border-b border-border">Weight (kg)</th>
-                <th className="text-left py-3 px-4 text-xs font-black text-muted-foreground uppercase tracking-wider border-b border-border">Details</th>
-                <th className="text-left py-3 px-4 text-xs font-black text-muted-foreground uppercase tracking-wider border-b border-border">Action</th>
-                <th className="text-left py-3 px-4 text-xs font-black text-muted-foreground uppercase tracking-wider border-b border-border">Payout</th>
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Date</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Worker</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Block</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Weight (kg)</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Details</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Action</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Payout</th>
               </tr>
             </thead>
             <tbody>
               {filteredHarvests.map((harvest) => (
-                  <tr key={harvest.id} className="border-b border-border/50 hover:bg-muted/10 transition-colors">
-                    <td className="py-3 px-4 text-sm text-foreground font-bold">{harvest.harvestDate}</td>
-                    <td className="py-3 px-4 text-sm font-black text-foreground uppercase tracking-tight">{harvest.worker.user?.name || 'Unnamed Worker'}</td>
-                    <td className="py-3 px-4 text-sm text-foreground font-medium">{harvest.plot.blockId}</td>
-                    <td className="py-3 px-4 text-sm font-black text-foreground">{harvest.netWeight.toFixed(1)}</td>
+                  <tr key={harvest.id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="py-3 px-4 text-sm text-gray-900">{harvest.harvestDate}</td>
+                    <td className="py-3 px-4 text-sm font-medium text-gray-900">{harvest.worker.user?.name || 'Unnamed Worker'}</td>
+                    <td className="py-3 px-4 text-sm text-gray-900">{harvest.plot.blockId}</td>
+                    <td className="py-3 px-4 text-sm font-semibold text-gray-900">{harvest.netWeight.toFixed(1)}</td>
                     <td className="py-3 px-4">
-                      <span className="text-[10px] text-muted-foreground font-black uppercase tracking-tighter">G: {harvest.grossWeight} | T: {harvest.tareWeight}</span>
+                      <span className="text-xs text-gray-400">G: {harvest.grossWeight} | T: {harvest.tareWeight}</span>
                     </td>
                     <td className="py-3 px-4 text-sm">
                       <div className="flex gap-2">
-                        <button onClick={() => handleEdit(harvest)} className="text-blue-600 dark:text-blue-400 hover:underline font-bold text-xs uppercase">Edit</button>
-                        <button onClick={() => handleDelete(harvest.id)} className="text-red-600 dark:text-red-400 hover:underline font-bold text-xs uppercase">Delete</button>
+                        <button onClick={() => handleEdit(harvest)} className="text-blue-600 hover:text-blue-700">Edit</button>
+                        <button onClick={() => handleDelete(harvest.id)} className="text-red-600 hover:text-red-700">Delete</button>
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-sm font-black text-green-600 dark:text-green-400">
+                    <td className="py-3 px-4 text-sm font-bold text-green-700">
                       {harvest.calculatedPay ? `LKR ${harvest.calculatedPay.toLocaleString()}` : '-'}
                     </td>
                   </tr>
                 ))}
               {harvests.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-muted-foreground text-sm font-bold uppercase tracking-widest opacity-50">No harvest records found</td>
+                  <td colSpan={7} className="py-8 text-center text-gray-500 text-sm">No harvest records found</td>
                 </tr>
               )}
             </tbody>
@@ -470,50 +450,50 @@ export function HarvestPage() {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-          <div className="bg-card rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200 border border-border">
-            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-green-50 dark:bg-green-950/30">
-              <h2 className="text-xl font-black text-green-900 dark:text-green-400 uppercase tracking-tighter">{editingRecord ? 'Edit Record' : 'Record Harvest'}</h2>
-              <button onClick={() => setShowModal(false)} className="text-muted-foreground hover:text-foreground transition-colors"><Plus className="w-6 h-6 rotate-45" /></button>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-green-50">
+              <h2 className="text-xl font-bold text-green-900">{editingRecord ? 'Edit Record' : 'Record Harvest'}</h2>
+              <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600"><X className="w-6 h-6" /></button>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
-                <label className="block text-xs font-black text-muted-foreground uppercase tracking-[0.2em] mb-1 text-left">Worker *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Worker *</label>
                 <select
                   required
                   value={formData.workerId}
                   onChange={(e) => setFormData({ ...formData, workerId: e.target.value })}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground font-bold"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                 >
                   <option value="">Select Worker</option>
                   {workers.map(w => <option key={w.id} value={w.id}>{w.user?.name || 'Unnamed Worker'}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-black text-muted-foreground uppercase tracking-[0.2em] mb-1 text-left">Plot / Block *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Plot / Block *</label>
                 <select
                   required
                   value={formData.plotId}
                   onChange={(e) => setFormData({ ...formData, plotId: e.target.value })}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground font-bold"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                 >
                   <option value="">Select Block</option>
                   {plots.map(p => <option key={p.id} value={p.blockId}>{p.blockId}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-black text-muted-foreground uppercase tracking-[0.2em] mb-1 text-left">Date *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Date *</label>
                 <input
                   required
                   type="date"
                   value={formData.harvestDate}
                   onChange={(e) => setFormData({ ...formData, harvestDate: e.target.value })}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground font-bold"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-black text-muted-foreground uppercase tracking-[0.2em] mb-1 text-left">Gross (kg) *</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Gross (kg) *</label>
                   <input
                     ref={grossWeightRef}
                     required
@@ -521,25 +501,25 @@ export function HarvestPage() {
                     step="0.01"
                     value={formData.grossWeight}
                     onChange={(e) => setFormData({ ...formData, grossWeight: e.target.value })}
-                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground font-bold"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-black text-muted-foreground uppercase tracking-[0.2em] mb-1 text-left">Tare (kg) *</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Tare (kg) *</label>
                   <input
                     required
                     type="number"
                     step="0.01"
                     value={formData.tareWeight}
                     onChange={(e) => setFormData({ ...formData, tareWeight: e.target.value })}
-                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-card text-foreground font-bold"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                   />
                 </div>
               </div>
-              <div className="flex gap-3 pt-6 border-t border-border mt-6">
-                <button type="button" onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg font-black uppercase tracking-widest text-xs hover:bg-muted transition-all">Cancel</button>
-                <button type="submit" disabled={isSubmitting} className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg font-black uppercase tracking-widest text-xs hover:bg-green-700 transition-all shadow-md shadow-green-100 dark:shadow-none">
-                  {isSubmitting ? 'Saving...' : (editingRecord ? 'Update' : 'Save Record')}
+              <div className="flex gap-3 pt-4 border-t border-gray-100">
+                <button type="button" onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg">Cancel</button>
+                <button type="submit" disabled={isSubmitting} className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg font-medium">
+                  {isSubmitting ? 'Saving...' : (editingRecord ? 'Update' : 'Save')}
                 </button>
               </div>
             </form>
@@ -548,19 +528,19 @@ export function HarvestPage() {
       )}
 
       {showScanner && (
-        <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-[60] backdrop-blur-md animate-in fade-in duration-300">
-          <div className="bg-card rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-border">
-            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-orange-50 dark:bg-orange-950/30">
-              <h2 className="text-xl font-black text-orange-900 dark:text-orange-400 flex items-center gap-2 uppercase tracking-tighter"><QrCode className="w-6 h-6" />Scan Worker QR</h2>
-              <button onClick={stopScanner} className="text-muted-foreground hover:text-foreground p-1 transition-colors"><Plus className="w-6 h-6 rotate-45" /></button>
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-[60] backdrop-blur-md">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in duration-300">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-orange-50">
+              <h2 className="text-xl font-bold text-orange-900 flex items-center gap-2"><QrCode className="w-6 h-6" />Scan Worker QR</h2>
+              <button onClick={stopScanner} className="text-gray-400 hover:text-gray-600 p-1"><X className="w-6 h-6" /></button>
             </div>
             <div className="p-6 text-center">
-              <div id="qr-reader" className="w-full rounded-xl overflow-hidden border-2 border-dashed border-orange-200 dark:border-orange-950 bg-muted/30 aspect-square mb-4"></div>
-              <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Scan worker QR to quickly record their harvest</p>
-              {cameraError && <div className="mt-4 p-3 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 text-[10px] font-black uppercase rounded-lg border border-red-200 dark:border-red-900/50">{cameraError}</div>}
+              <div id="qr-reader" className="w-full rounded-xl overflow-hidden border-2 border-dashed border-orange-200 bg-gray-50 aspect-square mb-4"></div>
+              <p className="text-sm text-gray-500">Scan worker QR to quickly record their harvest</p>
+              {cameraError && <div className="mt-4 p-3 bg-red-50 text-red-600 text-xs rounded-lg">{cameraError}</div>}
             </div>
-            <div className="px-6 py-4 bg-muted/30 border-t border-border flex justify-center">
-              <button onClick={stopScanner} className="px-8 py-2 bg-card border border-border text-foreground rounded-lg font-black uppercase tracking-widest text-xs hover:bg-muted transition-all">Cancel</button>
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-center">
+              <button onClick={stopScanner} className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg">Cancel</button>
             </div>
           </div>
         </div>

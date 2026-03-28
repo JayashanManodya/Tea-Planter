@@ -5,8 +5,6 @@ import { Globe, User, Bell, Shield, Sprout, MapPin, Maximize, QrCode, Download }
 import { QRCodeSVG } from 'qrcode.react';
 import { toast } from 'sonner';
 import { api } from '@/lib/api';
-import { ModeToggle } from '../components/ModeToggle';
-import { Moon, Sun, Monitor, Loader2 } from 'lucide-react';
 
 export function SettingsPage() {
   const { language, setLanguage, t } = useLanguage();
@@ -38,41 +36,21 @@ export function SettingsPage() {
   }, [plantationId, user?.id]);
 
   return (
-    <div className="p-6 space-y-6 text-left bg-background text-foreground">
+    <div className="p-6 space-y-6 text-left">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">{t('settings')}</h1>
-        <p className="text-muted-foreground mt-1">Manage your account and preferences</p>
-      </div>
-
-      {/* Appearance Settings */}
-      <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
-            <Moon className="w-5 h-5 text-purple-700 dark:text-purple-400" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-foreground">Appearance</h3>
-            <p className="text-sm text-muted-foreground">Customize how TeaPlanter looks on your device</p>
-          </div>
-        </div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-muted/30 rounded-xl border border-border/50">
-          <div>
-            <p className="font-medium text-foreground">Theme Preference</p>
-            <p className="text-xs text-muted-foreground">Choose between light, dark, or system theme</p>
-          </div>
-          <ModeToggle />
-        </div>
+        <h1 className="text-2xl font-bold text-gray-900">{t('settings')}</h1>
+        <p className="text-gray-600 mt-1">Manage your account and preferences</p>
       </div>
 
       {/* Language Settings */}
-      <div className="bg-card rounded-lg border border-border p-6">
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
         <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
-            <Globe className="w-5 h-5 text-blue-700 dark:text-blue-400" />
+          <div className="p-2 rounded-lg bg-blue-100">
+            <Globe className="w-5 h-5 text-blue-700" />
           </div>
           <div>
-            <h3 className="font-semibold text-foreground">{t('select-language')}</h3>
-            <p className="text-sm text-muted-foreground">Choose your preferred language</p>
+            <h3 className="font-semibold text-gray-900">{t('select-language')}</h3>
+            <p className="text-sm text-gray-600">Choose your preferred language</p>
           </div>
         </div>
 
@@ -82,8 +60,8 @@ export function SettingsPage() {
               key={lang}
               onClick={() => setLanguage(lang)}
               className={`p-4 rounded-lg border-2 font-medium transition-all ${language === lang
-                ? 'border-green-600 bg-green-50 dark:bg-green-950/20 text-green-700 dark:text-green-400'
-                : 'border-border text-muted-foreground hover:border-muted hover:bg-muted/30'
+                ? 'border-green-600 bg-green-50 text-green-700'
+                : 'border-gray-200 text-gray-600 hover:border-gray-300'
                 }`}
             >
               {t(lang === 'en' ? 'english' : lang === 'si' ? 'sinhala' : 'tamil')}
@@ -93,14 +71,14 @@ export function SettingsPage() {
       </div>
 
       {/* Profile Settings */}
-      <div className="bg-card rounded-lg border border-border p-6">
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
         <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
-            <User className="w-5 h-5 text-green-700 dark:text-green-400" />
+          <div className="p-2 rounded-lg bg-green-100">
+            <User className="w-5 h-5 text-green-700" />
           </div>
           <div>
-            <h3 className="font-semibold text-foreground">Profile Information</h3>
-            <p className="text-sm text-muted-foreground">Your account details (Managed via Clerk)</p>
+            <h3 className="font-semibold text-gray-900">Profile Information</h3>
+            <p className="text-sm text-gray-600">Your account details (Managed via Clerk)</p>
           </div>
         </div>
 
@@ -108,31 +86,31 @@ export function SettingsPage() {
           <div className="flex items-center gap-4 mb-4">
             {user?.imageUrl && <img src={user.imageUrl} className="w-16 h-16 rounded-full border-2 border-green-500" alt="Avatar" />}
             <div>
-              <p className="font-bold text-lg text-foreground">{user?.fullName}</p>
-              <p className="text-sm text-muted-foreground capitalize font-medium">{userRole}</p>
+              <p className="font-bold text-lg text-gray-900">{user?.fullName}</p>
+              <p className="text-sm text-gray-500 capitalize font-medium">{userRole}</p>
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-foreground/70 mb-1">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input
               type="email"
               value={user?.primaryEmailAddress?.emailAddress}
               disabled
-              className="w-full px-4 py-2 border border-border rounded-lg bg-muted/50 text-muted-foreground"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600"
             />
           </div>
         </div>
       </div>
 
       {/* Notification Settings */}
-      <div className="bg-card rounded-lg border border-border p-6">
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
         <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/30">
-            <Bell className="w-5 h-5 text-orange-700 dark:text-orange-400" />
+          <div className="p-2 rounded-lg bg-orange-100">
+            <Bell className="w-5 h-5 text-orange-700" />
           </div>
           <div>
-            <h3 className="font-semibold text-foreground">Notifications</h3>
-            <p className="text-sm text-muted-foreground">Manage notification preferences</p>
+            <h3 className="font-semibold text-gray-900">Notifications</h3>
+            <p className="text-sm text-gray-600">Manage notification preferences</p>
           </div>
         </div>
 
@@ -143,10 +121,10 @@ export function SettingsPage() {
             { label: 'Task reminders', enabled: false },
             { label: 'Disease detection alerts', enabled: true },
           ].map((item, i) => (
-            <div key={i} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-              <span className="text-sm font-medium text-foreground">{item.label}</span>
+            <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <span className="text-sm font-medium text-gray-900">{item.label}</span>
               <button
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${item.enabled ? 'bg-green-600' : 'bg-muted'
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${item.enabled ? 'bg-green-600' : 'bg-gray-300'
                   }`}
               >
                 <span
@@ -160,14 +138,14 @@ export function SettingsPage() {
       </div>
 
       {/* Security */}
-      <div className="bg-card rounded-lg border border-border p-6">
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
         <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/30">
-            <Shield className="w-5 h-5 text-red-700 dark:text-red-400" />
+          <div className="p-2 rounded-lg bg-red-100">
+            <Shield className="w-5 h-5 text-red-700" />
           </div>
           <div>
-            <h3 className="font-semibold text-foreground">Security</h3>
-            <p className="text-sm text-muted-foreground">Your security settings are managed by Google & Clerk</p>
+            <h3 className="font-semibold text-gray-900">Security</h3>
+            <p className="text-sm text-gray-600">Your security settings are managed by Google & Clerk</p>
           </div>
         </div>
 
@@ -175,7 +153,7 @@ export function SettingsPage() {
           href="https://accounts.clerk.com/user"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-block px-4 py-2 bg-foreground text-background rounded-lg font-medium hover:opacity-90 transition-opacity"
+          className="inline-block px-4 py-2 bg-gray-900 text-white rounded-lg font-medium hover:bg-black transition-colors"
         >
           Manage Account Security
         </a>
@@ -247,21 +225,21 @@ function PlantationCard({ plantation, loading }: { plantation: any, loading: boo
   };
 
   if (loading) return (
-    <div className="bg-card rounded-lg border border-border p-6 flex items-center justify-center">
+    <div className="bg-white rounded-lg border border-gray-200 p-6 flex items-center justify-center">
       <Loader2 className="w-6 h-6 animate-spin text-green-600" />
     </div>
   );
 
   return (
-    <div className="bg-card rounded-lg border border-border p-6">
+    <div className="bg-white rounded-lg border border-gray-200 p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
-            <Sprout className="w-5 h-5 text-green-700 dark:text-green-400" />
+          <div className="p-2 rounded-lg bg-green-100">
+            <Sprout className="w-5 h-5 text-green-700" />
           </div>
           <div>
-            <h3 className="font-semibold text-foreground text-left">My Plantation</h3>
-            <p className="text-sm text-muted-foreground text-left">Primary estate information</p>
+            <h3 className="font-semibold text-gray-900 text-left">My Plantation</h3>
+            <p className="text-sm text-gray-600 text-left">Primary estate information</p>
           </div>
         </div>
         {!isEditing && (
@@ -279,69 +257,69 @@ function PlantationCard({ plantation, loading }: { plantation: any, loading: boo
           {error && <p className="text-sm text-red-600 text-left">{error}</p>}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-muted-foreground/60 uppercase tracking-widest mb-1 text-left">Estate Name</label>
+              <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 text-left">Estate Name</label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-2 border border-border rounded-lg bg-card text-foreground"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-muted-foreground/60 uppercase tracking-widest mb-1 text-left">Location</label>
+              <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 text-left">Location</label>
               <input
                 type="text"
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                className="w-full px-4 py-2 border border-border rounded-lg bg-card text-foreground"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-muted-foreground/60 uppercase tracking-widest mb-1 text-left">Total Acreage</label>
+              <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 text-left">Total Acreage</label>
               <input
                 type="number"
                 step="0.1"
                 value={formData.totalArea}
                 onChange={(e) => setFormData({ ...formData, totalArea: e.target.value })}
-                className="w-full px-4 py-2 border border-border rounded-lg bg-card text-foreground"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                 required
               />
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="block text-xs font-bold text-muted-foreground/60 uppercase tracking-widest mb-1 text-left">Latitude</label>
+                <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 text-left">Latitude</label>
                 <input
                   type="number"
                   step="0.000001"
                   value={formData.latitude}
                   onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
                   placeholder="e.g. 6.9271"
-                  className="w-full px-4 py-2 border border-border rounded-lg text-sm bg-card text-foreground"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm"
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-muted-foreground/60 uppercase tracking-widest mb-1 text-left">Longitude</label>
+                <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 text-left">Longitude</label>
                 <input
                   type="number"
                   step="0.000001"
                   value={formData.longitude}
                   onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
                   placeholder="e.g. 79.8612"
-                  className="w-full px-4 py-2 border border-border rounded-lg text-sm bg-card text-foreground"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-xs font-bold text-muted-foreground/60 uppercase tracking-widest mb-1 text-left">Harvesting Rate (LKR/kg)</label>
+              <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 text-left">Harvesting Rate (LKR/kg)</label>
               <input
                 type="number"
                 step="0.01"
                 value={formData.harvestingRate}
                 onChange={(e) => setFormData({ ...formData, harvestingRate: e.target.value })}
                 placeholder="e.g. 50.00"
-                className="w-full px-4 py-2 border border-border rounded-lg bg-card text-foreground"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
               />
             </div>
           </div>
@@ -364,35 +342,35 @@ function PlantationCard({ plantation, loading }: { plantation: any, loading: boo
         </form>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="p-4 bg-muted/50 rounded-lg">
-            <p className="text-[10px] text-muted-foreground/60 font-bold uppercase tracking-widest mb-1">Estate Name</p>
-            <p className="font-bold text-foreground">{plantation.name}</p>
+          <div className="p-4 bg-gray-50 rounded-lg">
+            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Estate Name</p>
+            <p className="font-bold text-gray-900">{plantation.name}</p>
           </div>
-          <div className="p-4 bg-muted/50 rounded-lg">
-            <p className="text-[10px] text-muted-foreground/60 font-bold uppercase tracking-widest mb-1">Location</p>
+          <div className="p-4 bg-gray-50 rounded-lg">
+            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Location</p>
             <div className="flex items-center gap-1">
-              <MapPin className="w-3 h-3 text-muted-foreground/40" />
-              <p className="font-bold text-foreground">{plantation.location}</p>
+              <MapPin className="w-3 h-3 text-gray-400" />
+              <p className="font-bold text-gray-900">{plantation.location}</p>
             </div>
           </div>
-          <div className="p-4 bg-muted/50 rounded-lg">
-            <p className="text-[10px] text-muted-foreground/60 font-bold uppercase tracking-widest mb-1">Total Acreage</p>
+          <div className="p-4 bg-gray-50 rounded-lg">
+            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Total Acreage</p>
             <div className="flex items-center gap-1">
-              <Maximize className="w-3 h-3 text-muted-foreground/40" />
-              <p className="font-bold text-foreground">{plantation.totalArea} Acres</p>
+              <Maximize className="w-3 h-3 text-gray-400" />
+              <p className="font-bold text-gray-900">{plantation.totalArea} Acres</p>
             </div>
           </div>
-          <div className="p-4 bg-muted/50 rounded-lg">
-            <p className="text-[10px] text-muted-foreground/60 font-bold uppercase tracking-widest mb-1">Coordinates</p>
-            <p className="text-xs font-bold text-foreground">
+          <div className="p-4 bg-gray-50 rounded-lg">
+            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Coordinates</p>
+            <p className="text-xs font-bold text-gray-900">
               {plantation.latitude && plantation.longitude
                 ? `${plantation.latitude.toFixed(4)}, ${plantation.longitude.toFixed(4)}`
                 : 'Not set'}
             </p>
           </div>
-          <div className="p-4 bg-muted/50 rounded-lg">
-            <p className="text-[10px] text-muted-foreground/60 font-bold uppercase tracking-widest mb-1">Harvesting Rate</p>
-            <p className="font-bold text-foreground">
+          <div className="p-4 bg-gray-50 rounded-lg">
+            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Harvesting Rate</p>
+            <p className="font-bold text-gray-900">
               {plantation.harvestingRate ? `LKR ${plantation.harvestingRate.toFixed(2)} / kg` : 'Not set'}
             </p>
           </div>
@@ -448,14 +426,14 @@ function PlantationForm() {
   };
 
   return (
-    <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800/30 rounded-lg p-6">
+    <div className="bg-green-50 border border-green-200 rounded-lg p-6">
       <div className="flex items-center gap-3 mb-4">
-        <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
-          <Sprout className="w-5 h-5 text-green-700 dark:text-green-400" />
+        <div className="p-2 rounded-lg bg-green-100">
+          <Sprout className="w-5 h-5 text-green-700" />
         </div>
         <div>
-          <h3 className="font-semibold text-foreground text-left">Become an Owner</h3>
-          <p className="text-sm text-muted-foreground text-left">Create your plantation to start managing your own tea estate</p>
+          <h3 className="font-semibold text-gray-900 text-left">Become an Owner</h3>
+          <p className="text-sm text-gray-600 text-left">Create your plantation to start managing your own tea estate</p>
         </div>
       </div>
 
@@ -472,31 +450,31 @@ function PlantationForm() {
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1 text-left">Plantation Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1 text-left">Plantation Name</label>
               <input
                 type="text"
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="e.g., Summit Tea Estate"
-                className="w-full px-4 py-2 border border-border rounded-lg bg-card text-foreground focus:ring-2 focus:ring-green-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1 text-left">Location</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1 text-left">Location</label>
               <input
                 type="text"
                 required
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                 placeholder="e.g., Nuwara Eliya"
-                className="w-full px-4 py-2 border border-border rounded-lg bg-card text-foreground focus:ring-2 focus:ring-green-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
               />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1 text-left">Total Area (Acreage)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1 text-left">Total Area (Acreage)</label>
               <input
                 type="number"
                 step="0.1"
@@ -504,44 +482,44 @@ function PlantationForm() {
                 value={formData.totalArea}
                 onChange={(e) => setFormData({ ...formData, totalArea: e.target.value })}
                 placeholder="e.g., 50.5"
-                className="w-full px-4 py-2 border border-border rounded-lg bg-card text-foreground focus:ring-2 focus:ring-green-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
               />
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1 text-left">Latitude</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1 text-left">Latitude</label>
                 <input
                   type="number"
                   step="0.000001"
                   value={formData.latitude}
                   onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
                   placeholder="6.9271"
-                  className="w-full px-4 py-2 border border-border rounded-lg bg-card text-foreground focus:ring-2 focus:ring-green-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1 text-left">Longitude</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1 text-left">Longitude</label>
                 <input
                   type="number"
                   step="0.000001"
                   value={formData.longitude}
                   onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
                   placeholder="79.8612"
-                  className="w-full px-4 py-2 border border-border rounded-lg bg-card text-foreground focus:ring-2 focus:ring-green-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
                 />
               </div>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1 text-left">Harvesting Rate (LKR/kg)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1 text-left">Harvesting Rate (LKR/kg)</label>
               <input
                 type="number"
                 step="0.01"
                 value={formData.harvestingRate}
                 onChange={(e) => setFormData({ ...formData, harvestingRate: e.target.value })}
                 placeholder="e.g. 50.00"
-                className="w-full px-4 py-2 border border-border rounded-lg bg-card text-foreground focus:ring-2 focus:ring-green-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
               />
             </div>
           </div>
@@ -592,14 +570,14 @@ function PinSettings() {
   };
 
   return (
-    <div className="bg-card rounded-lg border border-border p-6 shadow-sm hover:border-indigo-200 dark:hover:border-indigo-900 transition-colors">
+    <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:border-indigo-200 transition-colors">
       <div className="flex items-center gap-3 mb-4">
-        <div className="p-2 rounded-lg bg-indigo-100 dark:bg-indigo-900/30">
-          <Shield className="w-5 h-5 text-indigo-700 dark:text-indigo-400" />
+        <div className="p-2 rounded-lg bg-indigo-100">
+          <Shield className="w-5 h-5 text-indigo-700" />
         </div>
         <div>
-          <h3 className="font-semibold text-foreground">Security PIN</h3>
-          <p className="text-sm text-muted-foreground">Set a 6-digit PIN to allow owners to assign you as a worker.</p>
+          <h3 className="font-semibold text-gray-900">Security PIN</h3>
+          <p className="text-sm text-gray-600">Set a 6-digit PIN to allow owners to assign you as a worker.</p>
         </div>
       </div>
 
@@ -614,7 +592,7 @@ function PinSettings() {
             value={pin}
             onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
             placeholder="Enter 6-digit PIN"
-            className="flex-1 px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500 bg-muted/50 text-foreground hover:bg-card transition-colors"
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-50 hover:bg-white transition-colors"
             required
           />
           <button
@@ -695,14 +673,14 @@ function PersonalProfile() {
   if (fetching) return null;
 
   return (
-    <div className="bg-card rounded-lg border border-border p-6 shadow-sm mt-6 mb-8">
+    <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm mt-6 mb-8">
       <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
-          <User className="w-5 h-5 text-blue-700 dark:text-blue-400" />
+        <div className="p-2 rounded-lg bg-blue-100">
+          <User className="w-5 h-5 text-blue-700" />
         </div>
         <div>
-          <h3 className="font-semibold text-foreground">Personal Profile</h3>
-          <p className="text-sm text-muted-foreground">Manage your contact and identity details. Owners will use this for workforce management.</p>
+          <h3 className="font-semibold text-gray-900">Personal Profile</h3>
+          <p className="text-sm text-gray-600">Manage your contact and identity details. Owners will use this for workforce management.</p>
         </div>
       </div>
 
@@ -712,21 +690,21 @@ function PersonalProfile() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1 text-left">Phone Number</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1 text-left">Phone Number</label>
             <input
               type="tel"
               value={profileData.phone}
               onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
               placeholder="e.g. 071 234 5678"
-              className="w-full px-4 py-2 border border-border rounded-lg bg-card text-foreground focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1 text-left">Gender</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1 text-left">Gender</label>
             <select
               value={profileData.gender}
               onChange={(e) => setProfileData({ ...profileData, gender: e.target.value })}
-              className="w-full px-4 py-2 border border-border rounded-lg bg-card text-foreground focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             >
               <option value="Male">Male</option>
               <option value="Female">Female</option>
@@ -734,67 +712,67 @@ function PersonalProfile() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1 text-left">Birthday</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1 text-left">Birthday</label>
             <input
               type="date"
               value={profileData.birthday}
               onChange={(e) => setProfileData({ ...profileData, birthday: e.target.value })}
-              className="w-full px-4 py-2 border border-border rounded-lg bg-card text-foreground focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1 text-left">Bank Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1 text-left">Bank Name</label>
             <input
               type="text"
               value={profileData.bankName}
               onChange={(e) => setProfileData({ ...profileData, bankName: e.target.value })}
               placeholder="e.g. Bank of Ceylon"
-              className="w-full px-4 py-2 border border-border rounded-lg bg-card text-foreground focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1 text-left">Branch Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1 text-left">Branch Name</label>
             <input
               type="text"
               value={profileData.branchName}
               onChange={(e) => setProfileData({ ...profileData, branchName: e.target.value })}
               placeholder="e.g. Colombo Fort"
-              className="w-full px-4 py-2 border border-border rounded-lg bg-card text-foreground focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1 text-left">Account Number</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1 text-left">Account Number</label>
             <input
               type="text"
               value={profileData.accountNumber}
               onChange={(e) => setProfileData({ ...profileData, accountNumber: e.target.value })}
               placeholder="e.g. 123456789"
-              className="w-full px-4 py-2 border border-border rounded-lg bg-card text-foreground focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1 text-left">Account Holder Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1 text-left">Account Holder Name</label>
             <input
               type="text"
               value={profileData.accountHolderName}
               onChange={(e) => setProfileData({ ...profileData, accountHolderName: e.target.value })}
               placeholder="e.g. J. Doe"
-              className="w-full px-4 py-2 border border-border rounded-lg bg-card text-foreground focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-foreground mb-1 text-left">Emergency Contact</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1 text-left">Emergency Contact</label>
           <input
             type="text"
             value={profileData.emergencyContact}
             onChange={(e) => setProfileData({ ...profileData, emergencyContact: e.target.value })}
             placeholder="Name / Relationship / Phone"
-            className="w-full px-4 py-2 border border-border rounded-lg bg-card text-foreground focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -900,24 +878,24 @@ function WorkerQRSettings() {
   if (plantations.length === 0) return null;
 
   return (
-    <div className="bg-card rounded-lg border border-border p-6 shadow-sm mt-6">
+    <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm mt-6">
       <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/30">
-          <QrCode className="w-5 h-5 text-orange-700 dark:text-orange-400" />
+        <div className="p-2 rounded-lg bg-orange-100">
+          <QrCode className="w-5 h-5 text-orange-700" />
         </div>
         <div>
-          <h3 className="font-semibold text-foreground text-left">Attendance QR Codes</h3>
-          <p className="text-sm text-muted-foreground text-left">Generate and download your unique QR codes for attendance marking.</p>
+          <h3 className="font-semibold text-gray-900 text-left">Attendance QR Codes</h3>
+          <p className="text-sm text-gray-600 text-left">Generate and download your unique QR codes for attendance marking.</p>
         </div>
       </div>
 
       <div className="space-y-6">
         {plantations.map((p) => (
-          <div key={p.id} className="p-4 bg-muted/30 rounded-xl border border-border/50 flex flex-col md:flex-row items-center gap-6">
+          <div key={p.id} className="p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col md:flex-row items-center gap-6">
             <div className="flex-1 text-left">
-              <p className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest mb-1">Plantation / Estate</p>
-              <h4 className="font-bold text-foreground text-lg">{p.name}</h4>
-              <p className="text-sm text-muted-foreground">{p.location}</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Plantation / Estate</p>
+              <h4 className="font-bold text-gray-900 text-lg">{p.name}</h4>
+              <p className="text-sm text-gray-500">{p.location}</p>
               <div className="mt-4">
                 {!p.qrCode ? (
                   <button
@@ -940,7 +918,7 @@ function WorkerQRSettings() {
             </div>
 
             {p.qrCode && (
-              <div className="p-3 bg-white rounded-lg shadow-sm border border-border">
+              <div className="p-3 bg-white rounded-lg shadow-sm border border-gray-200">
                 <QRCodeSVG
                   id={`qr-${p.qrCode}`}
                   value={p.qrCode}

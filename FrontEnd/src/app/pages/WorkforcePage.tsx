@@ -300,8 +300,8 @@ export function WorkforcePage() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Workforce Management</h1>
-          <p className="text-muted-foreground mt-1 text-left">Manage workers and task assignments</p>
+          <h1 className="text-2xl font-bold text-gray-900">Workforce Management</h1>
+          <p className="text-gray-600 mt-1">Manage workers and task assignments</p>
         </div>
         <div className="flex gap-2">
           <button
@@ -310,7 +310,7 @@ export function WorkforcePage() {
               setUserSearchTerm('');
               setShowUserSearchModal(true);
             }}
-            className="flex items-center gap-2 px-4 py-2 border border-blue-600 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg font-bold transition-all"
+            className="flex items-center gap-2 px-4 py-2 border border-blue-600 text-blue-600 hover:bg-blue-50 rounded-lg font-medium transition-colors"
           >
             <Search className="w-5 h-5" />
             Search Registered Users
@@ -328,7 +328,7 @@ export function WorkforcePage() {
               });
               setShowModal(true);
             }}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold transition-all shadow-sm shadow-blue-100 dark:shadow-none"
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
           >
             <Plus className="w-5 h-5" />
             Add Worker
@@ -336,23 +336,23 @@ export function WorkforcePage() {
         </div>
       </div>
 
-      <div className="bg-card rounded-lg border border-border p-4 space-y-4 shadow-sm">
+      <div className="bg-white rounded-lg border border-gray-200 p-4 space-y-4">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">
-            <Search className="w-5 h-5 text-muted-foreground/50 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search by name, email, or role..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
           <div className="flex flex-wrap gap-2">
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-3 py-2 border border-border rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground"
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none"
             >
               <option value="ALL">All Statuses</option>
               <option value="Active">Active</option>
@@ -362,7 +362,7 @@ export function WorkforcePage() {
             <select
               value={filterRole}
               onChange={(e) => setFilterRole(e.target.value)}
-              className="px-3 py-2 border border-border rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground"
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none"
             >
               <option value="ALL">All Roles</option>
               {['Harvester', 'Pruner', 'Supervisor', 'Driver', 'Maintenance', 'Field Worker', 'Security'].map(r => (
@@ -372,19 +372,19 @@ export function WorkforcePage() {
             <select
               value={filterBlock}
               onChange={(e) => setFilterBlock(e.target.value)}
-              className="px-3 py-2 border border-border rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground"
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none"
             >
               <option value="ALL">All Blocks</option>
               {Array.from(new Set(workers.map(w => w.assignedBlock).filter(Boolean))).map(b => (
                 <option key={b} value={b}>{b}</option>
               ))}
             </select>
-            <div className="flex items-center gap-2 border-l pl-2 ml-2 border-border">
-              <span className="text-sm text-muted-foreground font-bold uppercase tracking-tighter">Sort:</span>
+            <div className="flex items-center gap-2 border-l pl-2 ml-2 border-gray-200">
+              <span className="text-sm text-gray-500 font-medium">Sort:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-2 border border-border rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground"
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none"
               >
                 <option value="name">Name (A-Z)</option>
                 <option value="joinDate">Join Date (Newest)</option>
@@ -394,7 +394,7 @@ export function WorkforcePage() {
           </div>
         </div>
         {(searchTerm || filterStatus !== 'ALL' || filterRole !== 'ALL' || filterBlock !== 'ALL') && (
-          <div className="flex justify-end pt-2 border-t border-border/50">
+          <div className="flex justify-end pt-2 border-t border-gray-50">
             <button
               onClick={() => {
                 setSearchTerm('');
@@ -402,7 +402,7 @@ export function WorkforcePage() {
                 setFilterRole('ALL');
                 setFilterBlock('ALL');
               }}
-              className="text-xs font-bold text-red-600 hover:text-red-700 uppercase"
+              className="text-xs font-medium text-red-600 hover:text-red-700"
             >
               Clear all filters
             </button>
@@ -411,21 +411,21 @@ export function WorkforcePage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-card rounded-lg border border-border p-4 shadow-sm">
-          <p className="text-sm text-muted-foreground mb-1 font-medium text-left">Total Workers</p>
-          <p className="text-2xl font-bold text-foreground text-left">{workers.length}</p>
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <p className="text-sm text-gray-600 mb-1">Total Workers</p>
+          <p className="text-2xl font-bold text-gray-900">{workers.length}</p>
         </div>
-        <div className="bg-card rounded-lg border border-border p-4 shadow-sm">
-          <p className="text-sm text-muted-foreground mb-1 font-medium text-left">Active</p>
-          <p className="text-2xl font-bold text-green-600 text-left">{workers.filter(w => w.status === 'Active').length}</p>
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <p className="text-sm text-gray-600 mb-1">Active</p>
+          <p className="text-2xl font-bold text-green-600">{workers.filter(w => w.status === 'Active').length}</p>
         </div>
-        <div className="bg-card rounded-lg border border-border p-4 shadow-sm">
-          <p className="text-sm text-muted-foreground mb-1 font-medium text-left">On Leave</p>
-          <p className="text-2xl font-bold text-orange-600 text-left">{workers.filter(w => w.status === 'On Leave').length}</p>
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <p className="text-sm text-gray-600 mb-1">On Leave</p>
+          <p className="text-2xl font-bold text-orange-600">{workers.filter(w => w.status === 'On Leave').length}</p>
         </div>
-        <div className="bg-card rounded-lg border border-border p-4 shadow-sm">
-          <p className="text-sm text-muted-foreground mb-1 font-medium text-left">Avg Monthly Harvest</p>
-          <p className="text-2xl font-bold text-foreground text-left">
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <p className="text-sm text-gray-600 mb-1">Avg Monthly Harvest</p>
+          <p className="text-2xl font-bold text-gray-900">
             {workers.filter(w => w.monthlyHarvest > 0).length > 0
               ? (workers.reduce((s, w) => s + w.monthlyHarvest, 0) / workers.filter(w => w.monthlyHarvest > 0).length).toFixed(0)
               : 0} kg
@@ -433,60 +433,60 @@ export function WorkforcePage() {
         </div>
       </div>
 
-      <div className="bg-card rounded-lg border border-border overflow-hidden shadow-sm">
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         <table className="w-full">
-          <thead>
-            <tr className="bg-muted/30 border-b border-border">
-              <th className="text-left py-3 px-4 text-sm font-bold text-foreground">Worker</th>
-              <th className="text-left py-3 px-4 text-sm font-bold text-foreground">Contact</th>
-              <th className="text-left py-3 px-4 text-sm font-bold text-foreground">Role</th>
-              <th className="text-left py-3 px-4 text-sm font-bold text-foreground">Assigned Block</th>
-              <th className="text-left py-3 px-4 text-sm font-bold text-foreground">Status</th>
-              <th className="text-left py-3 px-4 text-sm font-bold text-foreground">Monthly Harvest</th>
-              <th className="text-left py-3 px-4 text-sm font-bold text-foreground">Actions</th>
+          <thead className="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Worker</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Contact</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Role</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Assigned Block</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Status</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Monthly Harvest</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredWorkers.map((worker) => (
-                <tr key={worker.id} className="border-b border-border/50 hover:bg-muted/10 transition-colors">
-                  <td className="py-3 px-4">
-                    <div className="flex items-center gap-3">
+              <tr key={worker.id} className="border-b border-gray-100 hover:bg-gray-50">
+                <td className="py-3 px-4">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => handleViewDetails(worker)}
+                      className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold hover:bg-blue-200 transition-all overflow-hidden border-2 border-white shadow-md flex-shrink-0"
+                    >
+                      {worker.user?.profileImageUrl ? (
+                        <img 
+                          src={worker.user.profileImageUrl} 
+                          alt={worker.user.name} 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-lg">{(worker.user?.name || 'W').charAt(0)}</span>
+                      )}
+                    </button>
+                    <div>
                       <button
                         onClick={() => handleViewDetails(worker)}
-                        className="w-14 h-14 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-700 dark:text-blue-400 font-bold hover:bg-blue-200 dark:hover:bg-blue-800/40 transition-all overflow-hidden border-2 border-border/50 shadow-md flex-shrink-0"
+                        className="font-medium text-gray-900 hover:text-blue-600 transition-colors text-left"
                       >
-                        {worker.user?.profileImageUrl ? (
-                          <img 
-                            src={worker.user.profileImageUrl} 
-                            alt={worker.user.name} 
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <span className="text-lg">{(worker.user?.name || 'W').charAt(0)}</span>
-                        )}
+                        {worker.user?.name || 'Unnamed Worker'}
                       </button>
-                      <div>
-                        <button
-                          onClick={() => handleViewDetails(worker)}
-                          className="font-bold text-foreground hover:text-blue-600 transition-colors text-left"
-                        >
-                          {worker.user?.name || 'Unnamed Worker'}
-                        </button>
-                        <p className="text-[10px] text-muted-foreground flex items-center gap-1 font-bold">
-                          <Calendar className="w-3 h-3" />
-                          JOINED {worker.joinDate.toUpperCase()}
-                        </p>
-                      </div>
+                      <p className="text-xs text-gray-500 flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        Joined {worker.joinDate}
+                      </p>
                     </div>
-                  </td>
+                  </div>
+                </td>
                 <td className="py-3 px-4">
                   <div className="space-y-1">
-                    <p className="text-xs text-foreground flex items-center gap-1 font-medium">
-                      <Mail className="w-3 h-3 text-muted-foreground" />
+                    <p className="text-sm text-gray-900 flex items-center gap-1">
+                      <Mail className="w-3 h-3" />
                       {worker.user?.email || 'No email'}
                     </p>
-                    <p className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Phone className="w-3 h-3 text-muted-foreground" />
+                    <p className="text-sm text-gray-600 flex items-center gap-1">
+                      <Phone className="w-3 h-3" />
                       {worker.user?.phone || 'No phone'}
                     </p>
                   </div>
@@ -494,22 +494,22 @@ export function WorkforcePage() {
                 <td className="py-3 px-4">
                   <div className="flex flex-wrap gap-1">
                     {worker.workerFunctions ? worker.workerFunctions.split(', ').map(r => (
-                      <span key={r} className="text-[10px] bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 px-1.5 py-0.5 rounded font-bold border border-blue-100 dark:border-blue-800/20">
-                        {r.toUpperCase()}
+                      <span key={r} className="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded font-medium border border-blue-100">
+                        {r}
                       </span>
                     )) : '-'}
                   </div>
                 </td>
-                <td className="py-3 px-4 text-sm font-bold text-foreground text-left">{worker.assignedBlock}</td>
+                <td className="py-3 px-4 text-sm font-medium text-gray-900">{worker.assignedBlock}</td>
                 <td className="py-3 px-4">
-                  <span className={`inline-flex items-center text-xs px-2 py-1 rounded-full font-bold ${worker.status === 'Active' ? 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400' :
-                    worker.status === 'On Leave' ? 'bg-orange-100 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400' :
-                      'bg-muted text-muted-foreground'
+                  <span className={`inline-flex items-center text-xs px-2 py-1 rounded-full ${worker.status === 'Active' ? 'bg-green-100 text-green-700' :
+                    worker.status === 'On Leave' ? 'bg-orange-100 text-orange-700' :
+                      'bg-gray-100 text-gray-700'
                     }`}>
                     {worker.status}
                   </span>
                 </td>
-                <td className="py-3 px-4 text-sm font-bold text-foreground text-left">
+                <td className="py-3 px-4 text-sm font-medium text-gray-900">
                   {worker.monthlyHarvest > 0 ? `${worker.monthlyHarvest} kg` : '-'}
                 </td>
                 <td className="py-3 px-4">
@@ -542,23 +542,23 @@ export function WorkforcePage() {
       </div>
       {/* User Search Modal */}
       {showUserSearchModal && (
-        <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-          <div className="bg-card rounded-xl shadow-xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200 border border-border">
-            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-blue-50 dark:bg-blue-950/30">
-              <h2 className="text-xl font-bold text-blue-900 dark:text-blue-400 flex items-center gap-2 uppercase tracking-tighter">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-blue-50">
+              <h2 className="text-xl font-bold text-blue-900 flex items-center gap-2">
                 <Users className="w-6 h-6" />
                 Find Registered Members
               </h2>
               <div className="flex items-center gap-3">
                 {modalRefreshing && (
-                  <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 animate-pulse text-xs font-bold uppercase">
+                  <div className="flex items-center gap-2 text-blue-600 animate-pulse text-xs font-medium">
                     <Loader2 className="w-4 h-4 animate-spin" />
                     Syncing from Clerk...
                   </div>
                 )}
                 <button
                   onClick={() => setShowUserSearchModal(false)}
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
                 >
                   <Plus className="w-6 h-6 rotate-45" />
                 </button>
@@ -567,11 +567,11 @@ export function WorkforcePage() {
 
             <div className="p-6 space-y-4">
               {syncError && (
-                <div className="p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 rounded-lg text-xs flex items-center justify-between font-bold uppercase tracking-tight">
+                <div className="p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm flex items-center justify-between">
                   <span>{syncError}</span>
                   <button
                     onClick={() => fetchWorkers()}
-                    className="underline font-black hover:text-red-800 dark:hover:text-red-300"
+                    className="underline font-semibold hover:text-red-800"
                   >
                     Retry
                   </button>
@@ -580,19 +580,19 @@ export function WorkforcePage() {
 
               <div className="flex gap-2">
                 <div className="relative flex-1">
-                  <Search className="w-5 h-5 text-muted-foreground/50 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
                     placeholder="Search by name or email..."
                     value={userSearchTerm}
                     onChange={(e) => setUserSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground font-bold"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                   />
                 </div>
                 <button
                   onClick={() => fetchWorkers()}
                   disabled={modalRefreshing}
-                  className="px-4 py-2 border border-border rounded-lg hover:bg-muted flex items-center gap-2 text-xs font-bold uppercase transition-all disabled:opacity-50 text-foreground"
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2 text-sm font-medium transition-colors"
                   title="Force Sync from Clerk"
                 >
                   <Loader2 className={`w-4 h-4 ${modalRefreshing ? 'animate-spin' : ''}`} />
@@ -616,10 +616,10 @@ export function WorkforcePage() {
                         (u.email || '').toLowerCase().includes(userSearchTerm.toLowerCase())
                       )
                       .map(u => (
-                        <tr key={u.id} className="hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-colors">
-                          <td className="p-3 border-b border-border/50 font-bold text-foreground">{u.name}</td>
-                          <td className="p-3 border-b border-border/50 text-muted-foreground">{u.email}</td>
-                          <td className="p-3 border-b border-border/50 text-right">
+                        <tr key={u.id} className="hover:bg-blue-50/50 transition-colors">
+                          <td className="p-3 border-b font-medium text-gray-900">{u.name}</td>
+                          <td className="p-3 border-b text-gray-600">{u.email}</td>
+                          <td className="p-3 border-b text-right">
                             <button
                               onClick={() => {
                                 setFormData({
@@ -633,7 +633,7 @@ export function WorkforcePage() {
                                 setShowUserSearchModal(false);
                                 setShowModal(true);
                               }}
-                              className="px-3 py-1 bg-blue-600 text-white rounded text-[10px] font-black uppercase tracking-wider hover:bg-blue-700 transition-colors shadow-sm"
+                              className="px-3 py-1 bg-blue-600 text-white rounded text-xs font-semibold hover:bg-blue-700 transition-colors"
                             >
                               Assign
                             </button>
@@ -643,17 +643,17 @@ export function WorkforcePage() {
                     }
                     {availableUsers.length === 0 && !modalRefreshing && (
                       <tr>
-                        <td colSpan={3} className="p-10 text-center text-muted-foreground">
+                        <td colSpan={3} className="p-8 text-center text-gray-500">
                           {syncError ? 'Unable to load users.' : 'No registered members found. They must login to the app first.'}
                         </td>
                       </tr>
                     )}
                     {modalRefreshing && availableUsers.length === 0 && (
                       <tr>
-                        <td colSpan={3} className="p-10 text-center text-muted-foreground">
-                          <div className="flex flex-col items-center gap-3">
-                            <Loader2 className="w-10 h-10 animate-spin text-blue-600 dark:text-blue-400" />
-                            <p className="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">Fetching users from your Clerk Dashboard...</p>
+                        <td colSpan={3} className="p-8 text-center text-gray-500">
+                          <div className="flex flex-col items-center gap-2">
+                            <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                            <p className="text-sm">Fetching users from your Clerk Dashboard...</p>
                           </div>
                         </td>
                       </tr>
@@ -668,22 +668,22 @@ export function WorkforcePage() {
 
       {/* QR Code Modal */}
       {showQrModal && selectedWorkerForQr && (
-        <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-[70] backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-card rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden border border-border">
-            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-orange-50 dark:bg-orange-950/30">
-              <h2 className="text-xl font-bold text-orange-900 dark:text-orange-400 flex items-center gap-2 uppercase tracking-tighter">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[70] backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-orange-50">
+              <h2 className="text-xl font-bold text-orange-900 flex items-center gap-2">
                 <QrCode className="w-6 h-6" />
                 Worker QR Code
               </h2>
               <button
                 onClick={() => setShowQrModal(false)}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
               >
                 <Plus className="w-6 h-6 rotate-45" />
               </button>
             </div>
             <div className="p-8 flex flex-col items-center gap-6">
-              <div className="p-4 bg-white dark:bg-slate-200 rounded-xl shadow-inner border border-border/50">
+              <div className="p-4 bg-white rounded-xl shadow-inner border border-gray-100">
                 {selectedWorkerForQr.qrCode ? (
                   <QRCodeSVG
                     id="worker-qr"
@@ -691,31 +691,29 @@ export function WorkforcePage() {
                     size={200}
                     level="H"
                     includeMargin={true}
-                    fgColor="#000000"
-                    bgColor="#FFFFFF"
                   />
                 ) : (
                   <div className="w-[200px] h-[200px] flex items-center justify-center">
-                    <Loader2 className="w-8 h-8 animate-spin text-orange-600 dark:text-orange-400" />
+                    <Loader2 className="w-8 h-8 animate-spin text-orange-600" />
                   </div>
                 )}
               </div>
               <div className="text-center">
-                <h3 className="text-lg font-black text-foreground uppercase tracking-widest">{selectedWorkerForQr.user?.name}</h3>
-                <p className="text-xs text-muted-foreground font-mono mt-2 bg-muted/50 px-3 py-1 rounded-full border border-border/50">{selectedWorkerForQr.qrCode || 'GENERATING...'}</p>
+                <h3 className="text-lg font-bold text-gray-900">{selectedWorkerForQr.user?.name}</h3>
+                <p className="text-sm text-gray-500 font-mono mt-1">{selectedWorkerForQr.qrCode || 'Generating...'}</p>
               </div>
             </div>
-            <div className="px-6 py-4 bg-muted/30 border-t border-border flex gap-3">
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex gap-3">
               <button
                 onClick={() => setShowQrModal(false)}
-                className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg font-bold uppercase tracking-wider text-xs hover:bg-muted transition-all"
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
               >
                 Close
               </button>
               <button
                 onClick={downloadQr}
                 disabled={!selectedWorkerForQr.qrCode}
-                className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg font-bold uppercase tracking-wider text-xs hover:bg-orange-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-md shadow-orange-100 dark:shadow-none"
+                className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg font-medium hover:bg-orange-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 <Download className="w-4 h-4" />
                 Download
@@ -728,15 +726,15 @@ export function WorkforcePage() {
       {/* Add/Edit Modal */}
       {
         showModal && (
-          <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-            <div className="bg-card rounded-xl shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200 border border-border">
-              <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-blue-50 dark:bg-blue-950/30">
-                <h2 className="text-xl font-bold text-blue-900 dark:text-blue-400 uppercase tracking-tighter">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200">
+              <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-blue-50">
+                <h2 className="text-xl font-bold text-blue-900">
                   {editingWorker ? 'Edit Worker Profile' : 'Register New Worker'}
                 </h2>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
                   disabled={isSubmitting}
                 >
                   <Plus className="w-6 h-6 rotate-45" />
@@ -746,17 +744,17 @@ export function WorkforcePage() {
               <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
                 {!editingWorker && (
                   <div className="space-y-3">
-                    <label className="block text-sm font-bold text-muted-foreground uppercase tracking-tighter text-left">Select Registered Member *</label>
+                    <label className="block text-sm font-semibold text-gray-700">Select Registered Member *</label>
 
                     {/* User Search Input */}
                     <div className="relative">
-                      <Search className="w-4 h-4 text-muted-foreground/50 absolute left-3 top-1/2 -translate-y-1/2" />
+                      <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                       <input
                         type="text"
                         placeholder="Search member by name or email..."
                         value={userSearchTerm}
                         onChange={(e) => setUserSearchTerm(e.target.value)}
-                        className="w-full pl-9 pr-4 py-2 border border-border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground"
+                        className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                       />
                     </div>
 
@@ -764,7 +762,7 @@ export function WorkforcePage() {
                       required
                       value={formData.userId}
                       onChange={(e) => setFormData({ ...formData, userId: e.target.value })}
-                      className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                     >
                       <option value="">Select a member...</option>
                       {availableUsers
@@ -776,14 +774,14 @@ export function WorkforcePage() {
                           <option key={u.id} value={u.id}>{u.name} ({u.email})</option>
                         ))}
                     </select>
-                    <p className="text-[10px] text-muted-foreground font-bold uppercase text-left opacity-70">Only members who have logged in and are not yet assigned will appear here.</p>
+                    <p className="text-[10px] text-gray-500">Only members who have logged in and are not yet assigned will appear here.</p>
                   </div>
                 )}
 
                 {/* PIN Field for Assignment */}
                 {!editingWorker && (
                   <div>
-                    <label className="block text-sm font-bold text-muted-foreground uppercase tracking-tighter text-left mb-1">
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">
                       Target Worker's 6-Digit Security PIN *
                     </label>
                     <input
@@ -793,17 +791,17 @@ export function WorkforcePage() {
                       placeholder="Enter the worker's security PIN"
                       value={formData.workerPin}
                       onChange={(e) => setFormData({ ...formData, workerPin: e.target.value.replace(/\D/g, '') })}
-                      className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground font-mono"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                     />
-                    <p className="text-[10px] text-muted-foreground font-bold uppercase text-left opacity-70 mt-1">
+                    <p className="text-[10px] text-gray-500 mt-1">
                       The worker must have set this PIN in their own Settings page and shared it with you.
                     </p>
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-sm font-bold text-muted-foreground uppercase tracking-tighter text-left mb-1">Roles (Can select multiple) *</label>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2 p-3 bg-muted/50 rounded-lg border border-border">
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Roles (Can select multiple) *</label>
+                  <div className="grid grid-cols-3 gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
                     {['Harvester', 'Pruner', 'Supervisor', 'Driver', 'Maintenance', 'Field Worker', 'Security'].map(role => (
                       <label key={role} className="flex items-center gap-2 cursor-pointer group">
                         <input
@@ -815,9 +813,9 @@ export function WorkforcePage() {
                               : formData.roles.filter(r => r !== role);
                             setFormData({ ...formData, roles: newRoles });
                           }}
-                          className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-border bg-card cursor-pointer"
+                          className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-gray-300 cursor-pointer"
                         />
-                        <span className="text-[10px] font-bold text-muted-foreground uppercase group-hover:text-blue-600 transition-colors">{role}</span>
+                        <span className="text-sm text-gray-700 group-hover:text-blue-700 transition-colors">{role}</span>
                       </label>
                     ))}
                   </div>
@@ -825,21 +823,21 @@ export function WorkforcePage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-bold text-muted-foreground uppercase tracking-tighter text-left mb-1">Assigned Block</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Assigned Block</label>
                     <input
                       type="text"
                       placeholder="e.g. Block A-01"
                       value={formData.assignedBlock}
                       onChange={(e) => setFormData({ ...formData, assignedBlock: e.target.value })}
-                      className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-muted-foreground uppercase tracking-tighter text-left mb-1">Status</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Status</label>
                     <select
                       value={formData.status}
                       onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
-                      className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground font-bold"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                     >
                       <option value="Active">Active</option>
                       <option value="On Leave">On Leave</option>
@@ -849,28 +847,28 @@ export function WorkforcePage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-muted-foreground uppercase tracking-tighter text-left mb-1">Join Date</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Join Date</label>
                   <input
                     type="date"
                     value={formData.joinDate}
                     onChange={(e) => setFormData({ ...formData, joinDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground font-bold"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                   />
                 </div>
 
-                <div className="flex gap-3 pt-4 border-t border-border mt-6">
+                <div className="flex gap-3 pt-4 border-t border-gray-100">
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
                     disabled={isSubmitting}
-                    className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg font-bold uppercase tracking-wider text-xs hover:bg-muted transition-all disabled:opacity-50"
+                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-bold uppercase tracking-wider text-xs hover:bg-blue-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-md shadow-blue-100 dark:shadow-none"
+                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
                   >
                     {isSubmitting ? (
                       <>
@@ -890,43 +888,43 @@ export function WorkforcePage() {
       {/* Worker Details Modal */}
       {
         showDetailsModal && selectedWorker && (
-          <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-            <div className="bg-card rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col animate-in fade-in zoom-in duration-200 border border-border">
-              <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-blue-50 dark:bg-blue-950/30">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col animate-in fade-in zoom-in duration-200">
+              <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-blue-50">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center overflow-hidden border-2 border-border shadow-sm">
+                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
                     {selectedWorker.user?.profileImageUrl ? (
                       <img src={selectedWorker.user.profileImageUrl} alt="" className="w-full h-full object-cover" />
                     ) : (
-                      <Users className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                      <Users className="w-6 h-6 text-blue-600" />
                     )}
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-blue-900 dark:text-blue-400 uppercase tracking-tighter">{selectedWorker.user?.name}</h2>
-                    <p className="text-[10px] text-blue-600 dark:text-blue-400 font-black uppercase tracking-widest">{selectedWorker.workerFunctions}</p>
+                    <h2 className="text-xl font-bold text-blue-900">{selectedWorker.user?.name}</h2>
+                    <p className="text-xs text-blue-600 font-medium">{selectedWorker.workerFunctions}</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setShowDetailsModal(false)}
-                  className="p-2 hover:bg-muted dark:hover:bg-blue-950/50 rounded-full transition-colors text-muted-foreground hover:text-foreground"
+                  className="p-2 hover:bg-white/50 rounded-full transition-colors text-blue-400 hover:text-blue-600"
                 >
                   <Plus className="w-6 h-6 rotate-45" />
                 </button>
               </div>
 
-              <div className="flex border-b border-border bg-muted/30">
+              <div className="flex border-b border-gray-100 bg-gray-50">
                 {(['info', 'tasks', 'attendance', 'harvest'] as const).map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`px-6 py-3 text-xs font-black uppercase tracking-widest transition-colors relative ${activeTab === tab
-                      ? 'text-blue-600 dark:text-blue-400'
-                      : 'text-muted-foreground hover:text-foreground'
+                    className={`px-6 py-3 text-sm font-semibold transition-colors relative ${activeTab === tab
+                      ? 'text-blue-600'
+                      : 'text-gray-500 hover:text-gray-700'
                       }`}
                   >
-                    {tab}
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
                     {activeTab === tab && (
-                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400" />
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
                     )}
                   </button>
                 ))}
@@ -934,48 +932,48 @@ export function WorkforcePage() {
 
               <div className="p-6 max-h-[60vh] overflow-y-auto">
                 {activeTab === 'info' && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-4">
-                      <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-left">Contact Details</h3>
+                      <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">Contact Details</h3>
                       <div className="space-y-2">
-                        <p className="text-sm flex items-center gap-2 text-foreground font-bold"><Mail className="w-4 h-4 text-blue-500" /> {selectedWorker.user?.email || 'No email'}</p>
-                        <p className="text-sm flex items-center gap-2 text-foreground font-bold"><Phone className="w-4 h-4 text-blue-500" /> {selectedWorker.user?.phone || 'No phone set'}</p>
+                        <p className="text-sm flex items-center gap-2"><Mail className="w-4 h-4 text-gray-400" /> {selectedWorkerForTask.user?.email || 'No email'}</p>
+                        <p className="text-sm flex items-center gap-2"><Phone className="w-4 h-4 text-gray-400" /> {selectedWorkerForTask.user?.phone || 'No phone set'}</p>
                       </div>
-                      <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-left pt-2">Personal Info</h3>
+                      <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider pt-2">Personal Info</h3>
                       <div className="space-y-2">
-                        <p className="text-sm text-foreground font-medium text-left"><span className="text-muted-foreground font-bold uppercase text-[10px] mr-2">Gender:</span> {selectedWorker.user?.gender || 'Not specified'}</p>
-                        <p className="text-sm text-foreground font-medium text-left"><span className="text-muted-foreground font-bold uppercase text-[10px] mr-2">Birthday:</span> {selectedWorker.user?.birthday || 'Not specified'}</p>
+                        <p className="text-sm text-gray-700"><span className="text-gray-500">Gender:</span> {selectedWorkerForTask.user?.gender || 'Not specified'}</p>
+                        <p className="text-sm text-gray-700"><span className="text-gray-500">Birthday:</span> {selectedWorkerForTask.user?.birthday || 'Not specified'}</p>
                       </div>
                     </div>
                     <div className="space-y-4">
-                      <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-left">Employment</h3>
-                      <div className="space-y-2 text-left">
-                        <p className="text-sm text-foreground font-medium"><span className="text-muted-foreground font-bold uppercase text-[10px] mr-2">Status:</span>
-                          <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${selectedWorker.status === 'Active' ? 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400' : 'bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-400'
-                            }`}>{selectedWorker.status}</span>
+                      <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">Employment</h3>
+                      <div className="space-y-2">
+                        <p className="text-sm text-gray-700"><span className="text-gray-500">Status:</span>
+                          <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] font-bold ${selectedWorkerForTask.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                            }`}>{selectedWorkerForTask.status}</span>
                         </p>
-                        <p className="text-sm text-foreground font-medium"><span className="text-muted-foreground font-bold uppercase text-[10px] mr-2">Assigned Block:</span> {selectedWorker.assignedBlock || 'General'}</p>
-                        <p className="text-sm text-foreground font-medium"><span className="text-muted-foreground font-bold uppercase text-[10px] mr-2">Join Date:</span> {selectedWorker.joinDate}</p>
+                        <p className="text-sm text-gray-700"><span className="text-gray-500">Assigned Block:</span> {selectedWorkerForTask.assignedBlock || 'General'}</p>
+                        <p className="text-sm text-gray-700"><span className="text-gray-500">Join Date:</span> {selectedWorkerForTask.joinDate}</p>
                       </div>
-                      <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-left pt-2">Emergency Contact</h3>
-                      <p className="text-sm text-foreground font-bold text-left bg-muted/30 p-2 rounded border border-border/50">{selectedWorker.user?.emergencyContact || 'None provided'}</p>
-                      <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] text-left pt-2">Bank Info</h3>
-                      <div className="bg-muted/50 p-4 rounded-lg border border-border space-y-3">
-                        <p className="text-[10px] text-foreground flex justify-between">
-                          <span className="font-black text-muted-foreground uppercase tracking-tighter">Bank</span>
-                          <span className="font-bold">{selectedWorker.user?.bankName || 'N/A'}</span>
+                      <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider pt-2">Emergency Contact</h3>
+                      <p className="text-sm text-gray-700">{selectedWorkerForTask.user?.emergencyContact || 'None provided'}</p>
+                      <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider pt-2">Bank Info</h3>
+                      <div className="bg-gray-50 p-3 rounded-lg border border-gray-100 space-y-2">
+                        <p className="text-xs text-gray-700">
+                          <span className="font-bold text-gray-400 uppercase tracking-tighter mr-2">Bank:</span>
+                          {selectedWorkerForTask.user?.bankName || 'N/A'}
                         </p>
-                        <p className="text-[10px] text-foreground flex justify-between">
-                          <span className="font-black text-muted-foreground uppercase tracking-tighter">Branch</span>
-                          <span className="font-bold">{selectedWorker.user?.branchName || 'N/A'}</span>
+                        <p className="text-xs text-gray-700">
+                          <span className="font-bold text-gray-400 uppercase tracking-tighter mr-2">Branch:</span>
+                          {selectedWorkerForTask.user?.branchName || 'N/A'}
                         </p>
-                        <p className="text-[10px] text-foreground flex justify-between">
-                          <span className="font-black text-muted-foreground uppercase tracking-tighter">A/C No</span>
-                          <span className="font-mono font-black text-blue-700 dark:text-blue-400">{selectedWorker.user?.accountNumber || 'N/A'}</span>
+                        <p className="text-xs text-gray-700">
+                          <span className="font-bold text-gray-400 uppercase tracking-tighter mr-2">A/C No:</span>
+                          <span className="font-mono text-blue-700">{selectedWorkerForTask.user?.accountNumber || 'N/A'}</span>
                         </p>
-                        <p className="text-[10px] text-foreground flex justify-between">
-                          <span className="font-black text-muted-foreground uppercase tracking-tighter">Holder</span>
-                          <span className="font-bold">{selectedWorker.user?.accountHolderName || 'N/A'}</span>
+                        <p className="text-xs text-gray-700">
+                          <span className="font-bold text-gray-400 uppercase tracking-tighter mr-2">Holder:</span>
+                          {selectedWorkerForTask.user?.accountHolderName || 'N/A'}
                         </p>
                       </div>
                     </div>
@@ -985,20 +983,20 @@ export function WorkforcePage() {
                 {activeTab === 'tasks' && (
                   <div className="space-y-3">
                     {loadingHistory ? (
-                      <div className="flex justify-center py-8"><Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400" /></div>
+                      <div className="flex justify-center py-8"><Loader2 className="w-6 h-6 animate-spin text-blue-600" /></div>
                     ) : history.tasks.length > 0 ? (
                       history.tasks.map((task: any) => (
-                        <div key={task.id} className="p-3 border border-border rounded-lg bg-muted/30 flex justify-between items-center hover:border-blue-500/50 transition-colors">
-                          <div className="text-left">
-                            <p className="font-bold text-foreground text-sm uppercase tracking-tight">{task.title}</p>
-                            <p className="text-[10px] text-muted-foreground font-medium">{task.description}</p>
+                        <div key={task.id} className="p-3 border border-gray-100 rounded-lg bg-gray-50 flex justify-between items-center">
+                          <div>
+                            <p className="font-semibold text-gray-900">{task.title}</p>
+                            <p className="text-xs text-gray-500">{task.description}</p>
                           </div>
-                          <span className={`px-2 py-1 rounded text-[10px] font-black uppercase ${task.status === 'COMPLETED' ? 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400' : 'bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400'
+                          <span className={`px-2 py-1 rounded text-[10px] font-bold ${task.status === 'COMPLETED' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
                             }`}>{task.status}</span>
                         </div>
                       ))
                     ) : (
-                      <p className="text-center py-12 text-sm text-muted-foreground font-bold uppercase tracking-widest">No task history found.</p>
+                      <p className="text-center py-8 text-sm text-gray-500">No task history found.</p>
                     )}
                   </div>
                 )}
@@ -1006,28 +1004,26 @@ export function WorkforcePage() {
                 {activeTab === 'attendance' && (
                   <div className="space-y-3">
                     {loadingHistory ? (
-                      <div className="flex justify-center py-8"><Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400" /></div>
+                      <div className="flex justify-center py-8"><Loader2 className="w-6 h-6 animate-spin text-blue-600" /></div>
                     ) : history.attendance.length > 0 ? (
                       history.attendance.map((record: any) => (
-                        <div key={record.id} className="p-3 border border-border rounded-lg bg-muted/30 flex justify-between items-center hover:border-blue-500/50 transition-colors">
+                        <div key={record.id} className="p-3 border border-gray-100 rounded-lg bg-gray-50 flex justify-between items-center">
                           <div className="flex items-center gap-3">
-                            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                              <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                            </div>
-                            <div className="text-left">
-                              <p className="text-sm font-bold text-foreground">
+                            <Calendar className="w-4 h-4 text-gray-400" />
+                            <div>
+                              <p className="text-sm font-medium text-gray-900">
                                 {new Date(record.checkIn).toLocaleDateString()}
                               </p>
-                              <p className="text-[10px] text-muted-foreground font-medium uppercase">
-                                {new Date(record.checkIn).toLocaleTimeString()} - {record.checkOut ? new Date(record.checkOut).toLocaleTimeString() : 'PRESENT'}
+                              <p className="text-[10px] text-gray-500">
+                                {new Date(record.checkIn).toLocaleTimeString()} - {record.checkOut ? new Date(record.checkOut).toLocaleTimeString() : 'Current'}
                               </p>
                             </div>
                           </div>
-                          <span className="px-2 py-1 bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400 rounded text-[10px] font-black uppercase">{record.status}</span>
+                          <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-[10px] font-bold">{record.status}</span>
                         </div>
                       ))
                     ) : (
-                      <p className="text-center py-12 text-sm text-muted-foreground font-bold uppercase tracking-widest">No attendance records found.</p>
+                      <p className="text-center py-8 text-sm text-gray-500">No attendance records found.</p>
                     )}
                   </div>
                 )}
@@ -1035,31 +1031,31 @@ export function WorkforcePage() {
                 {activeTab === 'harvest' && (
                   <div className="space-y-3">
                     {loadingHistory ? (
-                      <div className="flex justify-center py-8"><Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400" /></div>
+                      <div className="flex justify-center py-8"><Loader2 className="w-6 h-6 animate-spin text-blue-600" /></div>
                     ) : history.harvests.length > 0 ? (
                       history.harvests.map((h: any) => (
-                        <div key={h.id} className="p-3 border border-border rounded-lg bg-muted/30 flex justify-between items-center hover:border-blue-500/50 transition-colors">
-                          <div className="text-left">
-                            <p className="text-sm font-bold text-foreground">{new Date(h.harvestDate).toLocaleDateString()}</p>
-                            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-tighter">Plot: {h.plot?.blockId || 'N/A'}</p>
+                        <div key={h.id} className="p-3 border border-gray-100 rounded-lg bg-gray-50 flex justify-between items-center">
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">{new Date(h.harvestDate).toLocaleDateString()}</p>
+                            <p className="text-[10px] text-gray-500">Plot: {h.plot?.blockId || 'N/A'}</p>
                           </div>
                           <div className="text-right">
-                            <p className="font-black text-foreground text-sm">{h.netWeight} kg</p>
-                            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-tighter">Net Weight</p>
+                            <p className="font-bold text-gray-900 text-sm">{h.netWeight} kg</p>
+                            <p className="text-[10px] text-gray-500">Net Weight</p>
                           </div>
                         </div>
                       ))
                     ) : (
-                      <p className="text-center py-12 text-sm text-muted-foreground font-bold uppercase tracking-widest">No harvest records found.</p>
+                      <p className="text-center py-8 text-sm text-gray-500">No harvest records found.</p>
                     )}
                   </div>
                 )}
               </div>
 
-              <div className="px-6 py-4 bg-muted/30 border-t border-border flex justify-end">
+              <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end">
                 <button
                   onClick={() => setShowDetailsModal(false)}
-                  className="px-6 py-2 bg-card border border-border rounded-lg text-foreground font-black uppercase tracking-widest text-xs hover:bg-muted transition-all"
+                  className="px-6 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 font-bold hover:bg-gray-50 transition-colors"
                 >
                   Close Profile
                 </button>

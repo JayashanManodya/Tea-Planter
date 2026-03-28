@@ -100,16 +100,16 @@ export function OwnerDashboard() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-foreground">Dashboard Overview</h1>
-                    <p className="text-muted-foreground mt-1">Welcome back, {user?.fullName || 'Owner'}</p>
+                    <h1 className="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
+                    <p className="text-gray-600 mt-1">Welcome back, {user?.fullName || 'Owner'}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium text-muted-foreground">Period:</p>
+                    <p className="text-sm font-medium text-gray-600">Period:</p>
                     <input
                         type="month"
                         value={selectedMonth}
                         onChange={(e) => setSelectedMonth(e.target.value)}
-                        className="px-3 py-1.5 border border-border rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none bg-card text-foreground shadow-sm"
+                        className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none bg-white shadow-sm"
                     />
                 </div>
             </div>
@@ -145,19 +145,19 @@ export function OwnerDashboard() {
             {/* Charts Row */}
             <div className="grid grid-cols-1 gap-6">
                 {/* Yield Trend */}
-                <div className="bg-card rounded-lg border border-border p-6">
+                <div className="bg-white rounded-lg border border-gray-200 p-6">
                     <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-semibold text-foreground">Monthly Yield Trend (Real Data)</h3>
-                        <span className="text-xs text-muted-foreground">Past 6 months</span>
+                        <h3 className="text-lg font-semibold text-gray-900">Monthly Yield Trend (Real Data)</h3>
+                        <span className="text-xs text-gray-400">Past 6 months</span>
                     </div>
                     <div className="h-[250px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={yieldTrendData}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="currentColor" opacity={0.1} />
-                                <XAxis dataKey="month" stroke="currentColor" fontSize={12} tickLine={false} axisLine={false} />
-                                <YAxis stroke="currentColor" fontSize={12} tickLine={false} axisLine={false} />
-                                <Tooltip contentStyle={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', color: 'var(--foreground)' }} />
-                                <Line type="monotone" dataKey="yield" stroke="#16a34a" strokeWidth={3} dot={{ fill: '#16a34a', strokeWidth: 2, r: 4 }} activeDot={{ r: 6 }} />
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="month" />
+                                <YAxis />
+                                <Tooltip />
+                                <Line type="monotone" dataKey="yield" stroke="#16a34a" strokeWidth={2} />
                             </LineChart>
                         </ResponsiveContainer>
                     </div>
@@ -167,10 +167,10 @@ export function OwnerDashboard() {
             {/* Recent Activity & Alerts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Recent Activity */}
-                <div className="bg-card rounded-lg border border-border p-6">
+                <div className="bg-white rounded-lg border border-gray-200 p-6">
                     <div className="flex items-center gap-2 mb-4">
-                        <Activity className="w-5 h-5 text-muted-foreground" />
-                        <h3 className="text-lg font-semibold text-foreground">Recent Activity</h3>
+                        <Activity className="w-5 h-5 text-gray-600" />
+                        <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
                     </div>
                     <div className="space-y-3">
                         {[
@@ -179,12 +179,12 @@ export function OwnerDashboard() {
                             { action: 'Fertilizer applied', plot: 'Block C', time: '6 hours ago', type: 'success' },
                             { action: 'Attendance marked', count: '45 workers', time: 'Today, 8:00 AM', type: 'info' },
                         ].map((activity, i) => (
-                            <div key={i} className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg">
+                            <div key={i} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
                                 <div className={`w-2 h-2 rounded-full mt-2 ${activity.type === 'success' ? 'bg-green-500' : 'bg-blue-500'
                                     }`} />
                                 <div className="flex-1">
-                                    <p className="text-sm font-medium text-foreground">{activity.action}</p>
-                                    <p className="text-xs text-muted-foreground mt-0.5">
+                                    <p className="text-sm font-medium text-gray-900">{activity.action}</p>
+                                    <p className="text-xs text-gray-500 mt-0.5">
                                         {activity.plot || activity.worker || activity.count} • {activity.time}
                                     </p>
                                 </div>
@@ -194,10 +194,10 @@ export function OwnerDashboard() {
                 </div>
 
                 {/* Alerts & Recommendations */}
-                <div className="bg-card rounded-lg border border-border p-6">
+                <div className="bg-white rounded-lg border border-gray-200 p-6">
                     <div className="flex items-center gap-2 mb-4">
-                        <AlertTriangle className="w-5 h-5 text-orange-500" />
-                        <h3 className="text-lg font-semibold text-foreground">Alerts & Recommendations</h3>
+                        <AlertTriangle className="w-5 h-5 text-orange-600" />
+                        <h3 className="text-lg font-semibold text-gray-900">Alerts & Recommendations</h3>
                     </div>
                     <div className="space-y-3">
                         {[
@@ -212,16 +212,16 @@ export function OwnerDashboard() {
                             <div
                                 key={i}
                                 className={`p-3 rounded-lg border ${alert.severity === 'error'
-                                    ? 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800/30'
+                                    ? 'bg-red-50 border-red-200'
                                     : alert.severity === 'warning'
-                                        ? 'bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800/30'
+                                        ? 'bg-orange-50 border-orange-200'
                                         : alert.severity === 'success'
-                                            ? 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800/30'
-                                            : 'bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800/30'
+                                            ? 'bg-green-50 border-green-200'
+                                            : 'bg-blue-50 border-blue-200'
                                     }`}
                             >
-                                <p className="text-sm font-medium text-foreground">{alert.title}</p>
-                                <p className="text-xs text-muted-foreground mt-1">{alert.message}</p>
+                                <p className="text-sm font-medium text-gray-900">{alert.title}</p>
+                                <p className="text-xs text-gray-600 mt-1">{alert.message}</p>
                             </div>
                         ))}
                     </div>
@@ -229,8 +229,8 @@ export function OwnerDashboard() {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-card rounded-lg border border-border p-6">
-                <h3 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {[
                         { label: 'Mark Attendance', icon: Calendar, color: 'bg-blue-600', to: '/attendance' },
