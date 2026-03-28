@@ -43,9 +43,6 @@ export function PublicNavbar() {
 
                 {/* Desktop Action Icons */}
                 <div className="flex items-center gap-3 pr-2">
-                    <button onClick={handleLogin} className="hidden sm:flex items-center gap-2 text-white/70 text-xs font-bold hover:text-white mr-2">
-                        For Planters
-                    </button>
                     <button onClick={handleLogin} className="px-6 py-2 bg-[#C8FF4C] rounded-full text-black text-xs font-bold hover:scale-105 transition-transform shadow-lg shadow-lime-500/20">
                         Get Started
                     </button>
