@@ -88,6 +88,26 @@ export function FinancialPage() {
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  
+  // Advanced Filter state - Payroll
+  const [payrollMinPay, setPayrollMinPay] = useState('');
+  const [payrollMaxPay, setPayrollMaxPay] = useState('');
+  const [payrollPaymentMode, setPayrollPaymentMode] = useState('ALL');
+
+  // Advanced Filter state - Bank Transfers
+  const [bankSearchTerm, setBankSearchTerm] = useState('');
+  const [bankFilterBankName, setBankFilterBankName] = useState('ALL');
+  const [bankFilterStatus, setBankFilterStatus] = useState('ALL');
+
+  // Advanced Filter state - Factory Incomes
+  const [incomeMinAmount, setIncomeMinAmount] = useState('');
+  const [incomeMaxAmount, setIncomeMaxAmount] = useState('');
+  const [incomeFilterFactory, setIncomeFilterFactory] = useState('ALL');
+  
+  // Advanced Filter state - Overview
+  const [overviewSearchTerm, setOverviewSearchTerm] = useState('');
+
   const [formData, setFormData] = useState({
     workerId: '',
     month: new Date().toISOString().slice(0, 7) // YYYY-MM
@@ -574,6 +594,17 @@ export function FinancialPage() {
       );
     }
 
+    if (incomeFilterFactory !== 'ALL') {
+      result = result.filter(i => i.factory?.id?.toString() === incomeFilterFactory);
+    }
+
+    if (incomeMinAmount) {
+      result = result.filter(i => (i.netAmount || 0) >= parseFloat(incomeMinAmount));
+    }
+    if (incomeMaxAmount) {
+      result = result.filter(i => (i.netAmount || 0) <= parseFloat(incomeMaxAmount));
+    }
+
     result.sort((a, b) => {
       if (incomeSortBy === 'date-desc') return (b.date.year * 12 + b.date.month) - (a.date.year * 12 + a.date.month);
       if (incomeSortBy === 'amount-desc') return (b.netAmount || 0) - (a.netAmount || 0);
@@ -582,11 +613,9 @@ export function FinancialPage() {
     });
 
     return result;
-  }, [incomes, incomeSearchTerm, incomeSortBy]);
+  }, [incomes, incomeSearchTerm, incomeSortBy, incomeFilterFactory, incomeMinAmount, incomeMaxAmount]);
 
   const filteredPayrolls = useMemo(() => {
-    // Exclude records that are already designated for Bank Transfers (but not yet paid) 
-    // to simulate the "move" behavior.
     let result = payrolls.filter(p => !(p.status === 'APPROVED' && p.paymentMode === 'BANK'));
 
     if (payrollSearchTerm) {
@@ -600,6 +629,17 @@ export function FinancialPage() {
       result = result.filter(p => p.status === payrollFilterStatus);
     }
 
+    if (payrollPaymentMode !== 'ALL') {
+      result = result.filter(p => p.paymentMode === payrollPaymentMode);
+    }
+
+    if (payrollMinPay) {
+      result = result.filter(p => (p.netPay || 0) >= parseFloat(payrollMinPay));
+    }
+    if (payrollMaxPay) {
+      result = result.filter(p => (p.netPay || 0) <= parseFloat(payrollMaxPay));
+    }
+
     result.sort((a, b) => {
       if (payrollSortBy === 'name-asc') return (a.worker?.user?.name || '').localeCompare(b.worker?.user?.name || '');
       if (payrollSortBy === 'amount-desc') return (b.netPay || 0) - (a.netPay || 0);
@@ -608,7 +648,41 @@ export function FinancialPage() {
     });
 
     return result;
-  }, [payrolls, payrollSearchTerm, payrollFilterStatus, payrollSortBy]);
+  }, [payrolls, payrollSearchTerm, payrollFilterStatus, payrollSortBy, payrollMinPay, payrollMaxPay, payrollPaymentMode]);
+
+  const filteredBankTransfers = useMemo(() => {
+    let result = payrolls.filter(p => (p.status === 'APPROVED' && p.paymentMode === 'BANK') || (p.status === 'PAID' && p.paymentMode === 'BANK'));
+
+    if (bankSearchTerm) {
+      const term = bankSearchTerm.toLowerCase();
+      result = result.filter(p =>
+        p.worker?.user?.name?.toLowerCase().includes(term) ||
+        p.worker?.user?.accountNumber?.toLowerCase().includes(term)
+      );
+    }
+
+    if (bankFilterBankName !== 'ALL') {
+      result = result.filter(p => p.worker?.user?.bankName === bankFilterBankName);
+    }
+
+    if (bankFilterStatus !== 'ALL') {
+      result = result.filter(p => p.status === bankFilterStatus);
+    }
+
+    return result;
+  }, [payrolls, bankSearchTerm, bankFilterBankName, bankFilterStatus]);
+
+  const filteredOverviewIncomes = useMemo(() => {
+    let result = [...incomes];
+    if (overviewSearchTerm) {
+      const term = overviewSearchTerm.toLowerCase();
+      result = result.filter(i =>
+        i.factory?.name?.toLowerCase().includes(term) ||
+        i.description?.toLowerCase().includes(term)
+      );
+    }
+    return result;
+  }, [incomes, overviewSearchTerm]);
 
   const totalPayroll = useMemo(() =>
     payrolls.reduce((sum, p) => sum + (p.netPay || 0), 0),
@@ -803,10 +877,10 @@ export function FinancialPage() {
                       contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
                     />
                     <Legend verticalAlign="bottom" height={36} iconType="circle" />
-                    <text x="50%" y="45%" textAnchor="middle" dominantBaseline="middle" className="text-xl font-black fill-gray-900">
+                    <text x="50%" y="45%" textAnchor="middle" dominantBaseline="middle" className="text-lg font-black fill-gray-900">
                       LKR {totalRevenue.toLocaleString()}
                     </text>
-                    <text x="50%" y="52%" textAnchor="middle" dominantBaseline="middle" className="text-[10px] font-black fill-gray-400 uppercase tracking-widest">
+                    <text x="50%" y="52%" textAnchor="middle" dominantBaseline="middle" className="text-[9px] font-black fill-gray-400 uppercase tracking-widest">
                       Total Revenue
                     </text>
                   </PieChart>
@@ -816,7 +890,7 @@ export function FinancialPage() {
 
             {/* Short Factory List */}
             <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 lg:col-span-1">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold text-gray-900">Recent Factory Incomes</h3>
                 <button
                   onClick={() => setActiveTab('FACTORIES')}
@@ -825,8 +899,20 @@ export function FinancialPage() {
                   View All
                 </button>
               </div>
+
+              <div className="relative mb-4">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search incomes..."
+                  value={overviewSearchTerm}
+                  onChange={(e) => setOverviewSearchTerm(e.target.value)}
+                  className="w-full pl-9 pr-4 py-1.5 border border-gray-100 bg-gray-50 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+
               <div className="space-y-3">
-                {filteredIncomes.slice(0, 5).map(income => (
+                {filteredOverviewIncomes.slice(0, 5).map(income => (
                   <div key={income.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                     <div>
                       <p className="font-bold text-gray-900">{income.factory?.name}</p>
@@ -835,6 +921,9 @@ export function FinancialPage() {
                     <p className="font-bold text-green-600">LKR {income.netAmount?.toLocaleString()}</p>
                   </div>
                 ))}
+                {filteredOverviewIncomes.length === 0 && (
+                  <p className="text-center py-4 text-xs text-gray-400 italic">No matching incomes</p>
+                )}
               </div>
             </div>
 
@@ -884,26 +973,101 @@ export function FinancialPage() {
                   placeholder="Search worker name..."
                   value={payrollSearchTerm}
                   onChange={(e) => setPayrollSearchTerm(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
                 />
               </div>
-                <button
-                  onClick={() => setShowModal(true)}
-                  className="flex items-center gap-2 px-4 py-2 border border-blue-600 text-blue-600 hover:bg-blue-50 rounded-lg font-bold text-sm shadow-sm transition-all active:scale-95"
-                >
-                  <Plus className="w-4 h-4" />
-                  Generate Individual
-                </button>
-                <button
-                  onClick={handleBulkGeneratePayroll}
-                  disabled={isSubmitting}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-sm shadow-md transition-all active:scale-95 disabled:opacity-50"
-                >
-                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                  Generate All
-                </button>
+              
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`p-2 rounded-lg border transition-all ${showFilters ? 'bg-blue-50 border-blue-200 text-blue-600 shadow-inner' : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50 shadow-sm'}`}
+                title="Advanced Filters"
+              >
+                <Filter className="w-5 h-5" />
+              </button>
+
+              <button
+                onClick={() => setShowModal(true)}
+                className="flex items-center gap-2 px-4 py-2 border border-blue-600 text-blue-600 hover:bg-blue-50 rounded-lg font-bold text-sm shadow-sm transition-all active:scale-95"
+              >
+                <Plus className="w-4 h-4" />
+                Generate Individual
+              </button>
+              <button
+                onClick={handleBulkGeneratePayroll}
+                disabled={isSubmitting}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-sm shadow-md transition-all active:scale-95 disabled:opacity-50"
+              >
+                {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                Generate All
+              </button>
             </div>
           </div>
+
+          {/* Advanced Filters Panel */}
+          {showFilters && (
+            <div className="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-100 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 animate-in slide-in-from-top duration-300">
+              <div>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Status</label>
+                <select
+                  value={payrollFilterStatus}
+                  onChange={(e) => setPayrollFilterStatus(e.target.value)}
+                  className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
+                >
+                  <option value="ALL">All Statuses</option>
+                  <option value="PENDING">Pending</option>
+                  <option value="APPROVED">Approved</option>
+                  <option value="PAID">Paid</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Payment Mode</label>
+                <select
+                  value={payrollPaymentMode}
+                  onChange={(e) => setPayrollPaymentMode(e.target.value)}
+                  className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
+                >
+                  <option value="ALL">All Modes</option>
+                  <option value="CASH">Cash</option>
+                  <option value="BANK">Bank Transfer</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Min Net Pay (LKR)</label>
+                <input
+                  type="number"
+                  placeholder="Min"
+                  value={payrollMinPay}
+                  onChange={(e) => setPayrollMinPay(e.target.value)}
+                  className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
+                />
+              </div>
+              <div className="relative">
+                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Max Net Pay (LKR)</label>
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    placeholder="Max"
+                    value={payrollMaxPay}
+                    onChange={(e) => setPayrollMaxPay(e.target.value)}
+                    className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
+                  />
+                  <button 
+                    onClick={() => {
+                      setPayrollMinPay('');
+                      setPayrollMaxPay('');
+                      setPayrollPaymentMode('ALL');
+                      setPayrollFilterStatus('ALL');
+                      setPayrollSearchTerm('');
+                    }}
+                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg border border-gray-200 shadow-sm"
+                    title="Clear Filters"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="overflow-x-auto rounded-xl border border-gray-200">
             <table className="w-full text-left border-collapse">
@@ -1002,11 +1166,43 @@ export function FinancialPage() {
               <h3 className="text-xl font-bold text-gray-900">Bank Transfer List</h3>
               <p className="text-sm text-gray-500">Manage digital payments and export for processing</p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+              <div className="relative flex-1 sm:w-48">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search worker..."
+                  value={bankSearchTerm}
+                  onChange={(e) => setBankSearchTerm(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
+                />
+              </div>
+
+              <select
+                value={bankFilterBankName}
+                onChange={(e) => setBankFilterBankName(e.target.value)}
+                className="px-2 py-2 bg-white border border-gray-300 rounded-lg text-xs font-bold text-gray-600 focus:ring-2 focus:ring-blue-500 outline-none shadow-sm max-w-[120px]"
+              >
+                <option value="ALL">ALL BANKS</option>
+                {Array.from(new Set(payrolls.map(p => p.worker.user?.bankName).filter(Boolean))).map(bank => (
+                  <option key={bank} value={bank}>{bank?.toUpperCase()}</option>
+                ))}
+              </select>
+
+              <select
+                value={bankFilterStatus}
+                onChange={(e) => setBankFilterStatus(e.target.value)}
+                className="px-2 py-2 bg-white border border-gray-300 rounded-lg text-xs font-bold text-gray-600 focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
+              >
+                <option value="ALL">ALL STATUS</option>
+                <option value="APPROVED">APPROVED</option>
+                <option value="PAID">PAID</option>
+              </select>
+
               <button
                 onClick={() => {
-                  const pending = payrolls.filter(p => p.status === 'APPROVED' && p.paymentMode === 'BANK');
-                  if (pending.length === 0) return alert('No pending bank transfers to export.');
+                  const pending = filteredBankTransfers.filter(p => p.status === 'APPROVED');
+                  if (pending.length === 0) return alert('No pending bank transfers to export in this view.');
                   
                   const headers = ["Worker Name", "Bank Name", "Branch", "Account Number", "Account Holder", "Net Pay (LKR)"];
                   const rows = pending.map(p => [
@@ -1029,21 +1225,21 @@ export function FinancialPage() {
                   link.click();
                   document.body.removeChild(link);
                 }}
-                className="flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg font-bold text-sm border border-green-200 transition-colors"
+                className="flex items-center gap-2 px-3 py-2 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg font-bold text-xs border border-green-200 transition-colors shadow-sm"
               >
-                <Download className="w-4 h-4" />
-                Export CSV
+                <Download className="w-3.5 h-3.5" />
+                Export
               </button>
               <button
                 onClick={() => {
-                  const ids = payrolls.filter(p => p.status === 'APPROVED' && p.paymentMode === 'BANK').map(p => p.id);
-                  if (ids.length === 0) return alert('No pending bank transfers found.');
+                  const ids = filteredBankTransfers.filter(p => p.status === 'APPROVED').map(p => p.id);
+                  if (ids.length === 0) return alert('No pending filtered bank transfers found.');
                   markAllAsPaid(ids);
                 }}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-bold text-sm shadow-md transition-all active:scale-95"
+                className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-bold text-xs shadow-md transition-all active:scale-95"
               >
-                <CheckCircle className="w-4 h-4" />
-                Mark All as Paid
+                <CheckCircle className="w-3.5 h-3.5" />
+                Pay All
               </button>
             </div>
           </div>
@@ -1052,38 +1248,38 @@ export function FinancialPage() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="px-4 py-3 text-xs font-bold text-gray-500 uppercase">Worker & Status</th>
-                  <th className="px-4 py-3 text-xs font-bold text-gray-500 uppercase">Bank Details</th>
-                  <th className="px-4 py-3 text-xs font-bold text-gray-500 uppercase text-right">Amount</th>
-                  <th className="px-4 py-3 text-xs font-bold text-gray-500 uppercase text-center">Action</th>
+                  <th className="px-4 py-3 text-xs font-bold text-gray-500 uppercase tracking-tighter">Worker & Status</th>
+                  <th className="px-4 py-3 text-xs font-bold text-gray-500 uppercase tracking-tighter">Bank Details</th>
+                  <th className="px-4 py-3 text-xs font-bold text-gray-500 uppercase tracking-tighter text-right">Amount</th>
+                  <th className="px-4 py-3 text-xs font-bold text-gray-500 uppercase tracking-tighter text-center">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {payrolls.filter(p => (p.status === 'APPROVED' && p.paymentMode === 'BANK') || (p.status === 'PAID' && p.paymentMode === 'BANK')).map((payroll) => (
+                {filteredBankTransfers.map((payroll) => (
                   <tr key={payroll.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-4 py-4">
-                      <p className="font-bold text-gray-900">{payroll.worker.user?.name}</p>
-                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase border ${
+                      <p className="font-bold text-gray-900 leading-tight">{payroll.worker.user?.name}</p>
+                      <span className={`text-[9px] font-black px-2 py-0.5 rounded-full uppercase border mt-1 inline-block ${
                         payroll.status === 'PAID' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-blue-50 text-blue-700 border-blue-200'
                       }`}>
                         {payroll.status}
                       </span>
                     </td>
                     <td className="px-4 py-4">
-                      <div className="p-3 bg-gray-50/50 rounded-lg border border-gray-100 flex flex-col gap-0.5">
+                      <div className="p-3 bg-gray-50/50 rounded-lg border border-gray-100 flex flex-col gap-0.5 max-w-[200px]">
                         <div className="flex items-center gap-2">
                           <Landmark className="w-3.5 h-3.5 text-gray-400" />
-                          <p className="text-sm font-bold text-gray-800">{payroll.worker.user?.bankName || 'No Bank Set'}</p>
+                          <p className="text-sm font-bold text-gray-800 truncate">{payroll.worker.user?.bankName || 'No Bank Set'}</p>
                         </div>
-                        <p className="text-xs text-gray-500 ml-5">{payroll.worker.user?.branchName || 'No Branch'}</p>
+                        <p className="text-[10px] text-gray-500 ml-5 truncate">{payroll.worker.user?.branchName || 'No Branch'}</p>
                         <div className="mt-2 text-xs font-mono text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block w-fit">
                            {payroll.worker.user?.accountNumber || 'MISSING ACCOUNT'}
                         </div>
-                        <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-tighter">Holder: {payroll.worker.user?.accountHolderName || 'N/A'}</p>
+                        <p className="text-[9px] text-gray-400 mt-1 uppercase tracking-tighter truncate">Holder: {payroll.worker.user?.accountHolderName || 'N/A'}</p>
                       </div>
                     </td>
                     <td className="px-4 py-4 text-right">
-                      <p className="text-lg font-bold text-gray-900">LKR {payroll.netPay?.toLocaleString()}</p>
+                      <p className="text-lg font-black text-gray-900 tracking-tight">LKR {payroll.netPay?.toLocaleString()}</p>
                     </td>
                     <td className="px-4 py-4 text-center">
                       {payroll.status === 'APPROVED' ? (
@@ -1092,7 +1288,7 @@ export function FinancialPage() {
                             setSelectedPayrollForPayment(payroll);
                             handleConfirmPayment('BANK');
                           }}
-                          className="px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg font-bold text-xs border border-blue-200 transition-all"
+                          className="px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg font-bold text-xs border border-blue-200 transition-all shadow-sm active:scale-95"
                         >
                           Mark Paid
                         </button>
@@ -1105,7 +1301,7 @@ export function FinancialPage() {
                     </td>
                   </tr>
                 ))}
-                {payrolls.filter(p => (p.status === 'APPROVED' && p.paymentMode === 'BANK') || (p.status === 'PAID' && p.paymentMode === 'BANK')).length === 0 && (
+                {filteredBankTransfers.length === 0 && (
                   <tr>
                     <td colSpan={4} className="px-4 py-12 text-center text-gray-400 font-medium">
                         No bank transfer records for this period.
@@ -1125,51 +1321,112 @@ export function FinancialPage() {
               <h3 className="text-xl font-bold text-gray-900">Factory Incomes & Management</h3>
               <p className="text-sm text-gray-500">Manage monthly paysheets and factory registrations</p>
             </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setShowFactoryModal(true)}
-                className="flex items-center gap-2 px-4 py-2 border border-blue-600 text-blue-600 hover:bg-blue-50 rounded-lg font-bold text-sm transition-all"
+            <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+              <div className="relative flex-1 sm:w-48">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search description..."
+                  value={incomeSearchTerm}
+                  onChange={(e) => setIncomeSearchTerm(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
+                />
+              </div>
+
+              <select
+                value={incomeFilterFactory}
+                onChange={(e) => setIncomeFilterFactory(e.target.value)}
+                className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs font-bold text-gray-600 focus:ring-2 focus:ring-blue-500 outline-none shadow-sm min-w-[120px]"
               >
-                <Plus className="w-4 h-4" />
-                Register Factory
-              </button>
+                <option value="ALL">ALL FACTORIES</option>
+                {factories.map(f => (
+                  <option key={f.id} value={f.id.toString()}>{f.name.toUpperCase()}</option>
+                ))}
+              </select>
+
               <button
-                onClick={() => {
-                  setEditingIncome(null);
-                  setIncomeFormData({
-                    factoryId: '',
-                    totalWeight: '',
-                    pricePerKg: '',
-                    transportDeduction: '0',
-                    otherDeductions: '0',
-                    month: new Date().getMonth() + 1,
-                    year: new Date().getFullYear(),
-                    description: ''
-                  });
-                  setShowIncomeModal(true);
-                }}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-bold text-sm shadow-md transition-all"
+                onClick={() => setShowFilters(!showFilters)}
+                className={`p-2 rounded-lg border transition-all ${showFilters ? 'bg-blue-50 border-blue-200 text-blue-600 shadow-inner' : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50 shadow-sm'}`}
+                title="Amount Range Filters"
               >
-                <Plus className="w-4 h-4" />
-                Record Paysheet
+                <Filter className="w-5 h-5" />
               </button>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowFactoryModal(true)}
+                  className="flex items-center gap-2 px-3 py-2 border border-blue-600 text-blue-600 hover:bg-blue-50 rounded-lg font-bold text-xs transition-all active:scale-95"
+                >
+                  <Plus className="w-4 h-4" />
+                  Register
+                </button>
+                <button
+                  onClick={() => {
+                    setEditingIncome(null);
+                    setIncomeFormData({
+                      factoryId: '',
+                      totalWeight: '',
+                      pricePerKg: '',
+                      transportDeduction: '0',
+                      otherDeductions: '0',
+                      month: new Date().getMonth() + 1,
+                      year: new Date().getFullYear(),
+                      description: ''
+                    });
+                    setShowIncomeModal(true);
+                  }}
+                  className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-bold text-xs shadow-md transition-all active:scale-95"
+                >
+                  <Plus className="w-4 h-4" />
+                  Record
+                </button>
+              </div>
             </div>
           </div>
+
+          {/* Advanced Amount Filters */}
+          {showFilters && (
+            <div className="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-100 grid grid-cols-1 sm:grid-cols-3 gap-4 animate-in slide-in-from-top duration-300">
+               <div>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Min Amount (LKR)</label>
+                <input
+                  type="number"
+                  placeholder="Min"
+                  value={incomeMinAmount}
+                  onChange={(e) => setIncomeMinAmount(e.target.value)}
+                  className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Max Amount (LKR)</label>
+                <input
+                  type="number"
+                  placeholder="Max"
+                  value={incomeMaxAmount}
+                  onChange={(e) => setIncomeMaxAmount(e.target.value)}
+                  className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
+                />
+              </div>
+              <div className="flex items-end gap-2">
+                 <button 
+                    onClick={() => {
+                      setIncomeMinAmount('');
+                      setIncomeMaxAmount('');
+                      setIncomeFilterFactory('ALL');
+                      setIncomeSearchTerm('');
+                    }}
+                    className="flex-1 px-4 py-2 bg-white text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-lg border border-gray-200 font-bold text-[10px] uppercase tracking-widest shadow-sm transition-all"
+                  >
+                    Clear All
+                  </button>
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 gap-6">
             <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 h-fit">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold text-gray-900">Monthly Paysheets</h3>
-                <div className="flex items-center gap-2">
-                  <Search className="w-4 h-4 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search factory..."
-                    value={incomeSearchTerm}
-                    onChange={(e) => setIncomeSearchTerm(e.target.value)}
-                    className="w-40 px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                  />
-                </div>
               </div>
 
               <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">

@@ -202,9 +202,12 @@ public class ReportService {
                 LocalDate end = month.withDayOfMonth(month.lengthOfMonth());
 
                 // 1. Calculate Revenue (Incomes)
-                double totalRevenue = factoryPaysheetRepository.findByPlantation(plantation).stream()
+                List<FactoryPaysheet> factoryIncomes = factoryPaysheetRepository.findByPlantation(plantation).stream()
                                 .filter(p -> p.getDate().getMonth().equals(month.getMonthValue())
                                                 && p.getDate().getYear().equals(month.getYear()))
+                                .toList();
+
+                double totalRevenue = factoryIncomes.stream()
                                 .mapToDouble(p -> p.getNetAmount() != null ? p.getNetAmount() : 0.0)
                                 .sum();
 
@@ -234,7 +237,8 @@ public class ReportService {
 
                         addHeader(document, "Financial Summary & Profit Analysis", plantation, month);
 
-                        // Summary Table
+                        // 1. Summary Overview Table
+                        document.add(new Paragraph("1. Monthly Performance Summary", SUBTITLE_FONT));
                         PdfPTable summaryTable = new PdfPTable(2);
                         summaryTable.setWidthPercentage(100);
                         summaryTable.setSpacingBefore(10f);
@@ -244,6 +248,12 @@ public class ReportService {
 
                         summaryTable.addCell(createCell("Total Revenue"));
                         summaryTable.addCell(createCell("LKR " + String.format("%,.2f", totalRevenue)));
+
+                        summaryTable.addCell(createCell("Labor (Payroll) Expenses"));
+                        summaryTable.addCell(createCell("LKR " + String.format("%,.2f", totalPayroll)));
+
+                        summaryTable.addCell(createCell("Input (Inventory) Expenses"));
+                        summaryTable.addCell(createCell("LKR " + String.format("%,.2f", totalInventory)));
 
                         summaryTable.addCell(createCell("Total Expenses"));
                         summaryTable.addCell(createCell("LKR " + String.format("%,.2f", totalExpenses)));
@@ -256,10 +266,32 @@ public class ReportService {
                         PdfPCell profitAmountCell = createCell("LKR " + String.format("%,.2f", netProfit));
                         profitAmountCell
                                         .setBackgroundColor(netProfit >= 0 ? new Color(22, 163, 74, 50)
-                                                        : new Color(220, 38, 38, 50));
+                                                         : new Color(220, 38, 38, 50));
                         summaryTable.addCell(profitAmountCell);
 
                         document.add(summaryTable);
+
+                        // 2. Factory Income Detailed Breakdown
+                        document.add(new Paragraph("\n2. Income & Revenue Detailed Overview", SUBTITLE_FONT));
+                        PdfPTable incomeTable = new PdfPTable(3);
+                        incomeTable.setWidthPercentage(100);
+                        incomeTable.setSpacingBefore(10f);
+                        addTableHeader(incomeTable, List.of("Factory Name", "Total Weight (kg)", "Net Income (LKR)"));
+
+                        for (FactoryPaysheet fp : factoryIncomes) {
+                                incomeTable.addCell(createCell(fp.getFactory() != null ? fp.getFactory().getName() : "Unknown"));
+                                incomeTable.addCell(createCell(String.format("%,.2f kg", fp.getTotalWeight())));
+                                incomeTable.addCell(createCell("LKR " + String.format("%,.2f", fp.getNetAmount())));
+                        }
+
+                        if (factoryIncomes.isEmpty()) {
+                                PdfPCell emptyCell = createCell("No income records found for this period.");
+                                emptyCell.setColspan(3);
+                                emptyCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                incomeTable.addCell(emptyCell);
+                        }
+
+                        document.add(incomeTable);
 
                         // Add Charts
                         document.add(new Paragraph("\nFinancial Charts Analysis", SUBTITLE_FONT));

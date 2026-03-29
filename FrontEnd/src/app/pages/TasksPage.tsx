@@ -261,14 +261,20 @@ export function TasksPage() {
     };
 
     const handleDeleteRate = async (id: number) => {
+        const rateToDelete = taskRates.find(r => r.id === id);
+        if (rateToDelete && tasks.some(t => t.taskCategory === rateToDelete.category)) {
+            alert(`Cannot delete "${rateToDelete.category}" because it is currently assigned to one or more tasks in the current view.`);
+            return;
+        }
+
         if (!confirm('Are you sure you want to delete this task type? This might affect existing task records.')) return;
         try {
             const token = await getToken();
             await api.deleteTaskRate(id, token || undefined);
             fetchData();
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to delete rate:', error);
-            alert('Failed to delete task type');
+            alert(error instanceof Error ? error.message : 'Failed to delete task type');
         }
     };
 
