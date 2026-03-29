@@ -92,29 +92,6 @@ export function LandingPage() {
                                         alt="Intelligent Estate Map"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
-
-                                    {/* Map Pins Overlays */}
-                                    <div className="absolute top-[30%] left-[40%] animate-bounce">
-                                        <div className="p-2 bg-[#C8FF4C] rounded-full shadow-2xl border-4 border-white">
-                                            <Leaf className="w-4 h-4 text-black" />
-                                        </div>
-                                    </div>
-                                    <div className="absolute bottom-[20%] right-[30%] animate-pulse">
-                                        <div className="p-2 bg-white rounded-full shadow-2xl">
-                                            <Users className="w-4 h-4 text-blue-600" />
-                                        </div>
-                                    </div>
-
-                                    <div className="absolute bottom-8 left-8 right-8 flex justify-between items-end">
-                                        <div className="p-5 bg-black/90 backdrop-blur rounded-[2rem] border border-white/20 shadow-2xl max-w-[240px]">
-                                            <div className="flex items-center gap-3 mb-2">
-                                                <div className="h-2 w-2 rounded-full bg-[#C8FF4C] animate-pulse"></div>
-                                                <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Live Monitoring</span>
-                                            </div>
-                                            <p className="text-white font-bold mb-1">Estate Yield View</p>
-                                            <p className="text-white/60 text-xs leading-relaxed">Real-time satellite and on-ground data integration.</p>
-                                        </div>
-                                    </div>
                                 </div>
 
                                 {/* Floating Small Card behind main image */}
