@@ -19,8 +19,9 @@ public class WorkforceController {
 
     @PostMapping("/workers/assign")
     public Worker assignWorker(@RequestParam Long userId, @RequestParam Long plantationId,
-            @RequestParam String functions, @RequestParam String pin) {
-        return workforceService.assignWorker(userId, plantationId, functions, pin);
+            @RequestParam String functions, @RequestParam String pin,
+            @RequestParam(required = false) String assignedBlock) {
+        return workforceService.assignWorker(userId, plantationId, functions, pin, assignedBlock);
     }
 
     @GetMapping("/users/available")
