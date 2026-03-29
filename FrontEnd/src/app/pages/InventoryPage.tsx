@@ -104,6 +104,23 @@ export function InventoryPage() {
       return;
     }
 
+    // Validation for name: letters, numbers and spaces only, max 20 characters
+    if (formData.name.length > 20) {
+      alert('Item name cannot exceed 20 characters.');
+      return;
+    }
+    if (!/^[a-zA-Z0-9 ]+$/.test(formData.name)) {
+      alert('Item name must contain only letters and numbers.');
+      return;
+    }
+
+    // Validation for reorder level: must be positive
+    const reorderVal = parseFloat(formData.reorderLevel);
+    if (isNaN(reorderVal) || reorderVal <= 0) {
+      alert('Reorder level must be a positive number.');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const payload = {
@@ -201,11 +218,15 @@ export function InventoryPage() {
     setShowModal(true);
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (item: InventoryItem) => {
+    if (item.currentStock > 0) {
+      alert("Cant delete stock available item");
+      return;
+    }
     if (!confirm('Are you sure you want to delete this item?')) return;
     try {
       const token = await getToken();
-      await api.deleteInventoryItem(id, token || undefined);
+      await api.deleteInventoryItem(item.id, token || undefined);
       fetchInventory();
     } catch (error) {
       console.error('Failed to delete item:', error);
@@ -527,7 +548,7 @@ export function InventoryPage() {
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleDelete(item.id)}
+                        onClick={() => handleDelete(item)}
                         className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                         title="Delete Item"
                       >
@@ -564,6 +585,9 @@ export function InventoryPage() {
                 <input
                   required
                   type="text"
+                  maxLength={20}
+                  pattern="[a-zA-Z0-9 ]+"
+                  title="Only letters, numbers and spaces are allowed (max 20 characters)"
                   placeholder="e.g. Zinc Fertilizer"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -609,6 +633,7 @@ export function InventoryPage() {
                     required
                     type="number"
                     step="0.1"
+                    min="0.1"
                     placeholder="0.00"
                     value={formData.reorderLevel}
                     onChange={(e) => setFormData({ ...formData, reorderLevel: e.target.value })}
