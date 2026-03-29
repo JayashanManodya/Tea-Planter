@@ -97,29 +97,9 @@ export function InventoryPage() {
     fetchInventory();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!formData.name || !formData.reorderLevel) {
-      alert('Please fill in required fields');
-      return;
-    }
-
-    // Validation for name: letters, numbers and spaces only, max 20 characters
-    if (formData.name.length > 20) {
-      alert('Item name cannot exceed 20 characters.');
-      return;
-    }
-    if (!/^[a-zA-Z0-9 ]+$/.test(formData.name)) {
-      alert('Item name must contain only letters and numbers.');
-      return;
-    }
-
-    // Validation for reorder level: must be positive
-    const reorderVal = parseFloat(formData.reorderLevel);
-    if (isNaN(reorderVal) || reorderVal <= 0) {
-      alert('Reorder level must be a positive number.');
-      return;
-    }
+    if (!e.currentTarget.reportValidity()) return;
 
     setIsSubmitting(true);
     try {
@@ -157,9 +137,10 @@ export function InventoryPage() {
     }
   };
 
-  const handleRestock = async (e: React.FormEvent) => {
+  const handleRestock = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!selectedItem || !stockFormData.quantity || !stockFormData.unitPrice) return;
+    if (!e.currentTarget.reportValidity()) return;
+    if (!selectedItem) return;
 
     setIsSubmitting(true);
     try {
@@ -176,15 +157,16 @@ export function InventoryPage() {
       fetchInventory();
     } catch (error) {
       console.error('Failed to restock:', error);
-      alert('Failed to record restock.');
+      setFormError('Failed to record restock.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleUse = async (e: React.FormEvent) => {
+  const handleUse = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!selectedItem || !stockFormData.quantity) return;
+    if (!e.currentTarget.reportValidity()) return;
+    if (!selectedItem) return;
 
     setIsSubmitting(true);
     try {
@@ -201,7 +183,7 @@ export function InventoryPage() {
       fetchInventory();
     } catch (error) {
       console.error('Failed to use stock:', error);
-      alert('Failed to record usage.');
+      setFormError('Failed to record usage.');
     } finally {
       setIsSubmitting(false);
     }
@@ -243,8 +225,9 @@ export function InventoryPage() {
     setShowLogEditModal(true);
   };
 
-  const handleUpdateLog = async (e: React.FormEvent) => {
+  const handleUpdateLog = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!e.currentTarget.reportValidity()) return;
     if (!editingLog || !stockFormData.quantity) return;
 
     setIsSubmitting(true);
@@ -585,9 +568,10 @@ export function InventoryPage() {
                 <input
                   required
                   type="text"
-                  maxLength={20}
-                  pattern="[a-zA-Z0-9 ]+"
-                  title="Only letters, numbers and spaces are allowed (max 20 characters)"
+                  maxLength={50}
+                  pattern="^[A-Za-z0-9 ]+$"
+                  onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Item Name can only contain letters, numbers, and spaces.')}
+                  onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
                   placeholder="e.g. Zinc Fertilizer"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -633,7 +617,9 @@ export function InventoryPage() {
                     required
                     type="number"
                     step="0.1"
-                    min="0.1"
+                    min="0"
+                    onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Reorder level must be a non-negative value.')}
+                    onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
                     placeholder="0.00"
                     value={formData.reorderLevel}
                     onChange={(e) => setFormData({ ...formData, reorderLevel: e.target.value })}
@@ -694,6 +680,9 @@ export function InventoryPage() {
                     required
                     type="number"
                     step="0.01"
+                    min="0.01"
+                    onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Quantity must be greater than zero.')}
+                    onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
                     placeholder={`0.00 ${selectedItem.unit}`}
                     value={stockFormData.quantity}
                     onChange={(e) => setStockFormData({ ...stockFormData, quantity: e.target.value })}
@@ -706,6 +695,9 @@ export function InventoryPage() {
                     required
                     type="number"
                     step="0.01"
+                    min="0"
+                    onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Unit price cannot be negative.')}
+                    onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
                     placeholder="0.00"
                     value={stockFormData.unitPrice}
                     onChange={(e) => setStockFormData({ ...stockFormData, unitPrice: e.target.value })}
@@ -766,6 +758,9 @@ export function InventoryPage() {
                     required
                     type="number"
                     step="0.01"
+                    min="0.01"
+                    onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity(`Please enter a quantity between 0.01 and ${selectedItem.currentStock}.`)}
+                    onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
                     placeholder={`0.00 ${selectedItem.unit}`}
                     max={selectedItem.currentStock}
                     value={stockFormData.quantity}
