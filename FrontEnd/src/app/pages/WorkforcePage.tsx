@@ -163,9 +163,10 @@ export function WorkforcePage() {
           // If userId exists, it means we are assigning from registered users
           await api.assignWorker(
             parseInt(formData.userId),
-            formData.roles.join(', ') || 'Worker', // Use selected roles or fallback to 'Worker'
+            formData.roles.join(', ') || 'Worker',
             plantationId ? parseInt(plantationId) : 1,
             formData.workerPin,
+            formData.assignedBlock,
             token || undefined
           );
         } else {
@@ -824,13 +825,18 @@ export function WorkforcePage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">Assigned Block</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Block A-01"
+                    <select
                       value={formData.assignedBlock}
                       onChange={(e) => setFormData({ ...formData, assignedBlock: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                    />
+                    >
+                      <option value="">Not Assigned</option>
+                      {plots.map((plot) => (
+                        <option key={plot.id} value={plot.blockId}>
+                          {plot.blockId} ({plot.acreage} Acres)
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">Status</label>
