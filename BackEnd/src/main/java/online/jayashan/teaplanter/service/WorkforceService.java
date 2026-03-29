@@ -104,7 +104,7 @@ public class WorkforceService {
     private final online.jayashan.teaplanter.repository.PlantationRepository plantationRepository;
 
     // Worker Management
-    public Worker assignWorker(Long userId, Long plantationId, String workerFunctions, String pin) {
+    public Worker assignWorker(Long userId, Long plantationId, String workerFunctions, String pin, String assignedBlock) {
         User user = userService.getUserById(userId);
 
         // PIN Validation
@@ -128,6 +128,7 @@ public class WorkforceService {
                 .user(user)
                 .plantation(plantation)
                 .workerFunctions(workerFunctions)
+                .assignedBlock(assignedBlock)
                 .status("Active")
                 .joinDate(java.time.LocalDate.now())
                 .build();
