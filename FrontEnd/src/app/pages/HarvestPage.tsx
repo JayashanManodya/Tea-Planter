@@ -137,8 +137,10 @@ export function HarvestPage() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!e.currentTarget.reportValidity()) return;
+
     if (!formData.workerId || !formData.plotId || !formData.grossWeight || !formData.tareWeight) {
       toast.error('Please fill in all fields');
       return;
@@ -499,6 +501,9 @@ export function HarvestPage() {
                     required
                     type="number"
                     step="0.01"
+                    min="0"
+                    onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Gross weight must be a non-negative value.')}
+                    onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
                     value={formData.grossWeight}
                     onChange={(e) => setFormData({ ...formData, grossWeight: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
@@ -510,6 +515,10 @@ export function HarvestPage() {
                     required
                     type="number"
                     step="0.01"
+                    min="0"
+                    max={formData.grossWeight || undefined}
+                    onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Tare weight cannot exceed gross weight.')}
+                    onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
                     value={formData.tareWeight}
                     onChange={(e) => setFormData({ ...formData, tareWeight: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
