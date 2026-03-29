@@ -58,7 +58,7 @@ export function PlotsPage() {
   const [filterClone, setFilterClone] = useState<string>('ALL');
   const [filterSoil, setFilterSoil] = useState<string>('ALL');
   const [sortBy, setSortBy] = useState<string>('blockId');
-
+  
   const fetchPlots = async () => {
     if (!plantationId) return;
     setLoading(true);
@@ -81,10 +81,9 @@ export function PlotsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.blockId || !formData.acreage || !formData.teaClone) {
-      alert('Please fill in all required fields');
-      return;
-    }
+    
+    // Check validity using browser native API
+    if (!e.currentTarget.reportValidity()) return;
 
     setIsSubmitting(true);
     try {
@@ -475,7 +474,10 @@ export function PlotsPage() {
                 <input
                   required
                   type="text"
-                  placeholder="e.g. Block D-12"
+                  maxLength={20}
+                  pattern="[a-zA-Z0-9]+"
+                  title="Only letters and numbers allowed (max 20 characters)"
+                  placeholder="e.g. BlockD12"
                   value={formData.blockId}
                   onChange={(e) => setFormData({ ...formData, blockId: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none"
@@ -491,6 +493,7 @@ export function PlotsPage() {
                     required
                     type="number"
                     step="0.1"
+                    min="0.1"
                     placeholder="e.g. 5.5"
                     value={formData.acreage}
                     onChange={(e) => setFormData({ ...formData, acreage: e.target.value })}
@@ -562,7 +565,10 @@ export function PlotsPage() {
                 <input
                   required
                   type="text"
-                  placeholder="e.g. TRI-2025"
+                  maxLength={30}
+                  pattern="[a-zA-Z0-9 ]+"
+                  title="Only letters, numbers, and spaces allowed (max 30 characters)"
+                  placeholder="e.g. TRI 2025"
                   value={formData.teaClone}
                   onChange={(e) => setFormData({ ...formData, teaClone: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none"
