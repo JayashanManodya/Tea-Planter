@@ -771,9 +771,51 @@ export function FinancialPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Profit Distribution Chart */}
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 flex flex-col h-full lg:col-span-1">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-900">Profit Distribution</h3>
+              </div>
+
+              <div className="flex-1 h-[300px] min-h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { name: 'Labor', value: totalPayroll },
+                        { name: 'Inputs', value: inventoryExpenses },
+                        { name: 'Profit', value: Math.max(0, netProfit) }
+                      ].filter(d => d.value > 0)}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={100}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      <Cell fill="#EF4444" />
+                      <Cell fill="#F97316" />
+                      <Cell fill="#22C55E" />
+                    </Pie>
+                    <RechartsTooltip
+                      formatter={(value: number) => `LKR ${value.toLocaleString()}`}
+                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                    />
+                    <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                    <text x="50%" y="45%" textAnchor="middle" dominantBaseline="middle" className="text-xl font-black fill-gray-900">
+                      LKR {totalRevenue.toLocaleString()}
+                    </text>
+                    <text x="50%" y="52%" textAnchor="middle" dominantBaseline="middle" className="text-[10px] font-black fill-gray-400 uppercase tracking-widest">
+                      Total Revenue
+                    </text>
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
             {/* Short Factory List */}
-            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 lg:col-span-1">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-bold text-gray-900">Recent Factory Incomes</h3>
                 <button
@@ -797,7 +839,7 @@ export function FinancialPage() {
             </div>
 
             {/* Payroll Summary */}
-            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 lg:col-span-1">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-bold text-gray-900">Payroll Status</h3>
                 <button
@@ -1114,7 +1156,7 @@ export function FinancialPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6">
             <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 h-fit">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold text-gray-900">Monthly Paysheets</h3>
@@ -1188,70 +1230,6 @@ export function FinancialPage() {
               </div>
             </div>
 
-            <div className="space-y-6">
-              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 flex flex-col h-fit">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold text-gray-900">Profit Distribution</h3>
-                </div>
-
-                <div className="flex-1 h-[300px] min-h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={[
-                          { name: 'Labor', value: totalPayroll },
-                          { name: 'Inputs', value: inventoryExpenses },
-                          { name: 'Profit', value: Math.max(0, netProfit) }
-                        ].filter(d => d.value > 0)}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={100}
-                        paddingAngle={5}
-                        dataKey="value"
-                      >
-                        <Cell fill="#EF4444" />
-                        <Cell fill="#F97316" />
-                        <Cell fill="#22C55E" />
-                      </Pie>
-                      <RechartsTooltip
-                        formatter={(value: number) => `LKR ${value.toLocaleString()}`}
-                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                      />
-                      <Legend verticalAlign="bottom" height={36} iconType="circle" />
-                      <text x="50%" y="45%" textAnchor="middle" dominantBaseline="middle" className="text-xl font-black fill-gray-900">
-                        LKR {totalRevenue.toLocaleString()}
-                      </text>
-                      <text x="50%" y="52%" textAnchor="middle" dominantBaseline="middle" className="text-[10px] font-black fill-gray-400 uppercase tracking-widest">
-                        Total Revenue
-                      </text>
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl shadow-lg p-8 text-white">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="p-3 bg-white/20 rounded-xl">
-                    <TrendingUp className="w-8 h-8" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-black uppercase tracking-tight">Financial Health</h3>
-                    <p className="text-blue-100 text-sm">Real-time performance metrics</p>
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-end border-b border-white/10 pb-4">
-                    <span className="text-sm font-bold text-blue-200 lowercase tracking-widest italic opacity-75">Operating Margin</span>
-                    <span className="text-3xl font-black">{totalRevenue > 0 ? ((netProfit / totalRevenue) * 100).toFixed(1) : 0}%</span>
-                  </div>
-                  <div className="flex justify-between items-end">
-                    <span className="text-sm font-bold text-blue-200 lowercase tracking-widest italic opacity-75">Labor Cost Ratio</span>
-                    <span className="text-3xl font-black">{totalRevenue > 0 ? ((totalPayroll / totalRevenue) * 100).toFixed(1) : 0}%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       )}
