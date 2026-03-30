@@ -803,15 +803,26 @@ export function WorkforcePage() {
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">Roles (Can select multiple) *</label>
                   <div className="grid grid-cols-3 gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    {['Clerk', 'Harvester', 'Pruner', 'Supervisor', 'Driver', 'Maintenance', 'Field Worker', 'Security'].map(role => (
+                    {['Clerk', 'Harvester', 'Pruner', 'Supervisor', 'Driver', 'Maintenance', 'Field Worker', 'Security', 'Other'].map(role => (
                       <label key={role} className="flex items-center gap-2 cursor-pointer group">
                         <input
                           type="checkbox"
                           checked={formData.roles.includes(role)}
                           onChange={(e) => {
-                            const newRoles = e.target.checked
-                              ? [...formData.roles, role]
-                              : formData.roles.filter(r => r !== role);
+                            let newRoles;
+                            const FIXED_SALARY_ROLES = ['Clerk', 'Supervisor', 'Driver', 'Maintenance', 'Security', 'Other'];
+                            
+                            if (e.target.checked) {
+                              if (FIXED_SALARY_ROLES.includes(role)) {
+                                // If selecting a fixed salary role, it's the only one allowed
+                                newRoles = [role];
+                              } else {
+                                // If selecting a regular role, remove any fixed salary roles
+                                newRoles = [...formData.roles.filter(r => !FIXED_SALARY_ROLES.includes(r)), role];
+                              }
+                            } else {
+                              newRoles = formData.roles.filter(r => r !== role);
+                            }
                             setFormData({ ...formData, roles: newRoles });
                           }}
                           className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-gray-300 cursor-pointer"

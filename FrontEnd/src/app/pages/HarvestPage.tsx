@@ -117,7 +117,10 @@ export function HarvestPage() {
     if (isProcessingScan.current) return;
     isProcessingScan.current = true;
 
-    const worker = workers.find(w => w.qrCode === decodedText);
+    const worker = workers.find(w => {
+      const functions = w.workerFunctions || '';
+      return w.qrCode === decodedText && functions.includes('Harvester');
+    });
 
     if (worker) {
       toast.success(`Worker identified: ${worker.user?.name || 'Worker'}`);
@@ -332,7 +335,7 @@ export function HarvestPage() {
                 className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
               >
                 <option value="ALL">All Workers</option>
-                {workers.map(w => (
+                {workers.filter(w => (w.workerFunctions || '').includes('Harvester')).map(w => (
                   <option key={w.id} value={w.id}>{w.user?.name || 'Unnamed Worker'}</option>
                 ))}
               </select>
@@ -467,8 +470,9 @@ export function HarvestPage() {
                   onChange={(e) => setFormData({ ...formData, workerId: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                 >
-                  <option value="">Select Worker</option>
-                  {workers.map(w => <option key={w.id} value={w.id}>{w.user?.name || 'Unnamed Worker'}</option>)}
+                  {workers.filter(w => (w.workerFunctions || '').includes('Harvester')).map(w => (
+                    <option key={w.id} value={w.id}>{w.user?.name || 'Unnamed Worker'}</option>
+                  ))}
                 </select>
               </div>
               <div>

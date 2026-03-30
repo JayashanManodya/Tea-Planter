@@ -171,10 +171,10 @@ export function SettingsPage() {
       )}
 
       {plantation && (
-        <PlantationCard plantation={plantation} loading={loadingPlantation} />
+        <PlantationCard plantation={plantation} loading={loadingPlantation} userRole={userRole} />
       )}
 
-      {!plantationId && (
+      {!plantationId && userRole.toLowerCase() !== 'clerk' && (
         <PlantationForm />
       )}
 
@@ -182,7 +182,7 @@ export function SettingsPage() {
   );
 }
 
-function PlantationCard({ plantation, loading }: { plantation: any, loading: boolean }) {
+function PlantationCard({ plantation, loading, userRole }: { plantation: any, loading: boolean, userRole: string }) {
   const { user } = useUser();
   const { getToken } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
@@ -242,7 +242,7 @@ function PlantationCard({ plantation, loading }: { plantation: any, loading: boo
             <p className="text-sm text-gray-600 text-left">Primary estate information</p>
           </div>
         </div>
-        {!isEditing && (
+        {!isEditing && userRole.toLowerCase() !== 'clerk' && (
           <button
             onClick={() => setIsEditing(true)}
             className="text-sm font-medium text-green-600 hover:text-green-700"

@@ -45,7 +45,15 @@ public class FinancialService {
 
                 payroll.setWorker(worker);
                 payroll.setMonth(start);
-                payroll.setBasicWage(harvestEarnings + taskEarnings);
+                
+                double basicWage;
+                if (isFixedSalaryWorker(worker)) {
+                        basicWage = worker.getBaseSalary() != null ? worker.getBaseSalary() : 0.0;
+                } else {
+                        basicWage = harvestEarnings + taskEarnings;
+                }
+                
+                payroll.setBasicWage(basicWage);
                 payroll.setStatus("PENDING");
                 payroll.setPlantation(worker.getPlantation()); // Scoping
                 return payrollRepository.save(payroll);
@@ -236,10 +244,21 @@ public class FinancialService {
                                                 end.atTime(23, 59, 59));
                 double taskEarnings = calculateTaskEarnings(tasks);
 
+                double baseSalary = 0.0;
+                double totalEarnings;
+                boolean isFixedSalary = isFixedSalaryWorker(worker);
+
+                if (isFixedSalary) {
+                        baseSalary = worker.getBaseSalary() != null ? worker.getBaseSalary() : 0.0;
+                        totalEarnings = baseSalary;
+                } else {
+                        totalEarnings = harvestEarnings + taskEarnings;
+                }
+
                 return online.jayashan.teaplanter.dto.PayrollPreviewDTO.builder()
-                                .harvestEarnings(harvestEarnings)
-                                .taskEarnings(taskEarnings)
-                                .totalEarnings(harvestEarnings + taskEarnings)
+                                .harvestEarnings(isFixedSalary ? 0.0 : harvestEarnings)
+                                .taskEarnings(isFixedSalary ? 0.0 : taskEarnings)
+                                .totalEarnings(totalEarnings)
                                 .harvestCount((long) harvests.size())
                                 .taskCount((long) tasks.size())
                                 .build();
@@ -272,12 +291,23 @@ public class FinancialService {
                                         if (t.getTaskCategory() != null) {
                                                 return taskRateRepository
                                                                 .findByCategory(t.getTaskCategory().trim()
-                                                                                .toUpperCase())
+                                                                                 .toUpperCase())
                                                                 .map(online.jayashan.teaplanter.entity.TaskRate::getRate)
                                                                 .orElse(0.0);
                                         }
                                         return 0.0;
                                 })
                                 .sum();
+        }
+
+        private boolean isFixedSalaryWorker(Worker worker) {
+                if (worker.getWorkerFunctions() == null) return false;
+                String functions = worker.getWorkerFunctions();
+                return functions.contains("Clerk") || 
+                       functions.contains("Supervisor") || 
+                       functions.contains("Driver") || 
+                       functions.contains("Maintenance") || 
+                       functions.contains("Security") || 
+                       functions.contains("Other");
         }
 }

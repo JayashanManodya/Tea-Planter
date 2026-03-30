@@ -41,5 +41,7 @@ public class Worker {
     @Column(unique = true)
     private String qrCode;
 
+    private Double baseSalary;
+
     private Double monthlyHarvest; // This might be calculated, but can store summary
 }

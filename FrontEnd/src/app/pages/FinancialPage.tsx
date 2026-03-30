@@ -111,6 +111,7 @@ export function FinancialPage() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showQRScanner, setShowQRScanner] = useState(false);
   const [selectedPayrollForPayment, setSelectedPayrollForPayment] = useState<PayrollRecord | null>(null);
+  const [showSalaryModal, setShowSalaryModal] = useState(false);
   const [qrError, setQrError] = useState<string | null>(null);
 
   const [deliveryFormData, setDeliveryFormData] = useState({
@@ -223,15 +224,10 @@ export function FinancialPage() {
     fetchData();
   }, [selectedMonth]);
 
-  const handleGeneratePayroll = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleGeneratePayroll = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!e.currentTarget.reportValidity()) return;
+    if (!formData.workerId || !formData.month) return;
     
-    if (!formData.workerId || !formData.month) {
-      alert('Please select a worker and month');
-      return;
-    }
-
     setIsSubmitting(true);
     try {
       const token = await getToken();
@@ -240,6 +236,7 @@ export function FinancialPage() {
         month: `${formData.month}-01`
       }, token || undefined);
       setShowModal(false);
+      setPayrollPreview(null);
       fetchData();
       alert('Payroll generated successfully!');
     } catch (error) {
@@ -252,83 +249,35 @@ export function FinancialPage() {
 
   const handleBulkGeneratePayroll = async () => {
     if (!plantationId) return;
-    if (!confirm(`Generate payroll records for ALL workers for ${selectedMonth}? Existing records for this month will be skipped to prevent duplicates.`)) return;
-
+    if (!confirm(`Generate payroll records for ALL workers for ${selectedMonth}? Existing records for this month will be skipped.`)) return;
+    
     setIsSubmitting(true);
     try {
       const token = await getToken();
       await api.bulkGeneratePayroll(selectedMonth, plantationId, token || undefined);
       fetchData();
-      alert('Payroll generation for all workers initiated successfully!');
+      alert('Bulk payroll generation successful!');
     } catch (error) {
-      console.error('Bulk payroll generation failed:', error);
-      alert(`Failed to generate all payrolls: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error('Bulk generation failed:', error);
+      alert('Failed to generate bulk payroll.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleAddIncome = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!e.currentTarget.reportValidity()) return;
-    
-    if (!incomeFormData.factoryId || !incomeFormData.totalWeight || !incomeFormData.pricePerKg) {
-      alert('Please fill in required fields');
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const data = {
-        factory: { id: parseInt(incomeFormData.factoryId) },
-        totalWeight: parseFloat(incomeFormData.totalWeight),
-        pricePerKg: parseFloat(incomeFormData.pricePerKg),
-        transportDeduction: parseFloat(incomeFormData.transportDeduction) || 0,
-        otherDeductions: parseFloat(incomeFormData.otherDeductions) || 0,
-        date: {
-          month: incomeFormData.month,
-          year: incomeFormData.year
-        },
-        description: incomeFormData.description
-      };
-
-      const token = await getToken();
-      if (editingIncome) {
-        await api.updateIncome(editingIncome.id, data, token || undefined);
-      } else {
-        await api.createIncome(data, plantationId || '', token || undefined);
-      }
-
-      setShowIncomeModal(false);
-      setEditingIncome(null);
-      setIncomeFormData({
-        factoryId: '',
-        totalWeight: '',
-        pricePerKg: '',
-        transportDeduction: '0',
-        otherDeductions: '0',
-        month: new Date().getMonth() + 1,
-        year: new Date().getFullYear(),
-        description: ''
-      });
-      fetchData();
-      alert('Monthly paysheet recorded successfully!');
-    } catch (error) {
-      console.error('Failed to record income:', error);
-      alert('Failed to record monthly paysheet.');
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleEditPayroll = (payroll: PayrollRecord) => {
+    setEditingPayroll({ ...payroll });
+    setShowEditPayrollModal(true);
   };
 
   const handleEditIncome = (income: IncomeRecord) => {
     setEditingIncome(income);
     setIncomeFormData({
-      factoryId: income.factory.id.toString(),
-      totalWeight: income.totalWeight.toString(),
-      pricePerKg: income.pricePerKg.toString(),
-      transportDeduction: income.transportDeduction.toString(),
-      otherDeductions: income.otherDeductions.toString(),
+      factoryId: income.factory?.id.toString() || '',
+      totalWeight: income.totalWeight?.toString() || '',
+      pricePerKg: income.pricePerKg?.toString() || '',
+      transportDeduction: income.transportDeduction?.toString() || '0',
+      otherDeductions: income.otherDeductions?.toString() || '0',
       month: income.date.month,
       year: income.date.year,
       description: income.description || ''
@@ -342,21 +291,53 @@ export function FinancialPage() {
       const token = await getToken();
       await api.deleteIncome(id, token || undefined);
       fetchData();
+      alert('Income record deleted.');
     } catch (error) {
       console.error('Failed to delete income:', error);
-      alert(`Failed to delete income record: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      alert('Failed to delete income record.');
+    }
+  };
+
+  const handleAddIncome = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const token = await getToken();
+      const payload = {
+        factory: { id: parseInt(incomeFormData.factoryId) },
+        totalWeight: parseFloat(incomeFormData.totalWeight),
+        pricePerKg: parseFloat(incomeFormData.pricePerKg),
+        transportDeduction: parseFloat(incomeFormData.transportDeduction) || 0,
+        otherDeductions: parseFloat(incomeFormData.otherDeductions) || 0,
+        date: {
+          month: incomeFormData.month,
+          year: incomeFormData.year
+        },
+        description: incomeFormData.description
+      };
+
+      if (editingIncome) {
+        await api.updateIncome(editingIncome.id, payload, token || undefined);
+        alert('Paysheet updated successfully!');
+      } else {
+        await api.createIncome(payload, plantationId || undefined, token || undefined);
+        alert('Paysheet recorded successfully!');
+      }
+      
+      setShowIncomeModal(false);
+      setEditingIncome(null);
+      fetchData();
+    } catch (error) {
+      console.error('Failed to save income:', error);
+      alert('Failed to save paysheet record.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleAddFactory = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!e.currentTarget.reportValidity()) return;
-    
-    if (!factoryFormData.name) {
-      alert('Factory name is required');
-      return;
-    }
-
+    if (!factoryFormData.name) return;
     setIsSubmitting(true);
     try {
       const token = await getToken();
@@ -368,6 +349,7 @@ export function FinancialPage() {
       setShowFactoryModal(false);
       setFactoryFormData({ name: '', registerNo: '', pricePerKg: '' });
       fetchData();
+      alert('Factory added successfully!');
     } catch (error) {
       console.error('Failed to add factory:', error);
       alert('Failed to add factory.');
@@ -378,13 +360,7 @@ export function FinancialPage() {
 
   const handleRecordDelivery = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!e.currentTarget.reportValidity()) return;
-    
-    if (!deliveryFormData.factoryId || !deliveryFormData.weight) {
-      alert('Please fill in required fields');
-      return;
-    }
-
+    if (!deliveryFormData.factoryId || !deliveryFormData.weight) return;
     setIsSubmitting(true);
     try {
       const token = await getToken();
@@ -395,8 +371,13 @@ export function FinancialPage() {
         plantationId: plantationId
       }, token || undefined);
       setShowDeliveryModal(false);
-      setDeliveryFormData({ factoryId: '', weight: '', deliveryDate: new Date().toISOString().split('T')[0] });
+      setDeliveryFormData({ 
+        factoryId: '', 
+        weight: '', 
+        deliveryDate: new Date().toISOString().split('T')[0] 
+      });
       fetchData();
+      alert('Delivery recorded successfully!');
     } catch (error) {
       console.error('Failed to record delivery:', error);
       alert('Failed to record delivery.');
@@ -407,10 +388,7 @@ export function FinancialPage() {
 
   const handleUpdatePayroll = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!e.currentTarget.reportValidity()) return;
-    
     if (!editingPayroll) return;
-
     setIsSubmitting(true);
     try {
       const token = await getToken();
@@ -424,7 +402,7 @@ export function FinancialPage() {
       alert('Payroll updated successfully!');
     } catch (error) {
       console.error('Failed to update payroll:', error);
-      alert(`Failed to update payroll: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      alert('Failed to update payroll.');
     } finally {
       setIsSubmitting(false);
     }
@@ -446,7 +424,6 @@ export function FinancialPage() {
 
   const handleDeletePayroll = async (id: number) => {
     if (!confirm('Are you sure you want to delete this payroll record?')) return;
-
     try {
       const token = await getToken();
       await api.deletePayroll(id, token || undefined);
@@ -454,7 +431,7 @@ export function FinancialPage() {
       alert('Payroll record deleted.');
     } catch (error) {
       console.error('Failed to delete payroll:', error);
-      alert(`Failed to delete payroll record: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      alert('Failed to delete payroll record.');
     }
   };
 
@@ -649,6 +626,29 @@ export function FinancialPage() {
       setIsExporting(false);
     }
   };
+
+  const handleUpdateBaseSalary = async (workerId: number, baseSalary: number) => {
+    setIsSubmitting(true);
+    try {
+      const token = await getToken();
+      await api.updateWorker(workerId, { baseSalary }, token || undefined);
+      await fetchData();
+      alert('Salary updated successfully!');
+    } catch (error) {
+      console.error('Failed to update salary:', error);
+      alert('Failed to update salary.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const fixedSalaryWorkers = useMemo(() => {
+    const FIXED_SALARY_ROLES = ['Clerk', 'Supervisor', 'Driver', 'Maintenance', 'Security', 'Other'];
+    return workers.filter(w => {
+      const functions = w.workerFunctions || '';
+      return FIXED_SALARY_ROLES.some(role => functions.includes(role));
+    });
+  }, [workers]);
 
   if (loading) {
     return (
@@ -895,6 +895,13 @@ export function FinancialPage() {
                   Generate Individual
                 </button>
                 <button
+                  onClick={() => setShowSalaryModal(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300 rounded-lg font-bold text-sm shadow-sm transition-all active:scale-95"
+                >
+                  <Activity className="w-4 h-4" />
+                  Manage Salaries
+                </button>
+                <button
                   onClick={handleBulkGeneratePayroll}
                   disabled={isSubmitting}
                   className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-sm shadow-md transition-all active:scale-95 disabled:opacity-50"
@@ -1086,16 +1093,34 @@ export function FinancialPage() {
                       <p className="text-lg font-bold text-gray-900">LKR {payroll.netPay?.toLocaleString()}</p>
                     </td>
                     <td className="px-4 py-4 text-center">
-                      {payroll.status === 'APPROVED' ? (
-                        <button
-                          onClick={() => {
-                            setSelectedPayrollForPayment(payroll);
-                            handleConfirmPayment('BANK');
-                          }}
-                          className="px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg font-bold text-xs border border-blue-200 transition-all"
-                        >
-                          Mark Paid
-                        </button>
+                       {payroll.status === 'APPROVED' ? (
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            onClick={() => {
+                              setSelectedPayrollForPayment(payroll);
+                              handleConfirmPayment('BANK');
+                            }}
+                            className="px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg font-bold text-xs border border-blue-200 transition-all"
+                          >
+                            Mark Paid
+                          </button>
+                          <div className="flex gap-1 border-l border-gray-200 pl-2">
+                            <button
+                               onClick={() => handleEditPayroll(payroll)}
+                               className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                               title="Edit"
+                            >
+                               <Edit2 className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                               onClick={() => handleDeletePayroll(payroll.id)}
+                               className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                               title="Delete"
+                            >
+                               <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
                       ) : (
                         <div className="flex flex-col items-center gap-1">
                            <CheckCircle className="w-5 h-5 text-green-600" />
@@ -1439,6 +1464,106 @@ export function FinancialPage() {
         </div>
       )}
 
+      {/* Staff Salary Management Modal */}
+      {showSalaryModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50">
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">Staff Salary Management</h3>
+                <p className="text-sm text-gray-500">Define fixed monthly salaries for administrative and support staff</p>
+              </div>
+              <button 
+                onClick={() => setShowSalaryModal(false)}
+                className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                title="Close Modal"
+              >
+                <Plus className="w-6 h-6 rotate-45 text-gray-500" />
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-6">
+              {fixedSalaryWorkers.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Activity className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <p className="text-gray-500 font-medium">No staff members found with fixed salary roles.</p>
+                  <p className="text-xs text-gray-400 mt-1">Add workers as Supervisor, Driver, Security, etc. in Workforce section first.</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left">
+                    <thead>
+                      <tr className="border-b border-gray-200">
+                        <th className="pb-3 font-bold text-gray-700">Staff Member</th>
+                        <th className="pb-3 font-bold text-gray-700">Roles</th>
+                        <th className="pb-3 font-bold text-gray-700">Monthly Base Salary (LKR)</th>
+                        <th className="pb-3 font-bold text-gray-700 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {fixedSalaryWorkers.map(w => (
+                        <tr key={w.id} className="group hover:bg-gray-50 transition-colors">
+                          <td className="py-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center font-bold text-blue-700 text-sm">
+                                {w.user?.name?.charAt(0) || 'W'}
+                              </div>
+                              <div>
+                                <p className="font-bold text-gray-900">{w.user?.name || 'Unnamed'}</p>
+                                <p className="text-xs text-gray-500">{w.user?.email}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-4">
+                            <div className="flex flex-wrap gap-1">
+                              {(w.workerFunctions || '').split(',').map((f: string) => (
+                                <span key={f} className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[10px] font-bold uppercase tracking-wider">
+                                  {f.trim()}
+                                </span>
+                              ))}
+                            </div>
+                          </td>
+                          <td className="py-4 w-48">
+                            <div className="relative">
+                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">LKR</span>
+                              <input
+                                type="number"
+                                defaultValue={w.baseSalary || 0}
+                                onBlur={(e) => {
+                                  const val = parseFloat(e.target.value);
+                                  if (val !== w.baseSalary) {
+                                    handleUpdateBaseSalary(w.id, val);
+                                  }
+                                }}
+                                className="w-full pl-11 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium"
+                              />
+                            </div>
+                          </td>
+                          <td className="py-4 text-right">
+                            <p className="text-[10px] text-gray-400 italic">Auto-saves on blur</p>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+            
+            <div className="p-6 border-t border-gray-100 bg-gray-50 flex justify-end">
+              <button 
+                onClick={() => setShowSalaryModal(false)}
+                className="px-6 py-2 bg-gray-900 text-white rounded-lg font-bold text-sm hover:bg-black transition-all active:scale-95"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Record Delivery Modal */}
       {showDeliveryModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
@@ -1479,9 +1604,9 @@ export function FinancialPage() {
                   min="0.01"
                   onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Weight must be a positive value greater than zero.')}
                   onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
-                  value={deliveryFormData.weight}
-                  onChange={(e) => setDeliveryFormData({ ...formData, weight: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                    value={deliveryFormData.weight ?? ''}
+                    onChange={(e) => setDeliveryFormData({ ...deliveryFormData, weight: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                 />
               </div>
 
@@ -1572,7 +1697,7 @@ export function FinancialPage() {
                     readOnly
                     onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Gross weight must be a non-negative value.')}
                     onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
-                    value={incomeFormData.totalWeight}
+                    value={incomeFormData.totalWeight ?? ''}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed outline-none text-gray-500 font-medium"
                   />
                 </div>
@@ -1585,7 +1710,7 @@ export function FinancialPage() {
                     min="0"
                     onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Rate must be a non-negative value.')}
                     onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
-                    value={incomeFormData.pricePerKg}
+                    value={incomeFormData.pricePerKg ?? ''}
                     onChange={(e) => setIncomeFormData({ ...incomeFormData, pricePerKg: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                   />
@@ -1600,7 +1725,7 @@ export function FinancialPage() {
                     min="0"
                     onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Transport deduction cannot be negative.')}
                     onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
-                    value={incomeFormData.transportDeduction}
+                    value={incomeFormData.transportDeduction ?? ''}
                     onChange={(e) => setIncomeFormData({ ...incomeFormData, transportDeduction: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none"
                   />
@@ -1612,7 +1737,7 @@ export function FinancialPage() {
                     min="0"
                     onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Other deductions cannot be negative.')}
                     onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
-                    value={incomeFormData.otherDeductions}
+                    value={incomeFormData.otherDeductions ?? ''}
                     onChange={(e) => setIncomeFormData({ ...incomeFormData, otherDeductions: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none"
                   />
@@ -1705,7 +1830,7 @@ export function FinancialPage() {
                   min="0"
                   onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Bonus cannot be negative.')}
                   onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
-                  value={editingPayroll.bonuses}
+                  value={editingPayroll.bonuses ?? ''}
                   onChange={(e) => setEditingPayroll({ ...editingPayroll, bonuses: parseFloat(e.target.value) || 0 })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                 />
@@ -1718,7 +1843,7 @@ export function FinancialPage() {
                   min="0"
                   onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Deduction cannot be negative.')}
                   onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
-                  value={editingPayroll.deductions}
+                  value={editingPayroll.deductions ?? ''}
                   onChange={(e) => setEditingPayroll({ ...editingPayroll, deductions: parseFloat(e.target.value) || 0 })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                 />

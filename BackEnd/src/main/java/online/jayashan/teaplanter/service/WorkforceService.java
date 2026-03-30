@@ -229,6 +229,9 @@ public class WorkforceService {
         if (workerDetails.getStatus() != null) {
             worker.setStatus(workerDetails.getStatus());
         }
+        if (workerDetails.getBaseSalary() != null) {
+            worker.setBaseSalary(workerDetails.getBaseSalary());
+        }
         
         return workerRepository.save(worker);
     }

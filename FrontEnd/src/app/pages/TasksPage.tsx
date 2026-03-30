@@ -544,7 +544,11 @@ export function TasksPage() {
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                                 >
                                     <option value="">Select Worker</option>
-                                    {workers.map(w => (
+                                    {workers.filter(w => {
+                                        const functions = w.workerFunctions || '';
+                                        const FIXED_SALARY_ROLES = ['Clerk', 'Supervisor', 'Driver', 'Maintenance', 'Security', 'Other'];
+                                        return !FIXED_SALARY_ROLES.some(role => functions.includes(role));
+                                    }).map(w => (
                                         <option key={w.id} value={w.id}>{w.user?.name || 'Unnamed Worker'}</option>
                                     ))}
                                 </select>
