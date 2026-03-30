@@ -50,7 +50,7 @@ export function PublicFooter() {
                         <div className="p-2 bg-[#C8FF4C] rounded-xl shadow-lg shadow-[#C8FF4C]/20">
                             <Leaf className="w-6 h-6 text-black" />
                         </div>
-                        <span className="text-2xl font-bold tracking-tight text-white">TeaPlanter AI</span>
+                        <span className="text-2xl font-bold tracking-tight text-white">Tea Planter</span>
                     </div>
                     <p className="text-gray-400 mb-10 leading-relaxed max-w-md">
                         Empowering Ceylon tea estates with neural vision, real-time analytics, and automated smart management.
@@ -140,7 +140,7 @@ export function PublicFooter() {
             </div>
 
             <div className="border-t border-white/10 mt-16 pt-8 flex flex-col md:flex-row items-center justify-between text-gray-500 text-xs font-semibold relative z-10">
-                <p>© 2026 TeaPlanter AI Inc. All rights reserved.</p>
+                <p>© 2026 Tea Planter. All rights reserved.</p>
                 <p className="mt-2 md:mt-0 flex items-center gap-1 group">
                     Designed with <Leaf className="w-3 h-3 text-[#C8FF4C] group-hover:scale-125 transition-transform" /> in Sri Lanka.
                 </p>

@@ -13,7 +13,7 @@ export function BlogPage() {
                             Insights
                         </div>
                         <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-gray-900 mb-8">
-                            The TeaPlanter Blog
+                            The Tea Planter Blog
                         </h1>
                         <p className="text-xl text-gray-600 leading-relaxed mb-12">
                             Dive deep into agricultural neural networks, workforce optimization strategies, and the latest releases from our development team.

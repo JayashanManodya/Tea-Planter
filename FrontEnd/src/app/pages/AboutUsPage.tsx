@@ -13,7 +13,7 @@ export function AboutUsPage() {
                             Company
                         </div>
                         <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-gray-900 mb-8">
-                            About TeaPlanter AI
+                            About Tea Planter
                         </h1>
                         <p className="text-xl text-gray-600 leading-relaxed mb-12">
                             Born in the central highlands of Sri Lanka, we set out to combine centuries of Ceylon tea mastery with the cutting edge of artificial intelligence.

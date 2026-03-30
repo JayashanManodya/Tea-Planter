@@ -3,13 +3,13 @@
 
 LAYOUT_WITH_LEGEND()
 
-title "TeaPlanter - System Overview [Container Diagram]"
+title "Tea Planter - System Overview [Container Diagram]"
 
 Person(owner, "Tea Estate Owner", "Manages the entire estate, finances, and workforce.")
 Person(worker, "Estate Worker", "Tracks attendance, harvest, and personal records.")
 Person(admin, "System Admin", "Manages users, system settings, and data integrity.")
 
-System_Boundary(teaplanter, "TeaPlanter System") {
+System_Boundary(teaplanter, "Tea Planter System") {
     Container(web_app, "Web Application", "React, TypeScript, Tailwind CSS", "Main interface for owners and workers to manage estate operations.")
     Container(api_service, "API Application", "Java, Spring Boot", "Handles business logic for workforce, inventory, harvests, and financial records.")
     ContainerDb(database, "PostgreSQL Database", "Stores estate data, including worker details, harvest records, and payroll.")

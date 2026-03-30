@@ -107,7 +107,9 @@ export function AttendancePage() {
         console.log("Attendance API Success:", data);
         fetchData();
         isProcessingScan.current = false;
-        return `Attendance marked: ${data.worker.user?.name || 'Worker'} (${data.checkOut ? 'Check-out' : 'Check-in'})`;
+        const msg = `Attendance marked: ${data.worker.user?.name || 'Worker'} (${data.checkOut ? 'Check-out' : 'Check-in'})`;
+        alert(msg);
+        return msg;
       },
       error: (err) => {
         console.error("Attendance API Error:", err);

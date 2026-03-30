@@ -123,13 +123,16 @@ export function HarvestPage() {
     });
 
     if (worker) {
-      toast.success(`Worker identified: ${worker.user?.name || 'Worker'}`);
+      await stopScanner();
+      const workerName = worker.user?.name || 'Worker';
+      alert(`Worker identified: ${workerName}`);
+      toast.success(`Worker identified: ${workerName}`);
+      
       setFormData(prev => ({
         ...prev,
         workerId: worker.id.toString(),
         plotId: worker.assignedBlock || prev.plotId
       }));
-      await stopScanner();
       setShowModal(true);
       setTimeout(() => {
         grossWeightRef.current?.focus();
@@ -282,6 +285,7 @@ export function HarvestPage() {
           </button>
           <button
             onClick={() => {
+              stopScanner();
               setEditingRecord(null);
               setFormData({
                 workerId: '',
@@ -455,7 +459,7 @@ export function HarvestPage() {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[100] backdrop-blur-sm">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-green-50">
               <h2 className="text-xl font-bold text-green-900">{editingRecord ? 'Edit Record' : 'Record Harvest'}</h2>
@@ -470,6 +474,7 @@ export function HarvestPage() {
                   onChange={(e) => setFormData({ ...formData, workerId: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                 >
+                  <option value="">Select Worker</option>
                   {workers.filter(w => (w.workerFunctions || '').includes('Harvester')).map(w => (
                     <option key={w.id} value={w.id}>{w.user?.name || 'Unnamed Worker'}</option>
                   ))}

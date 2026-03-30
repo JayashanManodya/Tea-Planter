@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { DollarSign, TrendingUp, TrendingDown, Download, Loader2, Info, Activity, Plus, ChevronRight, Edit2, Trash2, AlertCircle, Package, CheckCircle, Search, Filter, ArrowUpDown, Calendar, Landmark, QrCode, Sparkles } from 'lucide-react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { useUser, useAuth } from '@clerk/clerk-react';
@@ -88,6 +88,7 @@ export function FinancialPage() {
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const isProcessingScan = useRef(false);
   const [formData, setFormData] = useState({
     workerId: '',
     month: new Date().toISOString().slice(0, 7) // YYYY-MM
@@ -437,7 +438,9 @@ export function FinancialPage() {
 
   const handlePay = (payroll: PayrollRecord) => {
     setSelectedPayrollForPayment(payroll);
+    setQrError(null);
     setShowPaymentModal(true);
+    isProcessingScan.current = false;
   };
 
   const handleSelectBankTransfer = async () => {
@@ -515,23 +518,31 @@ export function FinancialPage() {
       worker: selectedPayrollForPayment.worker.user?.name 
     });
 
+    if (isProcessingScan.current) return;
+    isProcessingScan.current = true;
+
     if (scanned === expected && expected !== "") {
       setIsSubmitting(true);
       setQrError(null);
+      
+      // Close immediate to prevent multiple scans
+      setShowQRScanner(false);
+      
       try {
         const token = await getToken();
         await api.updatePayrollStatus(selectedPayrollForPayment.id, 'PAID', 'CASH', token || undefined);
-        setShowQRScanner(false);
         setSelectedPayrollForPayment(null);
         fetchData();
         alert(`Payment verified! Cash handed over to ${selectedPayrollForPayment.worker.user?.name}.`);
       } catch (error) {
         console.error('QR Payment failed:', error);
         setQrError('Failed to process payment. Please try again.');
+        isProcessingScan.current = false; // Allow retry on failure
       } finally {
         setIsSubmitting(false);
       }
     } else {
+      isProcessingScan.current = false; // Allow re-scanning different code
       if (!expected) {
         setQrError('Error: This worker has no QR code assigned in their profile.');
       } else {
@@ -1939,42 +1950,52 @@ export function FinancialPage() {
 
       {/* QR Scanner Modal */}
       {showQRScanner && selectedPayrollForPayment && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[70] backdrop-blur-md">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-300">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-[60] backdrop-blur-md animate-in fade-in duration-300">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-green-50">
-              <div>
-                <h2 className="text-lg font-bold text-green-900">Scan Worker QR</h2>
-                <p className="text-xs text-green-700">Verifying payment for {selectedPayrollForPayment.worker.user?.name}</p>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <QrCode className="w-6 h-6 text-green-600" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-green-900">Scan Worker QR</h2>
+                  <p className="text-xs text-green-700 font-medium">Verifying payment for {selectedPayrollForPayment.worker.user?.name}</p>
+                </div>
               </div>
               <button
                 onClick={() => setShowQRScanner(false)}
-                className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-full"
                 disabled={isSubmitting}
               >
                 <Plus className="w-6 h-6 rotate-45" />
               </button>
             </div>
 
-            <div className="p-8 flex flex-col items-center">
-              <div id="qr-reader" className="w-full max-w-[300px] border-4 border-green-500 rounded-2xl overflow-hidden shadow-lg relative min-h-[300px] bg-black flex items-center justify-center">
-                  <div className="text-xs text-white absolute top-4 z-10 bg-black/50 px-2 py-1 rounded">Position QR in center</div>
+            <div className="p-6">
+              <div id="qr-reader" className="w-full rounded-xl overflow-hidden border-2 border-dashed border-green-200 bg-gray-50 aspect-square">
                   {/* html5-qrcode renderer will mount here */}
               </div>
               
+              <p className="text-center text-sm text-gray-500 mt-4 font-medium px-4">
+                Scan <span className="font-bold text-green-700">{selectedPayrollForPayment.worker.user?.name}</span> QR to verify payment. Position the worker's QR code within the frame to scan.
+              </p>
+
               {qrError && (
-                <div className="mt-6 p-4 bg-red-50 text-red-700 rounded-xl text-sm font-medium border border-red-100 flex items-center gap-2 animate-bounce">
+                <div className="mt-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm font-medium border border-red-100 flex items-center gap-2 animate-in slide-in-from-top-2 duration-300">
                   <AlertCircle className="w-4 h-4 flex-shrink-0" />
                   {qrError}
                 </div>
               )}
+            </div>
 
-              <div className="mt-8 p-4 bg-blue-50 border border-blue-100 rounded-xl flex gap-3 text-left">
-                   <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-1" />
-                   <div>
-                        <p className="text-sm font-bold text-blue-900">Wait for Worker QR</p>
-                        <p className="text-xs text-blue-700 leading-relaxed mt-1">Please ask the worker to show their ID card QR code. Once scanned successfully, the payment will be recorded instantly.</p>
-                   </div>
-              </div>
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-center">
+              <button
+                onClick={() => setShowQRScanner(false)}
+                className="px-8 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-semibold transition-colors disabled:opacity-50"
+                disabled={isSubmitting}
+              >
+                Cancel
+              </button>
             </div>
 
             <QRScannerLogic onScanSuccess={handleQRScanSuccess} />

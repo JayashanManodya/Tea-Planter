@@ -13,7 +13,7 @@ export function ApiAccessPage() {
                             Developers
                         </div>
                         <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-gray-900 mb-8">
-                            Build with TeaPlanter API
+                            Build with Tea Planter API
                         </h1>
                         <p className="text-xl text-gray-600 leading-relaxed mb-12">
                             Integrate our robust neural scanning models and realtime worker state telemetry directly into your legacy ERP or factory machinery arrays.

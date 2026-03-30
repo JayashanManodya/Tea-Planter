@@ -16,7 +16,7 @@ export function EstatePartnersPage() {
                             Our Estate Partners
                         </h1>
                         <p className="text-xl text-gray-600 leading-relaxed mb-12">
-                            From sprawling 400-hectare historic plantations in Nuwara Eliya to dynamic modern facilities, see who trusts TeaPlanter AI with their yields.
+                            From sprawling 400-hectare historic plantations in Nuwara Eliya to dynamic modern facilities, see who trusts Tea Planter with their yields.
                         </p>
                     </div>
                 </div>

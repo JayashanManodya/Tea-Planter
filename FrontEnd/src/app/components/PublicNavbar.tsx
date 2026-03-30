@@ -29,7 +29,7 @@ export function PublicNavbar() {
                     <div className="p-1.5 bg-[#C8FF4C] rounded-full">
                         <Leaf className="w-4 h-4 text-black" />
                     </div>
-                    <span className="text-white font-bold hidden sm:inline">TeaPlanter AI</span>
+                    <span className="text-white font-bold hidden sm:inline">Tea Planter</span>
                 </Link>
 
                 {/* Desktop Nav Items */}

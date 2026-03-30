@@ -16,7 +16,7 @@ export function GuidePage() {
                             Platform Guide
                         </h1>
                         <p className="text-xl text-gray-600 leading-relaxed">
-                            Master every module of the TeaPlanter AI ecosystem. From managing your workforce to leveraging neural-vision scanners for crop health, explore how the entire system connects.
+                            Master every module of the Tea Planter ecosystem. From managing your workforce to leveraging neural-vision scanners for crop health, explore how the entire system connects.
                         </p>
                     </div>
 

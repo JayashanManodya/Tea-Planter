@@ -197,7 +197,7 @@ export function LandingPage() {
                                 {[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 fill-current" />)}
                             </div>
                             <p className="text-gray-600 text-lg leading-relaxed mb-8 relative z-10">
-                                "TeaPlanter AI completely transformed how we handle our logistics. The disease scanner alone saved 20% of our seasonal yield."
+                                "Tea Planter completely transformed how we handle our logistics. The disease scanner alone saved 20% of our seasonal yield."
                             </p>
                             <div className="flex items-center gap-4 relative z-10">
                                 <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-400">RC</div>
@@ -264,7 +264,7 @@ export function LandingPage() {
                                 Ready to scale your plantation?
                             </h2>
                             <p className="text-xl text-black/70 mb-12 font-medium">
-                                Join dozens of modern estates leveraging AI to optimize every leaf. Start your journey with TeaPlanter AI today.
+                                Join dozens of modern estates leveraging AI to optimize every leaf. Start your journey with Tea Planter today.
                             </p>
                             <button onClick={handleLogin} className="px-10 py-5 bg-black text-white rounded-full font-bold text-lg flex items-center justify-center gap-3 hover:scale-105 transition-transform shadow-2xl mx-auto">
                                 Start Your Estate Now <ArrowRight className="w-5 h-5" />

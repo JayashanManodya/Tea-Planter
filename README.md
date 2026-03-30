@@ -1,4 +1,4 @@
-# 🍃 TeaPlanter AI Enterprise(In Progress)
+# 🍃 Tea Planter (In Progress)
 
 > A full-stack intelligent estate management platform built for Sri Lankan tea plantation owners, clerks, and workers.
 
@@ -18,7 +18,7 @@ This is not just a software project. It is our family's effort to give back to a
 
 ## What It Does
 
-**TeaPlanter AI Enterprise** is a role-based estate management platform covering every aspect of running a tea estate:
+**Tea Planter** is a role-based estate management platform covering every aspect of running a tea estate:
 
 - 📊 **Dashboard** — Real-time KPIs: daily harvest, active workers, revenue, and alerts
 - 🗺️ **Plots** — Interactive map with per-block stats and area tracking

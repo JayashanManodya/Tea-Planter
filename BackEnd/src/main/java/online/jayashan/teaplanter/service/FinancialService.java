@@ -22,6 +22,7 @@ public class FinancialService {
         private final FactoryRepository factoryRepository;
         private final StockEntryRepository stockEntryRepository;
         private final online.jayashan.teaplanter.repository.PlantationRepository plantationRepository;
+        private final EmailService emailService;
 
         public Payroll generatePayroll(Payroll payroll) {
                 Worker worker = workerRepository.findById(payroll.getWorker().getId())
@@ -112,6 +113,7 @@ public class FinancialService {
                         }
                 }
 
+                boolean wasAlreadyPaid = "PAID".equals(payroll.getStatus());
                 payroll.setStatus(status);
                 if (mode != null) {
                         payroll.setPaymentMode(mode);
@@ -119,6 +121,9 @@ public class FinancialService {
                 
                 if ("PAID".equals(status)) {
                         payroll.setPaidDate(java.time.LocalDate.now());
+                        if (!wasAlreadyPaid) {
+                            emailService.sendPayrollEmail(payroll);
+                        }
                 }
                 return payrollRepository.save(payroll);
         }
@@ -126,12 +131,16 @@ public class FinancialService {
         public List<Payroll> bulkUpdatePayrollStatus(List<Long> ids, String status, String mode) {
                 List<Payroll> payrolls = payrollRepository.findAllById(ids);
                 payrolls.forEach(p -> {
+                        boolean wasAlreadyPaid = "PAID".equals(p.getStatus());
                         p.setStatus(status);
                         if (mode != null) {
                                 p.setPaymentMode(mode);
                         }
                         if ("PAID".equals(status)) {
                                 p.setPaidDate(java.time.LocalDate.now());
+                                if (!wasAlreadyPaid) {
+                                    emailService.sendPayrollEmail(p);
+                                }
                         }
                 });
                 return payrollRepository.saveAll(payrolls);
