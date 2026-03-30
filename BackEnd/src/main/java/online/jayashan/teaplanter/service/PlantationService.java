@@ -64,6 +64,10 @@ public class PlantationService {
         User user = userRepository.findByClerkId(clerkId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        if (!user.getRoles().contains(Role.OWNER)) {
+            throw new RuntimeException("Access denied: Only Owners can update plantation details");
+        }
+
         Plantation plantation = plantationRepository.findByOwner(user)
                 .orElseThrow(() -> new RuntimeException("Plantation not found for this user"));
 

@@ -133,15 +133,26 @@ public class WorkforceService {
                 .joinDate(java.time.LocalDate.now())
                 .build();
 
-        // Update user role to WORKER if not already
-        if (!user.getRoles().contains(online.jayashan.teaplanter.entity.Role.WORKER)) {
+        // Update roles based on assigned functions
+        boolean isClerk = workerFunctions != null && workerFunctions.contains("Clerk");
+        boolean changed = false;
+
+        if (isClerk && !user.getRoles().contains(online.jayashan.teaplanter.entity.Role.CLERK)) {
+            user.getRoles().add(online.jayashan.teaplanter.entity.Role.CLERK);
+            changed = true;
+            clerkService.updateUserMetadata(user.getClerkId(), "clerk", plantationId);
+        } else if (!isClerk && !user.getRoles().contains(online.jayashan.teaplanter.entity.Role.WORKER)) {
             user.getRoles().add(online.jayashan.teaplanter.entity.Role.WORKER);
-            user.setPlantation(plantation); // Ensure user is linked to plantation
-            userRepository.save(user); // Persistence moved here for clarity
-            // Also sync to Clerk metadata
+            changed = true;
             clerkService.updateUserMetadata(user.getClerkId(), "worker", plantationId);
-        } else if (user.getPlantation() == null) {
+        }
+
+        if (user.getPlantation() == null || !user.getPlantation().getId().equals(plantationId)) {
             user.setPlantation(plantation);
+            changed = true;
+        }
+
+        if (changed) {
             userRepository.save(user);
         }
 
@@ -192,6 +203,25 @@ public class WorkforceService {
         // Do NOT overwrite user or plantation relationships as they are fixed on assignment
         if (workerDetails.getWorkerFunctions() != null) {
             worker.setWorkerFunctions(workerDetails.getWorkerFunctions());
+            
+            // Sync roles if "Clerk" status changed
+            User user = worker.getUser();
+            boolean currentlyClerk = user.getRoles().contains(online.jayashan.teaplanter.entity.Role.CLERK);
+            boolean newIsClerk = workerDetails.getWorkerFunctions().contains("Clerk");
+            
+            if (newIsClerk && !currentlyClerk) {
+                user.getRoles().add(online.jayashan.teaplanter.entity.Role.CLERK);
+                userRepository.save(user);
+                clerkService.updateUserMetadata(user.getClerkId(), "clerk", worker.getPlantation().getId());
+            } else if (!newIsClerk && currentlyClerk) {
+                // If they were a Clerk and are no longer, demote to worker
+                user.getRoles().remove(online.jayashan.teaplanter.entity.Role.CLERK);
+                if (!user.getRoles().contains(online.jayashan.teaplanter.entity.Role.WORKER)) {
+                    user.getRoles().add(online.jayashan.teaplanter.entity.Role.WORKER);
+                }
+                userRepository.save(user);
+                clerkService.updateUserMetadata(user.getClerkId(), "worker", worker.getPlantation().getId());
+            }
         }
         if (workerDetails.getAssignedBlock() != null) {
             worker.setAssignedBlock(workerDetails.getAssignedBlock());

@@ -803,7 +803,7 @@ export function WorkforcePage() {
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">Roles (Can select multiple) *</label>
                   <div className="grid grid-cols-3 gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    {['Harvester', 'Pruner', 'Supervisor', 'Driver', 'Maintenance', 'Field Worker', 'Security'].map(role => (
+                    {['Clerk', 'Harvester', 'Pruner', 'Supervisor', 'Driver', 'Maintenance', 'Field Worker', 'Security'].map(role => (
                       <label key={role} className="flex items-center gap-2 cursor-pointer group">
                         <input
                           type="checkbox"

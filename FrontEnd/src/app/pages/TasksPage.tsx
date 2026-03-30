@@ -466,7 +466,7 @@ export function TasksPage() {
                                     EDIT
                                 </button>
                             )}
-                            {(task.status === 'ASSIGNED' || userRole === 'owner') && (
+                            {(task.status === 'ASSIGNED' || userRole === 'owner' || userRole === 'clerk') && (
                                 <button
                                     onClick={() => handleDeleteTask(task.id)}
                                     className="p-1 px-2 text-red-600 hover:bg-red-50 rounded transition-colors flex items-center gap-1 text-xs font-bold"

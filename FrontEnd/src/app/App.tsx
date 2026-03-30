@@ -171,7 +171,7 @@ function AppRoutes() {
           </PrivateRoute>
         } />
         <Route path="financial" element={
-          <PrivateRoute allowedRoles={['owner', 'worker']}>
+          <PrivateRoute allowedRoles={['owner', 'clerk', 'worker']}>
             <FinancialPage />
           </PrivateRoute>
         } />
@@ -191,7 +191,7 @@ function AppRoutes() {
           </PrivateRoute>
         } />
         <Route path="reports" element={
-          <PrivateRoute allowedRoles={['owner']}>
+          <PrivateRoute allowedRoles={['owner', 'clerk']}>
             <ReportsPage />
           </PrivateRoute>
         } />
