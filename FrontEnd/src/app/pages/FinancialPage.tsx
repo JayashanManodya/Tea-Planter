@@ -79,7 +79,6 @@ export function FinancialPage() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [showIncomeModal, setShowIncomeModal] = useState(false);
-  const [showFactoryModal, setShowFactoryModal] = useState(false);
   const [showDeliveryModal, setShowDeliveryModal] = useState(false);
   const [showEditPayrollModal, setShowEditPayrollModal] = useState(false);
   const [editingPayroll, setEditingPayroll] = useState<PayrollRecord | null>(null);
@@ -102,11 +101,6 @@ export function FinancialPage() {
     month: new Date().getMonth() + 1,
     year: new Date().getFullYear(),
     description: ''
-  });
-  const [factoryFormData, setFactoryFormData] = useState({
-    name: '',
-    registerNo: '',
-    pricePerKg: ''
   });
   const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'PAYROLL' | 'INCOMES' | 'BANK_TRANSFERS' | 'FACTORIES'>('OVERVIEW');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -342,28 +336,6 @@ export function FinancialPage() {
     }
   };
 
-  const handleAddFactory = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!factoryFormData.name) return;
-    setIsSubmitting(true);
-    try {
-      const token = await getToken();
-      await api.createFactory({
-        ...factoryFormData,
-        pricePerKg: parseFloat(factoryFormData.pricePerKg) || 0,
-        plantationId: plantationId
-      }, token || undefined);
-      setShowFactoryModal(false);
-      setFactoryFormData({ name: '', registerNo: '', pricePerKg: '' });
-      fetchData();
-      alert('Factory added successfully!');
-    } catch (error) {
-      console.error('Failed to add factory:', error);
-      alert('Failed to add factory.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const handleRecordDelivery = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -1189,13 +1161,6 @@ export function FinancialPage() {
             </div>
             <div className="flex gap-2">
               <button
-                onClick={() => setShowFactoryModal(true)}
-                className="flex items-center gap-2 px-4 py-2 border border-blue-600 text-blue-600 hover:bg-blue-50 rounded-lg font-bold text-sm transition-all"
-              >
-                <Plus className="w-4 h-4" />
-                Register Factory
-              </button>
-              <button
                 onClick={() => {
                   setEditingIncome(null);
                   setIncomeFormData({
@@ -1422,89 +1387,6 @@ export function FinancialPage() {
                   ) : (
                     'Generate Payroll'
                   )}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Add Factory Modal */}
-      {showFactoryModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-blue-50">
-              <h2 className="text-xl font-bold text-blue-900">Register Factory</h2>
-              <button
-                onClick={() => setShowFactoryModal(false)}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-                disabled={isSubmitting}
-              >
-                <Plus className="w-6 h-6 rotate-45" />
-              </button>
-            </div>
-
-            <form onSubmit={handleAddFactory} className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Factory Name *</label>
-                <input
-                  required
-                  type="text"
-                  maxLength={50}
-                  pattern="^[A-Za-z0-9 ]+$"
-                  onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Factory Name can only contain letters, numbers, and spaces.')}
-                  onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
-                  value={factoryFormData.name}
-                  onChange={(e) => setFactoryFormData({ ...factoryFormData, name: e.target.value })}
-                  placeholder="e.g. Bogawantalawa Tea Factory"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Registration No</label>
-                <input
-                  type="text"
-                  maxLength={20}
-                  pattern="^[A-Za-z0-9\-]+$"
-                  onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Registration No can only contain letters, numbers, and hyphens.')}
-                  onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
-                  value={factoryFormData.registerNo}
-                  onChange={(e) => setFactoryFormData({ ...factoryFormData, registerNo: e.target.value })}
-                  placeholder="e.g. TF-2024-001"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Current Price per Kg (LKR)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Price must be a positive value.')}
-                  onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
-                  value={factoryFormData.pricePerKg}
-                  onChange={(e) => setFactoryFormData({ ...factoryFormData, pricePerKg: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                />
-              </div>
-
-              <div className="flex gap-3 pt-4 border-t border-gray-100">
-                <button
-                  type="button"
-                  onClick={() => setShowFactoryModal(false)}
-                  disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-                >
-                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Register'}
                 </button>
               </div>
             </form>
