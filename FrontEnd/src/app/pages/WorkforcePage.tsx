@@ -233,12 +233,12 @@ export function WorkforcePage() {
   const confirmDelete = async () => {
     if (!workerToDelete) return;
     setIsDeleting(true);
+    setShowDeleteModal(false);
     try {
       const token = await getToken();
       await api.deleteWorker(workerToDelete.id, token || undefined);
       await fetchWorkers();
       toast.success('Worker successfully deleted.');
-      setShowDeleteModal(false);
       setWorkerToDelete(null);
     } catch (error) {
       console.error('Failed to delete worker:', error);
@@ -1096,16 +1096,6 @@ export function WorkforcePage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[70] backdrop-blur-sm">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200 relative">
             
-            {/* Loading Overlay (Buffer Effect) */}
-            {isDeleting && (
-              <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-10 flex flex-col items-center justify-center rounded-xl">
-                <div className="bg-white/80 p-4 rounded-xl shadow-xl flex flex-col items-center justify-center">
-                  <Loader2 className="w-10 h-10 animate-spin text-red-600 mb-4" />
-                  <p className="text-red-800 font-bold text-sm animate-pulse tracking-wide">Processing deletion...</p>
-                </div>
-              </div>
-            )}
-
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-red-50">
               <h2 className="text-xl font-bold text-red-900 text-left flex items-center gap-2">
                 <AlertCircle className="w-5 h-5 text-red-700" />
@@ -1157,6 +1147,16 @@ export function WorkforcePage() {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Global Loading Overlay (Buffer Effect) for worker deletion */}
+      {isDeleting && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-[100] flex flex-col items-center justify-center">
+          <div className="bg-white p-6 rounded-2xl shadow-2xl flex flex-col items-center justify-center animate-in fade-in zoom-in duration-300 min-w-[200px] border border-red-100">
+            <Loader2 className="w-12 h-12 animate-spin text-red-600 mb-4" />
+            <p className="text-red-800 font-bold text-base animate-pulse tracking-wider">Deleting Worker...</p>
           </div>
         </div>
       )}
