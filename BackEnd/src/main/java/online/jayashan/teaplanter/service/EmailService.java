@@ -80,6 +80,62 @@ public class EmailService {
         return functions.contains("Harvester") || functions.contains("Pruner") || functions.contains("Field Worker");
     }
 
+    public void sendTaskAssignmentEmail(Task task) {
+        if (task.getAssignedWorker() == null || task.getAssignedWorker().getUser() == null || task.getAssignedWorker().getUser().getEmail() == null) {
+            return;
+        }
+
+        String to = task.getAssignedWorker().getUser().getEmail();
+        String subject = "Tea Planter: New Task Assigned - " + task.getTitle();
+        String workerName = task.getAssignedWorker().getUser().getName();
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(to);
+            helper.setSubject(subject);
+
+            StringBuilder content = new StringBuilder();
+            content.append("<html><body style='font-family: \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px;'>");
+            content.append("<div style='max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;'>");
+            
+            // Header
+            content.append("<div style='background-color: #f9fbf9; padding: 30px; text-align: center; border-bottom: 1px solid #eee;'>");
+            content.append("<h1 style='margin: 0; font-size: 20px; font-weight: 600; color: #2e7d32; text-transform: uppercase; letter-spacing: 2px;'>Tea Planter</h1>");
+            content.append("<p style='margin: 5px 0 0 0; color: #666; font-size: 13px; font-weight: 500;'>New Task Assignment</p>");
+            content.append("</div>");
+
+            // Body
+            content.append("<div style='padding: 30px;'>");
+            content.append("<h2 style='color: #1a3c22; margin-top: 0;'>Hello, ").append(workerName).append("!</h2>");
+            content.append("<p style='color: #555; line-height: 1.6;'>You have been assigned a new task on the plantation. Please review the details below:</p>");
+
+            content.append("<div style='background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 25px 0; border: 1px solid #eee;'>");
+            content.append("<p style='margin: 0 0 10px 0;'><strong>Task Title:</strong> ").append(task.getTitle()).append("</p>");
+            content.append("<p style='margin: 0 0 10px 0;'><strong>Category:</strong> ").append(task.getTaskCategory()).append("</p>");
+            content.append("<p style='margin: 0 0 10px 0;'><strong>Date:</strong> ").append(task.getTaskDate() != null ? task.getTaskDate() : "N/A").append("</p>");
+            content.append("<p style='margin: 0 0 10px 0;'><strong>Priority:</strong> ").append(task.getPriority() != null ? task.getPriority() : "Normal").append("</p>");
+            content.append("<p style='margin: 0 0 10px 0;'><strong>Details:</strong> ").append(task.getDescription() != null ? task.getDescription() : "None").append("</p>");
+            content.append("</div>");
+
+            content.append("<p style='color: #555; line-height: 1.6;'>Check your dashboard for more information and to update the task status once completed.</p>");
+            
+            // Footer
+            content.append("<div style='margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #777; font-size: 12px;'>");
+            content.append("<p style='margin: 5px 0;'><strong>Tea Planter Dashboard</strong></p>");
+            content.append("<p style='margin: 20px 0 0 0; color: #aaa;'>Copyright &copy; 2026 Tea Planter. All rights reserved.</p>");
+            content.append("</div>");
+
+            content.append("</div></div></body></html>");
+
+            helper.setText(content.toString(), true);
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            System.err.println("Failed to send task email to " + to + ": " + e.getMessage());
+        }
+    }
+
     private String buildEnhancedHtmlContent(Payroll payroll, List<Attendance> attendance, List<Task> tasks, List<Harvest> harvests) {
         String workerName = payroll.getWorker().getUser().getName();
         String monthStr = payroll.getMonth().format(DateTimeFormatter.ofPattern("MMMM yyyy"));

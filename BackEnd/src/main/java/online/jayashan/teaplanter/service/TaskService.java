@@ -18,6 +18,7 @@ public class TaskService {
     private final WorkerRepository workerRepository;
     private final online.jayashan.teaplanter.repository.TaskRateRepository taskRateRepository;
     private final online.jayashan.teaplanter.repository.PlantationRepository plantationRepository;
+    private final EmailService emailService;
 
     public Task createTask(online.jayashan.teaplanter.dto.TaskRequestDTO dto) {
         Worker worker = null;
@@ -44,7 +45,19 @@ public class TaskService {
             taskBuilder.plantation(worker.getPlantation());
         }
 
-        return taskRepository.save(taskBuilder.build());
+        Task savedTask = taskRepository.save(taskBuilder.build());
+
+        if (savedTask.getAssignedWorker() != null) {
+            java.util.concurrent.CompletableFuture.runAsync(() -> {
+                try {
+                    emailService.sendTaskAssignmentEmail(savedTask);
+                } catch (Exception e) {
+                    System.err.println("Failed to send async task email: " + e.getMessage());
+                }
+            });
+        }
+
+        return savedTask;
     }
 
     public List<Task> getAllTasks(java.time.LocalDate month, Long plantationId) {
