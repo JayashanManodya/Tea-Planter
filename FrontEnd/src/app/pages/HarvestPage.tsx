@@ -125,13 +125,15 @@ export function HarvestPage() {
     if (worker) {
       await stopScanner();
       const workerName = worker.user?.name || 'Worker';
-      alert(`Worker identified: ${workerName}`);
       toast.success(`Worker identified: ${workerName}`);
+      
+      const assignedPlot = plots.find(p => p.blockId === worker.assignedBlock);
+      const isPlotActive = assignedPlot && assignedPlot.status?.toUpperCase() === 'ACTIVE';
       
       setFormData(prev => ({
         ...prev,
         workerId: worker.id.toString(),
-        plotId: worker.assignedBlock || prev.plotId
+        plotId: isPlotActive ? worker.assignedBlock : ''
       }));
       setShowModal(true);
       setTimeout(() => {
@@ -149,6 +151,12 @@ export function HarvestPage() {
 
     if (!formData.workerId || !formData.plotId || !formData.grossWeight || !formData.tareWeight) {
       toast.error('Please fill in all fields');
+      return;
+    }
+
+    const selectedPlotData = plots.find(p => p.blockId === formData.plotId);
+    if (!editingRecord && selectedPlotData && selectedPlotData.status?.toUpperCase() !== 'ACTIVE') {
+      toast.error('You can only record harvests for Active plots');
       return;
     }
 
@@ -489,7 +497,9 @@ export function HarvestPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                 >
                   <option value="">Select Block</option>
-                  {plots.map(p => <option key={p.id} value={p.blockId}>{p.blockId}</option>)}
+                  {plots
+                    .filter(p => p.status?.toUpperCase() === 'ACTIVE')
+                    .map(p => <option key={p.id} value={p.blockId}>{p.blockId}</option>)}
                 </select>
               </div>
               <div>

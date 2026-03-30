@@ -21,7 +21,9 @@ public class RegistryService {
         if (plantationId != null) {
             plantationRepository.findById(plantationId).ifPresent(plot::setPlantation);
         }
-        plot.setStatus("Active");
+        if (plot.getStatus() == null || plot.getStatus().trim().isEmpty()) {
+            plot.setStatus("Active");
+        }
         return plotRepository.save(plot);
     }
 

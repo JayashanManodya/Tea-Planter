@@ -48,6 +48,10 @@ public class HarvestService {
         Plot plot = plotRepository.findByBlockId(dto.getPlotId())
                 .orElseThrow(() -> new RuntimeException("Plot not found"));
 
+        if (!"Active".equalsIgnoreCase(plot.getStatus())) {
+            throw new RuntimeException("Harvest records can only be added for active plots");
+        }
+
         double netWeight = dto.getGrossWeight() - dto.getTareWeight();
 
         // Explicitly fetch plantation to ensure we have the most up-to-date data (e.g.
