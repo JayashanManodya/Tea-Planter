@@ -86,7 +86,8 @@ public class EmailService {
         }
 
         String to = task.getAssignedWorker().getUser().getEmail();
-        String subject = "Tea Planter: New Task Assigned - " + task.getTitle();
+        String plantationName = task.getPlantation() != null ? task.getPlantation().getName() : "Tea Planter";
+        String subject = plantationName + ": New Task Assigned - " + task.getTitle();
         String workerName = task.getAssignedWorker().getUser().getName();
 
         try {
@@ -102,7 +103,7 @@ public class EmailService {
             
             // Header
             content.append("<div style='background-color: #f9fbf9; padding: 30px; text-align: center; border-bottom: 1px solid #eee;'>");
-            content.append("<h1 style='margin: 0; font-size: 20px; font-weight: 600; color: #2e7d32; text-transform: uppercase; letter-spacing: 2px;'>Tea Planter</h1>");
+            content.append("<h1 style='margin: 0; font-size: 20px; font-weight: 600; color: #2e7d32; text-transform: uppercase; letter-spacing: 2px;'>").append(plantationName).append("</h1>");
             content.append("<p style='margin: 5px 0 0 0; color: #666; font-size: 13px; font-weight: 500;'>New Task Assignment</p>");
             content.append("</div>");
 
@@ -112,6 +113,7 @@ public class EmailService {
             content.append("<p style='color: #555; line-height: 1.6;'>You have been assigned a new task on the plantation. Please review the details below:</p>");
 
             content.append("<div style='background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 25px 0; border: 1px solid #eee;'>");
+            content.append("<p style='margin: 0 0 10px 0;'><strong>Plantation:</strong> ").append(plantationName).append("</p>");
             content.append("<p style='margin: 0 0 10px 0;'><strong>Task Title:</strong> ").append(task.getTitle()).append("</p>");
             content.append("<p style='margin: 0 0 10px 0;'><strong>Category:</strong> ").append(task.getTaskCategory()).append("</p>");
             content.append("<p style='margin: 0 0 10px 0;'><strong>Date:</strong> ").append(task.getTaskDate() != null ? task.getTaskDate() : "N/A").append("</p>");
@@ -123,8 +125,8 @@ public class EmailService {
             
             // Footer
             content.append("<div style='margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #777; font-size: 12px;'>");
-            content.append("<p style='margin: 5px 0;'><strong>Tea Planter Dashboard</strong></p>");
-            content.append("<p style='margin: 20px 0 0 0; color: #aaa;'>Copyright &copy; 2026 Tea Planter. All rights reserved.</p>");
+            content.append("<p style='margin: 5px 0;'><strong>").append(plantationName).append(" Dashboard</strong></p>");
+            content.append("<p style='margin: 20px 0 0 0; color: #aaa;'>Copyright &copy; 2026 ").append(plantationName).append(". All rights reserved.</p>");
             content.append("</div>");
 
             content.append("</div></div></body></html>");

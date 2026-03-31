@@ -329,7 +329,7 @@ export function WorkerTasks() {
                                         </div>
                                         
                                         {task.description && (
-                                            <div className="bg-gray-50 rounded-lg p-3 mt-4 border-l-4 border-green-500/20 text-left">
+                                            <div className="bg-gray-50 rounded-lg p-3 mt-4 border-l-4 border-green-500/20 text-left max-w-3xl">
                                                 <p className="text-sm text-gray-600 whitespace-pre-wrap leading-relaxed break-words">
                                                     {task.description}
                                                 </p>
