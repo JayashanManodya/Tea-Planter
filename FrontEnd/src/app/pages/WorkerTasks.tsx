@@ -136,19 +136,19 @@ export function WorkerTasks() {
     return (
         <div className="p-6 space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Tasks</h1>
                     <p className="text-gray-600 mt-1">Manage your assigned tasks</p>
                 </div>
 
                 {plantations.length > 0 && (
-                    <div className="flex items-center gap-2">
-                        <Building2 className="w-5 h-5 text-gray-400" />
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                        <Building2 className="w-5 h-5 text-gray-400 hidden sm:block" />
                         <select
                             value={selectedPlantation || ''}
                             onChange={(e) => setSelectedPlantation(Number(e.target.value))}
-                            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none font-medium"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none font-medium"
                         >
                             {plantations.map(p => (
                                 <option key={p.id} value={p.id}>{p.name}</option>
@@ -214,13 +214,13 @@ export function WorkerTasks() {
                     </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-gray-50">
-                    <div className="flex items-center gap-2">
-                        <Filter className="w-4 h-4 text-gray-400" />
+                <div className="grid grid-cols-2 md:flex md:flex-wrap items-center gap-3 pt-2 border-t border-gray-50">
+                    <div className="flex items-center gap-2 col-span-2 sm:col-span-1 w-full md:w-auto">
+                        <Filter className="w-4 h-4 text-gray-400 hidden sm:block" />
                         <select
                             value={priorityFilter}
                             onChange={(e) => setPriorityFilter(e.target.value)}
-                            className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+                            className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
                         >
                             <option value="ALL">All Priorities</option>
                             <option value="HIGH">High Priority</option>
@@ -231,7 +231,7 @@ export function WorkerTasks() {
                     <select
                         value={blockFilter}
                         onChange={(e) => setBlockFilter(e.target.value)}
-                        className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+                        className="w-full sm:w-auto px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none col-span-2 sm:col-span-1"
                     >
                         <option value="ALL">All Blocks</option>
                         {plots.map(p => (
@@ -239,12 +239,12 @@ export function WorkerTasks() {
                         ))}
                     </select>
                     <div className="h-6 w-px bg-gray-200 hidden md:block mx-1" />
-                    <div className="flex items-center gap-2">
-                        <ArrowUpDown className="w-4 h-4 text-gray-400" />
+                    <div className="flex items-center gap-2 col-span-2 md:col-span-auto w-full md:w-auto">
+                        <ArrowUpDown className="w-4 h-4 text-gray-400 hidden sm:block" />
                         <select
                             value={sortBy}
                             onChange={(e) => setSortBy(e.target.value)}
-                            className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+                            className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
                         >
                             <option value="date-desc">Newest First</option>
                             <option value="date-asc">Oldest First</option>
@@ -287,9 +287,9 @@ export function WorkerTasks() {
                                         : 'bg-white border-gray-200'
                                     }`}
                             >
-                                <div className="flex items-start justify-between">
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-2 mb-2">
+                                <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+                                    <div className="flex-1 w-full text-left">
+                                        <div className="flex flex-wrap items-center gap-2 mb-2">
                                             <h3 className="font-medium text-gray-900">{task.title}</h3>
                                             <span
                                                 className={`text-xs px-2 py-0.5 rounded-full ${task.priority === 'HIGH'
@@ -312,7 +312,7 @@ export function WorkerTasks() {
                                                 {task.status.replace('_', ' ')}
                                             </span>
                                         </div>
-                                        <div className="flex items-center gap-4 text-sm text-gray-600">
+                                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600">
                                             <span>
                                                 <span className="font-medium">Date:</span> {new Date(task.taskDate).toLocaleDateString()}
                                             </span>
@@ -329,7 +329,7 @@ export function WorkerTasks() {
                                         </div>
                                         
                                         {task.description && (
-                                            <div className="bg-gray-50 rounded-lg p-3 mt-4 border-l-4 border-green-500/20 text-left max-w-3xl">
+                                            <div className="bg-gray-50 rounded-lg p-3 mt-4 border-l-4 border-green-500/20 text-left w-full">
                                                 <p className="text-sm text-gray-600 whitespace-pre-wrap leading-relaxed break-words">
                                                     {task.description}
                                                 </p>
@@ -341,7 +341,7 @@ export function WorkerTasks() {
                                         <button
                                             onClick={() => handleCompleteTask(task.id)}
                                             disabled={isUpdatingTask}
-                                            className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                                            className="w-full sm:w-auto px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
                                         >
                                             {isUpdatingTask ? (
                                                 <>

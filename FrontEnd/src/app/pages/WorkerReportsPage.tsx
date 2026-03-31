@@ -120,7 +120,7 @@ export function WorkerReportsPage() {
                         <button
                             onClick={handleDownload}
                             disabled={isDownloading || !selectedPlantation}
-                            className="mt-8 flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 disabled:opacity-50 transition-colors"
+                            className="mt-8 w-full sm:w-auto flex items-center justify-center sm:justify-start gap-2 px-6 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 disabled:opacity-50 transition-colors"
                         >
                             {isDownloading ? (
                                 <Loader2 className="w-5 h-5 animate-spin" />

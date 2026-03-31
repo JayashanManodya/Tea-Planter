@@ -299,7 +299,7 @@ export function TasksPage() {
 
     return (
         <div className="p-6 space-y-6 text-left">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Task Management</h1>
                     <div className="flex items-center gap-2 mt-1">
@@ -313,7 +313,7 @@ export function TasksPage() {
                     </div>
                 </div>
                 {(userRole === 'owner' || userRole === 'clerk') && (
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
                         <button
                             onClick={() => {
                                 setEditingRate(null);
@@ -325,14 +325,14 @@ export function TasksPage() {
                                 });
                                 setShowRateModal(true);
                             }}
-                            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+                            className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors w-full sm:w-auto"
                         >
                             <Settings2 className="w-5 h-5" />
                             Manage Task Types
                         </button>
                         <button
                             onClick={() => setShowAssignModal(true)}
-                            className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
+                            className="flex items-center justify-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors w-full sm:w-auto"
                         >
                             <Plus className="w-5 h-5" />
                             Assign Task
@@ -353,13 +353,13 @@ export function TasksPage() {
                             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                         />
                     </div>
-                    <div className="flex flex-wrap items-center gap-3">
-                        <div className="flex items-center gap-2">
-                            <Filter className="w-4 h-4 text-gray-400" />
+                    <div className="grid grid-cols-2 md:flex md:flex-nowrap items-center gap-3">
+                        <div className="flex items-center gap-2 w-full md:w-auto col-span-2 sm:col-span-1">
+                            <Filter className="w-4 h-4 text-gray-400 hidden md:block" />
                             <select
                                 value={statusFilter}
                                 onChange={(e) => setStatusFilter(e.target.value)}
-                                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
                             >
                                 <option value="ALL">All Status</option>
                                 <option value="ASSIGNED">Assigned</option>
@@ -371,7 +371,7 @@ export function TasksPage() {
                         <select
                             value={priorityFilter}
                             onChange={(e) => setPriorityFilter(e.target.value)}
-                            className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+                            className="w-full md:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none col-span-2 sm:col-span-1"
                         >
                             <option value="ALL">All Priorities</option>
                             <option value="HIGH">High Priority</option>
@@ -381,7 +381,7 @@ export function TasksPage() {
                         <select
                             value={blockFilter}
                             onChange={(e) => setBlockFilter(e.target.value)}
-                            className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+                            className="w-full md:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none col-span-2 sm:col-span-1"
                         >
                             <option value="ALL">All Blocks</option>
                             {plots.map(p => (
@@ -389,12 +389,12 @@ export function TasksPage() {
                             ))}
                         </select>
                         <div className="h-8 w-px bg-gray-200 hidden md:block" />
-                        <div className="flex items-center gap-2">
-                            <ArrowUpDown className="w-4 h-4 text-gray-400" />
+                        <div className="flex items-center gap-2 w-full md:w-auto col-span-2 sm:col-span-1">
+                            <ArrowUpDown className="w-4 h-4 text-gray-400 hidden md:block" />
                             <select
                                 value={sortBy}
                                 onChange={(e) => setSortBy(e.target.value)}
-                                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
                             >
                                 <option value="date-desc">Newest First</option>
                                 <option value="date-asc">Oldest First</option>
@@ -730,7 +730,7 @@ export function TasksPage() {
                             </button>
                         </div>
 
-                        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 overflow-y-auto max-h-[75vh]">
                             {/* Form Side */}
                             <form onSubmit={handleSaveRate} className="space-y-4">
                                 <h3 className="font-bold text-gray-900 text-sm text-left">{editingRate ? 'Edit Task Type' : 'Add New Task Type'}</h3>

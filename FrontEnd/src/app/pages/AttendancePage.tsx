@@ -271,15 +271,15 @@ export function AttendancePage() {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Attendance & HR Module</h1>
           <p className="text-gray-600 mt-1">Track daily attendance and manage leave</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
           <button
             onClick={startScanner}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors w-full sm:w-auto"
           >
             <QrCode className="w-5 h-5" />
             Scan QR
@@ -296,7 +296,7 @@ export function AttendancePage() {
               });
               setShowModal(true);
             }}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium w-full sm:w-auto"
           >
             <Clock className="w-5 h-5" />
             Record Attendance
@@ -338,13 +338,13 @@ export function AttendancePage() {
             />
           </div>
           
-          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-            <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-              <Filter className="w-4 h-4 text-gray-500" />
+          <div className="grid grid-cols-2 lg:flex lg:flex-nowrap items-center gap-3 w-full lg:w-auto">
+            <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200 w-full lg:w-auto col-span-2 sm:col-span-1">
+              <Filter className="w-4 h-4 text-gray-500 hidden lg:block" />
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="bg-transparent text-sm font-medium outline-none text-gray-700"
+                className="w-full bg-transparent text-sm font-medium outline-none text-gray-700"
               >
                 <option value="ALL">All Status</option>
                 <option value="WORKING">Working</option>
@@ -359,13 +359,13 @@ export function AttendancePage() {
               type="date"
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value)}
-              className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              className="w-full lg:w-auto px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500 transition-all col-span-2 sm:col-span-1"
             />
 
-            <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-lg">
+            <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-lg w-full lg:w-auto col-span-2 sm:col-span-1">
               <button
                 onClick={() => setSortConfig({ ...sortConfig, key: 'name' })}
-                className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
+                className={`flex-1 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
                   sortConfig.key === 'name' 
                     ? 'bg-white text-blue-600 shadow-sm' 
                     : 'text-gray-500 hover:text-gray-700'
@@ -375,7 +375,7 @@ export function AttendancePage() {
               </button>
               <button
                 onClick={() => setSortConfig({ ...sortConfig, key: 'time' })}
-                className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
+                className={`flex-1 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
                   sortConfig.key === 'time' 
                     ? 'bg-white text-blue-600 shadow-sm' 
                     : 'text-gray-500 hover:text-gray-700'
@@ -391,7 +391,7 @@ export function AttendancePage() {
                  direction: sortConfig.direction === 'asc' ? 'desc' : 'asc'
                })}
                title={sortConfig.direction === 'asc' ? 'Sort Descending' : 'Sort Ascending'}
-               className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
+               className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors w-full lg:w-auto col-span-2 sm:col-span-1 flex justify-center items-center"
             >
                <ArrowUpDown className={`w-4 h-4 transition-transform duration-200 ${sortConfig.direction === 'desc' ? 'rotate-180' : ''}`} />
             </button>

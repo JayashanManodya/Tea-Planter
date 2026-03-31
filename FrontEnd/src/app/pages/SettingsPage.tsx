@@ -54,7 +54,7 @@ export function SettingsPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {(['en', 'si', 'ta'] as Language[]).map((lang) => (
             <button
               key={lang}
@@ -620,20 +620,20 @@ function PinSettings() {
         {error && <p className="text-sm text-red-600 text-left">{error}</p>}
         {success && <p className="text-sm text-green-600 text-left">PIN updated successfully!</p>}
 
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <input
             type="text"
             maxLength={6}
             value={pin}
             onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
             placeholder="Enter 6-digit PIN"
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-50 hover:bg-white transition-colors"
+            className="w-full sm:flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-50 hover:bg-white transition-colors"
             required
           />
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 disabled:opacity-50 transition-colors shadow-sm"
+            className="w-full sm:w-auto px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 disabled:opacity-50 transition-colors shadow-sm"
           >
             {loading ? 'Updating...' : 'Set PIN'}
           </button>

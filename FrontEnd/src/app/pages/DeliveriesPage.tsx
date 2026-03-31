@@ -159,7 +159,7 @@ export function DeliveriesPage() {
 
     return (
         <div className="p-6 space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Tea Deliveries</h1>
                     <div className="flex items-center gap-2 mt-1">
@@ -178,7 +178,7 @@ export function DeliveriesPage() {
                         setFormData({ factoryId: '', weight: '', deliveryDate: new Date().toISOString().split('T')[0] });
                         setShowModal(true);
                     }}
-                    className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors w-full sm:w-auto"
                 >
                     <Plus className="w-5 h-5" />
                     Record Delivery
@@ -260,31 +260,31 @@ export function DeliveriesPage() {
                                 className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none"
                             />
                         </div>
-                        <div className="flex flex-wrap items-center gap-4">
-                            <div className="flex items-center gap-2">
-                                <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">From:</span>
+                        <div className="grid grid-cols-2 lg:flex lg:flex-nowrap items-center gap-3 w-full md:w-auto mt-2 md:mt-0">
+                            <div className="flex items-center gap-2 col-span-2 sm:col-span-1">
+                                <span className="text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[40px]">From:</span>
                                 <input
                                     type="date"
                                     value={startDate}
                                     onChange={(e) => setStartDate(e.target.value)}
-                                    className="px-2 py-1.5 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-green-500 outline-none"
+                                    className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-green-500 outline-none"
                                 />
                             </div>
-                            <div className="flex items-center gap-2">
-                                <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">To:</span>
+                            <div className="flex items-center gap-2 col-span-2 sm:col-span-1">
+                                <span className="text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[40px]">To:</span>
                                 <input
                                     type="date"
                                     value={endDate}
                                     onChange={(e) => setEndDate(e.target.value)}
-                                    className="px-2 py-1.5 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-green-500 outline-none"
+                                    className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-green-500 outline-none"
                                 />
                             </div>
-                            <div className="flex items-center gap-2">
-                                <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Sort:</span>
+                            <div className="flex items-center gap-2 col-span-2 lg:col-span-1">
+                                <span className="text-xs font-bold text-gray-500 uppercase tracking-wider hidden sm:block">Sort:</span>
                                 <select
                                     value={sortBy}
                                     onChange={(e) => setSortBy(e.target.value as any)}
-                                    className="px-2 py-1.5 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-green-500 outline-none bg-white font-medium"
+                                    className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-green-500 outline-none bg-white font-medium"
                                 >
                                     <option value="date-desc">Newest First</option>
                                     <option value="date-asc">Oldest First</option>
@@ -292,7 +292,7 @@ export function DeliveriesPage() {
                                     <option value="weight-asc">Weight (Low-High)</option>
                                 </select>
                             </div>
-                            <div className="h-8 w-px bg-gray-200 hidden md:block"></div>
+                            <div className="h-8 w-px bg-gray-200 hidden lg:block"></div>
                             {(searchTerm || factoryFilter !== 'ALL' || startDate || endDate) && (
                                 <button
                                     onClick={() => {
@@ -301,7 +301,7 @@ export function DeliveriesPage() {
                                         setStartDate('');
                                         setEndDate('');
                                     }}
-                                    className="text-xs font-bold text-green-600 hover:text-green-700"
+                                    className="text-xs font-bold text-green-600 hover:text-green-700 col-span-2 lg:col-span-1 mt-2 lg:mt-0 text-right lg:text-left pr-2"
                                 >
                                     Clear All
                                 </button>

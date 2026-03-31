@@ -327,12 +327,12 @@ export function InventoryPage() {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Inventory & Input Control</h1>
           <p className="text-gray-600 mt-1">Manage fertilizers, chemicals, and equipment</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
           <button
             onClick={() => {
               setEditingItem(null);
@@ -344,7 +344,7 @@ export function InventoryPage() {
               });
               setShowModal(true);
             }}
-            className="flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-medium transition-colors"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-medium transition-colors w-full sm:w-auto"
           >
             <Plus className="w-5 h-5" />
             Add Item
@@ -366,13 +366,13 @@ export function InventoryPage() {
             />
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-gray-400" />
+          <div className="grid grid-cols-2 lg:flex lg:flex-nowrap items-center gap-3">
+            <div className="flex items-center gap-2 w-full lg:w-auto col-span-2 sm:col-span-1">
+              <Filter className="w-4 h-4 text-gray-400 hidden lg:block" />
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-orange-500 outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-orange-500 outline-none"
               >
                 <option value="ALL">All Categories</option>
                 {Array.from(new Set(inventory.map(i => i.category))).map(c => (
@@ -384,19 +384,19 @@ export function InventoryPage() {
             <select
               value={filterStockStatus}
               onChange={(e) => setFilterStockStatus(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-orange-500 outline-none"
+              className="w-full lg:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-orange-500 outline-none col-span-2 sm:col-span-1"
             >
               <option value="ALL">All Stock Status</option>
               <option value="IN_STOCK">In Stock</option>
               <option value="LOW">Low Stock</option>
             </select>
 
-            <div className="flex items-center gap-2 border-l pl-3 ml-2 border-gray-200">
-              <ArrowUpDown className="w-4 h-4 text-gray-400" />
+            <div className="flex items-center gap-2 w-full lg:w-auto col-span-2 sm:col-span-1 lg:border-l lg:pl-3 lg:ml-2 border-gray-200">
+              <ArrowUpDown className="w-4 h-4 text-gray-400 hidden lg:block" />
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-orange-500 outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-orange-500 outline-none"
               >
                 <option value="name">Name (A-Z)</option>
                 <option value="category">Category</option>
@@ -892,14 +892,14 @@ export function InventoryPage() {
                 className="w-full pl-9 pr-4 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-gray-400 outline-none"
               />
             </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-gray-400" />
+            <div className="grid grid-cols-2 lg:flex lg:flex-nowrap items-center gap-3">
+              <div className="flex items-center gap-2 w-full lg:w-auto col-span-2 sm:col-span-1">
+                <Calendar className="w-4 h-4 text-gray-400 hidden lg:block" />
                 <input
                   type="month"
                   value={logFilterMonth === 'ALL' ? '' : logFilterMonth}
                   onChange={(e) => setLogFilterMonth(e.target.value || 'ALL')}
-                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-gray-400 outline-none"
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-gray-400 outline-none"
                 />
                 {logFilterMonth !== 'ALL' && (
                   <button
@@ -913,19 +913,19 @@ export function InventoryPage() {
               <select
                 value={logFilterType}
                 onChange={(e) => setLogFilterType(e.target.value)}
-                className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-gray-400 outline-none"
+                className="w-full lg:w-auto px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-gray-400 outline-none col-span-2 sm:col-span-1"
               >
                 <option value="ALL">All Types</option>
                 <option value="PURCHASE">Purchase Only</option>
                 <option value="USAGE">Usage Only</option>
               </select>
 
-              <div className="flex items-center gap-2 border-l pl-3 border-gray-200">
-                <ArrowUpDown className="w-4 h-4 text-gray-400" />
+              <div className="flex items-center gap-2 w-full lg:w-auto col-span-2 sm:col-span-1 lg:border-l lg:pl-3 border-gray-200">
+                <ArrowUpDown className="w-4 h-4 text-gray-400 hidden lg:block" />
                 <select
                   value={logSortBy}
                   onChange={(e) => setLogSortBy(e.target.value)}
-                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-gray-400 outline-none"
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-gray-400 outline-none"
                 >
                   <option value="date-desc">Newest First</option>
                   <option value="date-asc">Oldest First</option>

@@ -663,7 +663,7 @@ export function FinancialPage() {
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Financial & Payroll Management</h1>
           <div className="flex items-center gap-2 mt-1">
@@ -676,13 +676,13 @@ export function FinancialPage() {
             />
           </div>
         </div>
-        <div className="flex gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest bg-gray-50 px-3 py-1 rounded-full border border-gray-100">
+        <div className="flex justify-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest bg-gray-50 px-3 py-1 rounded-full border border-gray-100 self-start sm:self-auto w-full sm:w-auto">
            Plantation Financials
         </div>
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex flex-wrap gap-2 border-b border-gray-200">
+      <div className="flex overflow-x-auto custom-scrollbar gap-2 border-b border-gray-200 pb-1">
         {[
           { id: 'OVERVIEW', label: 'Financial Overview', icon: Activity },
           { id: 'PAYROLL', label: 'Payroll & Wages', icon: DollarSign },
@@ -692,7 +692,7 @@ export function FinancialPage() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`flex items-center gap-2 px-6 py-3 text-sm font-bold border-b-2 transition-all ${
+            className={`flex items-center whitespace-nowrap gap-2 px-6 py-3 text-sm font-bold border-b-2 transition-all ${
               activeTab === tab.id
                 ? 'border-blue-600 text-blue-600 bg-blue-50/50 rounded-t-lg'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
@@ -714,7 +714,7 @@ export function FinancialPage() {
             <button 
               onClick={handleExport}
               disabled={isExporting}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg font-bold text-sm shadow-sm transition-all active:scale-95 disabled:opacity-50"
+              className="flex items-center justify-center gap-2 w-full sm:w-auto px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg font-bold text-sm shadow-sm transition-all active:scale-95 disabled:opacity-50"
             >
               {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
               {isExporting ? 'Exporting...' : 'Export Financial Report'}
@@ -877,10 +877,10 @@ export function FinancialPage() {
 
       {activeTab === 'PAYROLL' && (
         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 animate-in slide-in-from-right-4 duration-300">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
             <h3 className="text-xl font-bold text-gray-900">Worker Payroll Management</h3>
-            <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-              <div className="relative flex-1 sm:w-64">
+            <div className="grid grid-cols-2 lg:flex lg:flex-nowrap items-center gap-3 w-full lg:w-auto">
+              <div className="relative col-span-2 lg:col-auto lg:w-64">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
@@ -892,14 +892,14 @@ export function FinancialPage() {
               </div>
                 <button
                   onClick={() => setShowModal(true)}
-                  className="flex items-center gap-2 px-4 py-2 border border-blue-600 text-blue-600 hover:bg-blue-50 rounded-lg font-bold text-sm shadow-sm transition-all active:scale-95"
+                  className="flex items-center justify-center gap-2 px-4 py-2 border border-blue-600 text-blue-600 hover:bg-blue-50 rounded-lg font-bold text-sm shadow-sm transition-all active:scale-95 col-span-2 sm:col-span-1 lg:col-auto w-full lg:w-auto whitespace-nowrap"
                 >
                   <Plus className="w-4 h-4" />
                   Generate Individual
                 </button>
                 <button
                   onClick={() => setShowSalaryModal(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300 rounded-lg font-bold text-sm shadow-sm transition-all active:scale-95"
+                  className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300 rounded-lg font-bold text-sm shadow-sm transition-all active:scale-95 col-span-2 sm:col-span-1 lg:col-auto w-full lg:w-auto whitespace-nowrap"
                 >
                   <Activity className="w-4 h-4" />
                   Manage Salaries
@@ -907,7 +907,7 @@ export function FinancialPage() {
                 <button
                   onClick={handleBulkGeneratePayroll}
                   disabled={isSubmitting}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-sm shadow-md transition-all active:scale-95 disabled:opacity-50"
+                  className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-sm shadow-md transition-all active:scale-95 disabled:opacity-50 col-span-2 lg:col-auto w-full lg:w-auto whitespace-nowrap"
                 >
                   {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                   Generate All
@@ -1010,12 +1010,12 @@ export function FinancialPage() {
 
       {activeTab === 'BANK_TRANSFERS' && (
         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 animate-in slide-in-from-right-4 duration-300">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
             <div>
               <h3 className="text-xl font-bold text-gray-900">Bank Transfer List</h3>
               <p className="text-sm text-gray-500">Manage digital payments and export for processing</p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
               <button
                 onClick={() => {
                   const pending = payrolls.filter(p => p.status === 'APPROVED' && p.paymentMode === 'BANK');
@@ -1042,7 +1042,7 @@ export function FinancialPage() {
                   link.click();
                   document.body.removeChild(link);
                 }}
-                className="flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg font-bold text-sm border border-green-200 transition-colors"
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg font-bold text-sm border border-green-200 transition-colors w-full sm:w-auto"
               >
                 <Download className="w-4 h-4" />
                 Export CSV
@@ -1053,7 +1053,7 @@ export function FinancialPage() {
                   if (ids.length === 0) return alert('No pending bank transfers found.');
                   markAllAsPaid(ids);
                 }}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-bold text-sm shadow-md transition-all active:scale-95"
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-bold text-sm shadow-md transition-all active:scale-95 w-full sm:w-auto"
               >
                 <CheckCircle className="w-4 h-4" />
                 Mark All as Paid
@@ -1159,7 +1159,7 @@ export function FinancialPage() {
               <h3 className="text-xl font-bold text-gray-900">Factory Incomes & Management</h3>
               <p className="text-sm text-gray-500">Manage monthly paysheets and factory registrations</p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 w-full sm:w-auto">
               <button
                 onClick={() => {
                   setEditingIncome(null);
@@ -1175,7 +1175,7 @@ export function FinancialPage() {
                   });
                   setShowIncomeModal(true);
                 }}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-bold text-sm shadow-md transition-all"
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-bold text-sm shadow-md transition-all w-full sm:w-auto"
               >
                 <Plus className="w-4 h-4" />
                 Record Paysheet

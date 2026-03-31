@@ -90,19 +90,19 @@ export function ReportsPage() {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Reports & Analytics</h1>
           <p className="text-gray-600 mt-1">Generate and export plantation reports</p>
         </div>
 
-        <div className="flex items-center gap-3 bg-white p-2 rounded-lg border border-gray-200 shadow-sm">
-          <label className="text-sm font-semibold text-gray-700">Report Month:</label>
+        <div className="flex items-center justify-between sm:justify-start gap-3 bg-white p-2 rounded-lg border border-gray-200 shadow-sm w-full sm:w-auto">
+          <label className="text-sm font-semibold text-gray-700 whitespace-nowrap">Report Month:</label>
           <input
             type="month"
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(e.target.value)}
-            className="px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 outline-none text-sm"
+            className="w-full sm:w-auto px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 outline-none text-sm"
           />
         </div>
       </div>
@@ -126,7 +126,7 @@ export function ReportsPage() {
                   <button
                     onClick={() => handleDownload(report.id, report.title)}
                     disabled={!!downloading}
-                    className="flex items-center gap-2 px-4 py-2 bg-gray-900 hover:bg-black text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-gray-900 hover:bg-black text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
                   >
                     {isDownloading ? (
                       <Loader2 className="w-4 h-4 animate-spin" />

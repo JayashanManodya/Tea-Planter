@@ -99,18 +99,18 @@ export function OwnerDashboard() {
     return (
         <div className="p-6 space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
-                    <p className="text-gray-600 mt-1">Welcome back, {user?.fullName || (userRole === 'clerk' ? 'Clerk' : 'Owner')}</p>
+                    <p className="text-gray-600 mt-1">Welcome back, {user?.fullName || (user?.publicMetadata?.role === 'clerk' ? 'Clerk' : 'Owner')}</p>
                 </div>
-                <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium text-gray-600">Period:</p>
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <p className="text-sm font-medium text-gray-600 whitespace-nowrap">Period:</p>
                     <input
                         type="month"
                         value={selectedMonth}
                         onChange={(e) => setSelectedMonth(e.target.value)}
-                        className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none bg-white shadow-sm"
+                        className="flex-1 sm:flex-none px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none bg-white shadow-sm min-w-0"
                     />
                 </div>
             </div>

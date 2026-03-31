@@ -269,11 +269,11 @@ export function DiseaseScannerPage() {
               </div>
 
               {/* Actions */}
-              <div className="flex gap-3">
-                <button className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button className="w-full sm:flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium">
                   Save Report
                 </button>
-                <button className="flex-1 px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg font-medium">
+                <button className="w-full sm:flex-1 px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg font-medium">
                   Scan Another
                 </button>
               </div>

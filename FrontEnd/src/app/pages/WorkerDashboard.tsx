@@ -144,35 +144,37 @@ export function WorkerDashboard() {
     return (
         <div className="p-6 space-y-6">
             {/* Header with Plantation Selector */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
                     <p className="text-gray-600 mt-1">Welcome back, {user?.firstName || 'Worker'}</p>
                 </div>
 
-                {plantations.length > 0 && (
-                    <div className="flex items-center gap-2">
-                        <Building2 className="w-5 h-5 text-gray-400" />
-                        <select
-                            value={selectedPlantation || ''}
-                            onChange={(e) => setSelectedPlantation(Number(e.target.value))}
-                            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none font-medium"
-                        >
-                            {plantations.map(p => (
-                                <option key={p.id} value={p.id}>{p.name}</option>
-                            ))}
-                        </select>
-                    </div>
-                )}
+                <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                    {plantations.length > 0 && (
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
+                            <Building2 className="w-5 h-5 text-gray-400 hidden sm:block" />
+                            <select
+                                value={selectedPlantation || ''}
+                                onChange={(e) => setSelectedPlantation(Number(e.target.value))}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none font-medium"
+                            >
+                                {plantations.map(p => (
+                                    <option key={p.id} value={p.id}>{p.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
 
-                <button
-                    onClick={() => setShowQrModal(true)}
-                    disabled={isGeneratingQr}
-                    className="flex items-center gap-2 px-4 py-2 bg-orange-100 text-orange-700 hover:bg-orange-200 rounded-lg font-bold transition-colors disabled:opacity-50"
-                >
-                    {isGeneratingQr ? <Loader2 className="w-5 h-5 animate-spin" /> : <QrCode className="w-5 h-5" />}
-                    My QR Code
-                </button>
+                    <button
+                        onClick={() => setShowQrModal(true)}
+                        disabled={isGeneratingQr}
+                        className="flex items-center justify-center gap-2 px-4 py-2 bg-orange-100 text-orange-700 hover:bg-orange-200 rounded-lg font-bold transition-colors disabled:opacity-50 w-full sm:w-auto"
+                    >
+                        {isGeneratingQr ? <Loader2 className="w-5 h-5 animate-spin" /> : <QrCode className="w-5 h-5" />}
+                        My QR Code
+                    </button>
+                </div>
             </div>
 
             {/* Stats Grid */}
