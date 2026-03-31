@@ -8,9 +8,9 @@ import { api } from '@/lib/api';
 
 export function SettingsPage() {
   const { language, setLanguage, t } = useLanguage();
-  const { user } = useUser();
+  const { isLoaded, user } = useUser();
   const { getToken } = useAuth();
-  const userRole = user?.publicMetadata?.role as string || 'Member';
+  const userRole = (user?.publicMetadata?.role as string) || 'worker';
   const plantationId = user?.publicMetadata?.plantationId as string | undefined;
 
   const [plantation, setPlantation] = useState<any>(null);
@@ -34,6 +34,17 @@ export function SettingsPage() {
 
     fetchPlantation();
   }, [plantationId, user?.id]);
+
+  if (!isLoaded) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-10 h-10 animate-spin text-green-600" />
+          <p className="text-gray-500 font-medium animate-pulse">Loading settings...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 space-y-6 text-left">
@@ -946,8 +957,28 @@ function WorkerQRSettings() {
     img.src = url;
   };
 
-  if (loading) return null;
-  if (plantations.length === 0) return null;
+  if (loading) return (
+    <div className="bg-white rounded-lg border border-gray-200 p-12 shadow-sm mt-6 flex flex-col items-center justify-center gap-3">
+      <Loader2 className="w-8 h-8 animate-spin text-orange-600" />
+      <p className="text-sm font-medium text-gray-500">Fetching attendance QR codes...</p>
+    </div>
+  );
+  
+  if (plantations.length === 0) return (
+    <div className="bg-white rounded-lg border border-gray-200 p-10 shadow-sm mt-6 text-center">
+      <div className="mx-auto w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center mb-4">
+        <QrCode className="w-8 h-8 text-orange-400" />
+      </div>
+      <h3 className="text-lg font-bold text-gray-900 mb-2">No Attendance QR Codes</h3>
+      <p className="text-sm text-gray-500 max-w-sm mx-auto mb-6">
+        You haven't been assigned to any plantations yet. Have your estate owner add you as a worker using your registered email: <span className="font-bold text-gray-700">{user?.primaryEmailAddress?.emailAddress}</span>
+      </p>
+      <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium border border-blue-100">
+        <Monitor className="w-4 h-4" />
+        QR codes appear here once assigned
+      </div>
+    </div>
+  );
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm mt-6">
