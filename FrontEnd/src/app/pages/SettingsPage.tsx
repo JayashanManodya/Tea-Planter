@@ -1064,9 +1064,12 @@ function PWAInstallNotice() {
                 Install Application
               </button>
             ) : (
-              <div className="text-[10px] font-bold text-gray-400 bg-gray-100 px-3 py-2 rounded-lg border border-gray-200 inline-block">
-                APP ALREADY INSTALLED OR NOT SUPPORTED
-              </div>
+            <ol className="text-[11px] text-gray-600 space-y-2 list-decimal list-inside font-medium bg-white/50 p-3 rounded-xl border border-white/50">
+              <li>Look at the right side of the <span className="font-bold text-gray-900">address bar</span> for an install icon (computer with arrow)</li>
+              <li>Or click the <span className="font-bold text-gray-900">three-dot menu</span> in the top right</li>
+              <li>Select <span className="font-bold text-blue-600">"Install Tea Planter"</span></li>
+              <li>The app will now appear in your app launcher or as a desktop shortcut</li>
+            </ol>
             )}
           </div>
         </div>
