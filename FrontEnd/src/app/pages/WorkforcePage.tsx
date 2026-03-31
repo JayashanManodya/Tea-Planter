@@ -450,105 +450,107 @@ export function WorkforcePage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Worker</th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Contact</th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Role</th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Assigned Block</th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Status</th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Monthly Harvest</th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredWorkers.map((worker) => (
-              <tr key={worker.id} className="border-b border-gray-100 hover:bg-gray-50">
-                <td className="py-3 px-4">
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => handleViewDetails(worker)}
-                      className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold hover:bg-blue-200 transition-all overflow-hidden border-2 border-white shadow-md flex-shrink-0"
-                    >
-                      {worker.user?.profileImageUrl ? (
-                        <img 
-                          src={worker.user.profileImageUrl} 
-                          alt={worker.user.name} 
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-lg">{(worker.user?.name || 'W').charAt(0)}</span>
-                      )}
-                    </button>
-                    <div>
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[1000px]">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Worker</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Contact</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Role</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Assigned Block</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Status</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Monthly Harvest</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredWorkers.map((worker) => (
+                <tr key={worker.id} className="border-b border-gray-100 hover:bg-gray-50">
+                  <td className="py-3 px-4">
+                    <div className="flex items-center gap-3">
                       <button
                         onClick={() => handleViewDetails(worker)}
-                        className="font-medium text-gray-900 hover:text-blue-600 transition-colors text-left"
+                        className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold hover:bg-blue-200 transition-all overflow-hidden border-2 border-white shadow-md flex-shrink-0"
                       >
-                        {worker.user?.name || 'Unnamed Worker'}
+                        {worker.user?.profileImageUrl ? (
+                          <img 
+                            src={worker.user.profileImageUrl} 
+                            alt={worker.user.name} 
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-lg">{(worker.user?.name || 'W').charAt(0)}</span>
+                        )}
                       </button>
-                      <p className="text-xs text-gray-500 flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        Joined {worker.joinDate}
+                      <div>
+                        <button
+                          onClick={() => handleViewDetails(worker)}
+                          className="font-medium text-gray-900 hover:text-blue-600 transition-colors text-left"
+                        >
+                          {worker.user?.name || 'Unnamed Worker'}
+                        </button>
+                        <p className="text-xs text-gray-500 flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          Joined {worker.joinDate}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="py-3 px-4">
+                    <div className="space-y-1">
+                      <p className="text-sm text-gray-900 flex items-center gap-1">
+                        <Mail className="w-3 h-3" />
+                        {worker.user?.email || 'No email'}
+                      </p>
+                      <p className="text-sm text-gray-600 flex items-center gap-1">
+                        <Phone className="w-3 h-3" />
+                        {worker.user?.phone || 'No phone'}
                       </p>
                     </div>
-                  </div>
-                </td>
-                <td className="py-3 px-4">
-                  <div className="space-y-1">
-                    <p className="text-sm text-gray-900 flex items-center gap-1">
-                      <Mail className="w-3 h-3" />
-                      {worker.user?.email || 'No email'}
-                    </p>
-                    <p className="text-sm text-gray-600 flex items-center gap-1">
-                      <Phone className="w-3 h-3" />
-                      {worker.user?.phone || 'No phone'}
-                    </p>
-                  </div>
-                </td>
-                <td className="py-3 px-4">
-                  <div className="flex flex-wrap gap-1">
-                    {worker.workerFunctions ? worker.workerFunctions.split(', ').map(r => (
-                      <span key={r} className="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded font-medium border border-blue-100">
-                        {r}
-                      </span>
-                    )) : '-'}
-                  </div>
-                </td>
-                <td className="py-3 px-4 text-sm font-medium text-gray-900">{worker.assignedBlock}</td>
-                <td className="py-3 px-4">
-                  <span className={`inline-flex items-center text-xs px-2 py-1 rounded-full ${worker.status === 'Active' ? 'bg-green-100 text-green-700' :
-                    worker.status === 'On Leave' ? 'bg-orange-100 text-orange-700' :
-                      'bg-gray-100 text-gray-700'
-                    }`}>
-                    {worker.status}
-                  </span>
-                </td>
-                <td className="py-3 px-4 text-sm font-medium text-gray-900">
-                  {worker.monthlyHarvest > 0 ? `${worker.monthlyHarvest} kg` : '-'}
-                </td>
-                <td className="py-3 px-4">
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEdit(worker)}
-                      className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteClick(worker)}
-                      className="text-red-600 hover:text-red-700 text-sm font-medium ml-2"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  </td>
+                  <td className="py-3 px-4">
+                    <div className="flex flex-wrap gap-1">
+                      {worker.workerFunctions ? worker.workerFunctions.split(', ').map(r => (
+                        <span key={r} className="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded font-medium border border-blue-100">
+                          {r}
+                        </span>
+                      )) : '-'}
+                    </div>
+                  </td>
+                  <td className="py-3 px-4 text-sm font-medium text-gray-900">{worker.assignedBlock}</td>
+                  <td className="py-3 px-4">
+                    <span className={`inline-flex items-center text-xs px-2 py-1 rounded-full ${worker.status === 'Active' ? 'bg-green-100 text-green-700' :
+                      worker.status === 'On Leave' ? 'bg-orange-100 text-orange-700' :
+                        'bg-gray-100 text-gray-700'
+                      }`}>
+                      {worker.status}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4 text-sm font-medium text-gray-900">
+                    {worker.monthlyHarvest > 0 ? `${worker.monthlyHarvest} kg` : '-'}
+                  </td>
+                  <td className="py-3 px-4">
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleEdit(worker)}
+                        className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(worker)}
+                        className="text-red-600 hover:text-red-700 text-sm font-medium ml-2"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
       {/* User Search Modal */}
       {showUserSearchModal && (
