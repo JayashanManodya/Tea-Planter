@@ -33,19 +33,19 @@ interface NavItem {
 const navItems: NavItem[] = [
   { to: '/dashboard', icon: LayoutDashboard, labelKey: 'dashboard', roles: ['owner', 'clerk'] },
   { to: '/worker-dashboard', icon: LayoutDashboard, labelKey: 'dashboard', roles: ['worker'] },
-  { to: '/worker-financial', icon: DollarSign, labelKey: 'financial', roles: ['worker'] },
-  { to: '/plots', icon: MapPin, labelKey: 'plots', roles: ['owner'] },
-  { to: '/workforce', icon: Users, labelKey: 'workforce', roles: ['owner'] },
-  { to: '/harvest', icon: Leaf, labelKey: 'harvest', roles: ['owner', 'clerk'] },
-  { to: '/inventory', icon: Package, labelKey: 'inventory', roles: ['owner', 'clerk'] },
   { to: '/attendance', icon: Calendar, labelKey: 'attendance', roles: ['owner', 'clerk'] },
-  { to: '/financial', icon: DollarSign, labelKey: 'financial', roles: ['owner', 'clerk'] },
-  { to: '/disease-scanner', icon: Scan, labelKey: 'disease-scanner', roles: ['owner', 'clerk'] },
-  { to: '/ai-assistant', icon: MessageSquare, labelKey: 'ai-assistant', roles: ['owner', 'clerk'] },
+  { to: '/harvest', icon: Leaf, labelKey: 'harvest', roles: ['owner', 'clerk'] },
   { to: '/tasks', icon: FileText, labelKey: 'tasks', roles: ['owner', 'clerk', 'worker'] },
   { to: '/deliveries', icon: Truck, labelKey: 'deliveries', roles: ['owner', 'clerk'] },
+  { to: '/inventory', icon: Package, labelKey: 'inventory', roles: ['owner', 'clerk'] },
+  { to: '/financial', icon: DollarSign, labelKey: 'financial', roles: ['owner', 'clerk'] },
+  { to: '/worker-financial', icon: DollarSign, labelKey: 'financial', roles: ['worker'] },
+  { to: '/workforce', icon: Users, labelKey: 'workforce', roles: ['owner'] },
+  { to: '/plots', icon: MapPin, labelKey: 'plots', roles: ['owner'] },
   { to: '/factories', icon: Building2, labelKey: 'factories', roles: ['owner'] },
   { to: '/reports', icon: FileText, labelKey: 'reports', roles: ['owner', 'clerk'] },
+  { to: '/disease-scanner', icon: Scan, labelKey: 'disease-scanner', roles: ['owner', 'clerk'] },
+  { to: '/ai-assistant', icon: MessageSquare, labelKey: 'ai-assistant', roles: ['owner', 'clerk'] },
 ];
 
 export function Sidebar() {
