@@ -12,6 +12,7 @@ import online.jayashan.teaplanter.repository.HarvestRepository;
 import online.jayashan.teaplanter.repository.TaskRepository;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -31,6 +32,7 @@ public class EmailService {
     private final HarvestRepository harvestRepository;
     private final TaskRepository taskRepository;
 
+    @Async
     public void sendPayrollEmail(Payroll payroll) {
         if (payroll.getWorker() == null || payroll.getWorker().getUser() == null || payroll.getWorker().getUser().getEmail() == null) {
             return;
@@ -62,9 +64,15 @@ public class EmailService {
             helper.setSubject(subject);
             helper.setText(buildEnhancedHtmlContent(payroll, attendance, tasks, harvests), true);
             
-            // Add inline logo
-            FileSystemResource logo = new FileSystemResource(new File("D:\\Projects\\Tea-Planter\\Pics\\TeaPlanterLogo3.png"));
-            if (logo.exists()) {
+            // Use a relative path from the project root instead of a hardcoded Windows drive
+            File logoFile = new File("Pics/TeaPlanterLogo3.png");
+            if (!logoFile.exists()) {
+                // If running from within the BackEnd directory
+                logoFile = new File("../Pics/TeaPlanterLogo3.png");
+            }
+
+            if (logoFile.exists()) {
+                FileSystemResource logo = new FileSystemResource(logoFile);
                 helper.addInline("logo", logo);
             }
 
@@ -80,6 +88,7 @@ public class EmailService {
         return functions.contains("Harvester") || functions.contains("Pruner") || functions.contains("Field Worker");
     }
 
+    @Async
     public void sendTaskAssignmentEmail(Task task) {
         if (task.getAssignedWorker() == null || task.getAssignedWorker().getUser() == null || task.getAssignedWorker().getUser().getEmail() == null) {
             return;

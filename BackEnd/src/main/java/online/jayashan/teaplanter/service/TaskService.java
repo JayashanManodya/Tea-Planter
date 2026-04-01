@@ -48,13 +48,7 @@ public class TaskService {
         Task savedTask = taskRepository.save(taskBuilder.build());
 
         if (savedTask.getAssignedWorker() != null) {
-            java.util.concurrent.CompletableFuture.runAsync(() -> {
-                try {
-                    emailService.sendTaskAssignmentEmail(savedTask);
-                } catch (Exception e) {
-                    System.err.println("Failed to send async task email: " + e.getMessage());
-                }
-            });
+            emailService.sendTaskAssignmentEmail(savedTask);
         }
 
         return savedTask;
