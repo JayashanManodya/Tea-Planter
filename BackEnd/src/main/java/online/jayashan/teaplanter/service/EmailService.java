@@ -24,6 +24,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.beans.factory.annotation.Value;
+import jakarta.annotation.PostConstruct;
 
 @Service
 @RequiredArgsConstructor
@@ -35,9 +37,24 @@ public class EmailService {
     private final TaskRepository taskRepository;
     private final PayrollRepository payrollRepository;
 
+    @Value("${spring.mail.host:Not Configured}")
+    private String mailHost;
+
+    @Value("${spring.mail.port:0}")
+    private int mailPort;
+
+    @Value("${spring.mail.username:Not Configured}")
+    private String mailUser;
+
+    @PostConstruct
+    public void init() {
+        System.out.println("DEBUG: EmailService initialized with Host: " + mailHost + ", Port: " + mailPort + ", User: " + mailUser);
+    }
+
     @Async
     @Transactional(readOnly = true)
     public void sendPayrollEmail(Long payrollId) {
+        System.out.println("DEBUG: Starting background payroll email process for ID: " + payrollId);
         Payroll payroll = payrollRepository.findById(payrollId)
                 .orElseThrow(() -> new RuntimeException("Payroll record not found for async email: " + payrollId));
 
@@ -47,7 +64,8 @@ public class EmailService {
 
         String to = payroll.getWorker().getUser().getEmail();
         String monthStr = payroll.getMonth().format(DateTimeFormatter.ofPattern("MMMM yyyy"));
-        String subject = "Tea Planter: Interactive Paysheet - " + monthStr;
+        String plantationName = (payroll.getPlantation() != null) ? payroll.getPlantation().getName() : "Tea Planter";
+        String subject = plantationName + ": Interactive Paysheet - " + monthStr;
 
         try {
             // Fetch month records
@@ -84,6 +102,7 @@ public class EmailService {
             }
 
             mailSender.send(message);
+            System.out.println("DEBUG: Successfully sent background payroll email to " + to);
         } catch (Exception e) {
             System.err.println("CRITICAL: Failed to send background payroll email to " + to + ": " + e.getMessage());
             e.printStackTrace();
@@ -99,6 +118,7 @@ public class EmailService {
     @Async
     @Transactional(readOnly = true)
     public void sendTaskAssignmentEmail(Long taskId) {
+        System.out.println("DEBUG: Starting background task assignment email process for ID: " + taskId);
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task record not found for async email: " + taskId));
 
@@ -154,6 +174,7 @@ public class EmailService {
 
             helper.setText(content.toString(), true);
             mailSender.send(message);
+            System.out.println("DEBUG: Successfully sent background task assignment email to " + to);
         } catch (Exception e) {
             System.err.println("CRITICAL: Failed to send background task assignment email to " + to + ": " + e.getMessage());
             e.printStackTrace();
@@ -161,8 +182,15 @@ public class EmailService {
     }
 
     private String buildEnhancedHtmlContent(Payroll payroll, List<Attendance> attendance, List<Task> tasks, List<Harvest> harvests) {
-        String workerName = payroll.getWorker().getUser().getName();
+        String workerName = (payroll.getWorker() != null && payroll.getWorker().getUser() != null) ? payroll.getWorker().getUser().getName() : "Worker";
         String monthStr = payroll.getMonth().format(DateTimeFormatter.ofPattern("MMMM yyyy"));
+        
+        String plantationName = "Tea Planter";
+        if (payroll.getPlantation() != null) {
+            plantationName = payroll.getPlantation().getName();
+        } else if (payroll.getWorker() != null && payroll.getWorker().getPlantation() != null) {
+            plantationName = payroll.getWorker().getPlantation().getName();
+        }
         
         // Earnings Details
         double basic = payroll.getBasicWage() != null ? payroll.getBasicWage() : 0.0;
@@ -176,8 +204,8 @@ public class EmailService {
         
         // Header
         content.append("<div style='background-color: #f9fbf9; padding: 40px 30px; text-align: center; border-bottom: 1px solid #eee;'>");
-        content.append("<img src='cid:logo' alt='Tea Planter' style='height: 80px; width: auto; margin-bottom: 15px;'>");
-        content.append("<h1 style='margin: 0; font-size: 20px; font-weight: 600; color: #2e7d32; text-transform: uppercase; letter-spacing: 2px;'>Tea Planter</h1>");
+        content.append("<img src='cid:logo' alt='").append(plantationName).append("' style='height: 80px; width: auto; margin-bottom: 15px;'>");
+        content.append("<h1 style='margin: 0; font-size: 20px; font-weight: 600; color: #2e7d32; text-transform: uppercase; letter-spacing: 2px;'>").append(plantationName).append("</h1>");
         content.append("<p style='margin: 5px 0 0 0; color: #666; font-size: 13px; font-weight: 500;'>Monthly Paysheet Summary</p>");
         content.append("</div>");
 
@@ -261,9 +289,9 @@ public class EmailService {
 
         // Footer
         content.append("<div style='margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #777; font-size: 12px;'>");
-        content.append("<p style='margin: 5px 0;'><strong>Tea Planter Dashboard</strong></p>");
+        content.append("<p style='margin: 5px 0;'><strong>").append(plantationName).append(" Dashboard</strong></p>");
         content.append("<p style='margin: 5px 0;'>Automated system message. Information reflects validated records as of payment date.</p>");
-        content.append("<p style='margin: 20px 0 0 0; color: #aaa;'>Copyright &copy; 2026 Tea Planter. All rights reserved.</p>");
+        content.append("<p style='margin: 20px 0 0 0; color: #aaa;'>Copyright &copy; 2026 ").append(plantationName).append(". All rights reserved.</p>");
         content.append("</div>");
 
         content.append("</div></div></body></html>");
