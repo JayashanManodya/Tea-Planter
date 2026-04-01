@@ -1520,7 +1520,10 @@ export function FinancialPage() {
 
             <div className="p-6 border-t border-gray-100 bg-gray-50 flex justify-end">
               <button
-                onClick={() => setShowSalaryModal(false)}
+                onClick={() => {
+                  setShowSalaryModal(false);
+                  setActiveTab('PAYROLL');
+                }}
                 className="px-6 py-2 bg-gray-900 text-white rounded-lg font-bold text-sm hover:bg-black transition-all active:scale-95"
               >
                 Done
