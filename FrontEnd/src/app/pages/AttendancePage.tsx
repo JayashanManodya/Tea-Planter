@@ -15,6 +15,13 @@ interface AttendanceRecord {
   remarks?: string;
 }
 
+const getLocalDateString = (date: Date = new Date()) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 export function AttendancePage() {
   const { user } = useUser();
   const { getToken } = useAuth();
@@ -37,7 +44,7 @@ export function AttendancePage() {
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
-  const [dateFilter, setDateFilter] = useState(new Date().toISOString().split('T')[0]);
+  const [dateFilter, setDateFilter] = useState(getLocalDateString());
   const [sortConfig, setSortConfig] = useState<{ key: 'name' | 'time'; direction: 'asc' | 'desc' }>({ key: 'time', direction: 'desc' });
   
   const scannerRef = useRef<Html5Qrcode | null>(null);
@@ -106,7 +113,12 @@ export function AttendancePage() {
       loading: 'Marking attendance...',
       success: (data) => {
         console.log("Attendance API Success:", data);
-        fetchData();
+        // Explicitly update the local state with the returned record
+        // This ensures the record shows up even if fetchData hasn't finished yet
+        setAttendance(prev => {
+          const filtered = prev.filter(a => a.id !== data.id);
+          return [data, ...filtered];
+        });
         isProcessingScan.current = false;
         setIsSubmitting(false);
         stopScanner();
@@ -409,7 +421,7 @@ export function AttendancePage() {
               onClick={() => {
                 setSearchTerm('');
                 setStatusFilter('ALL');
-                setDateFilter(new Date().toISOString().split('T')[0]);
+                setDateFilter(getLocalDateString());
               }}
               className="text-xs font-medium text-red-600 hover:text-red-700"
             >
