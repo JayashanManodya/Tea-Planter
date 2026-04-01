@@ -22,7 +22,6 @@ import {
   Menu
 } from 'lucide-react';
 import { useState } from 'react';
-import logoImg from '@/app/assets/TeaPlanterLogo3.png';
 
 interface NavItem {
   to: string;
@@ -74,7 +73,7 @@ export function Sidebar() {
       {/* Mobile Header */}
       <div className="md:hidden w-full h-16 bg-white border-b border-gray-200 flex-shrink-0 flex items-center justify-between px-4 z-40 relative">
         <div className="flex items-center gap-2">
-          <img src={logoImg} alt="Logo" className="w-16 h-16 object-contain" />
+          <img src="/TeaPlanterLogo3.png" alt="Logo" className="w-16 h-16 object-contain" />
           <span className="font-bold text-gray-900">Tea Planter</span>
         </div>
 
@@ -161,7 +160,7 @@ export function Sidebar() {
       <div className="h-16 border-b border-gray-200 flex items-center justify-between px-4">
         {!collapsed && (
           <div className="flex items-center gap-2">
-            <img src={logoImg} alt="Logo" className="w-16 h-16 object-contain" />
+            <img src="/TeaPlanterLogo3.png" alt="Logo" className="w-16 h-16 object-contain" />
             <span className="font-bold text-gray-900">Tea Planter</span>
           </div>
         )}
