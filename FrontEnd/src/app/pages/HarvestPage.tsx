@@ -32,10 +32,11 @@ export function HarvestPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingRecord, setEditingRecord] = useState<HarvestRecord | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const today = new Date().toISOString().split('T')[0];
   const [formData, setFormData] = useState({
     workerId: '',
     plotId: '',
-    harvestDate: new Date().toISOString().split('T')[0],
+    harvestDate: today,
     grossWeight: '',
     tareWeight: '1'
   });
@@ -160,6 +161,11 @@ export function HarvestPage() {
       return;
     }
 
+    if (!editingRecord && formData.harvestDate !== today) {
+      toast.error('Harvest records can only be recorded for today.');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const payload = {
@@ -182,7 +188,7 @@ export function HarvestPage() {
       setFormData({
         workerId: '',
         plotId: '',
-        harvestDate: new Date().toISOString().split('T')[0],
+        harvestDate: today,
         grossWeight: '',
         tareWeight: '1'
       });
@@ -298,7 +304,7 @@ export function HarvestPage() {
               setFormData({
                 workerId: '',
                 plotId: '',
-                harvestDate: new Date().toISOString().split('T')[0],
+                harvestDate: today,
                 grossWeight: '',
                 tareWeight: '1'
               });
@@ -509,10 +515,14 @@ export function HarvestPage() {
                 <input
                   required
                   type="date"
+                  min={today}
+                  max={today}
+                  disabled={!!editingRecord}
                   value={formData.harvestDate}
                   onChange={(e) => setFormData({ ...formData, harvestDate: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none disabled:bg-gray-50 disabled:text-gray-500"
                 />
+                <p className="text-[10px] text-gray-400 mt-1">Note: Harvest records can only be added for today's date.</p>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
