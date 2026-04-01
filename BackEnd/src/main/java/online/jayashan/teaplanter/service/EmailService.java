@@ -15,6 +15,10 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 import java.io.File;
 import java.time.LocalDate;
@@ -44,9 +48,18 @@ public class EmailService {
     @Value("${spring.mail.username:Not Configured}")
     private String mailUser;
 
+    @Value("${mail.provider:smtp}")
+    private String mailProvider;
+
+    @Value("${resend.api.key:}")
+    private String resendApiKey;
+
+    @Value("${mail.from:${spring.mail.username:}}")
+    private String mailFrom;
+
     @PostConstruct
     public void init() {
-        System.out.println("DEBUG: EmailService initialized with Host: " + mailHost + ", Port: " + mailPort + ", User: " + mailUser);
+        System.out.println("DEBUG: EmailService initialized with Host: " + mailHost + ", Port: " + mailPort + ", User: " + mailUser + ", Provider: " + mailProvider);
     }
 
     @Async
@@ -80,27 +93,8 @@ public class EmailService {
                 harvests = harvestRepository.findByWorkerAndHarvestDateBetween(payroll.getWorker(), start, end);
             }
 
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
-            helper.setFrom(mailUser);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(buildEnhancedHtmlContent(payroll, attendance, tasks, harvests), true);
-            
-            // Use a relative path from the project root instead of a hardcoded Windows drive
-            File logoFile = new File("Pics/TeaPlanterLogo3.png");
-            if (!logoFile.exists()) {
-                // If running from within the BackEnd directory
-                logoFile = new File("../Pics/TeaPlanterLogo3.png");
-            }
-
-            if (logoFile.exists()) {
-                FileSystemResource logo = new FileSystemResource(logoFile);
-                helper.addInline("logo", logo);
-            }
-
-            mailSender.send(message);
+            String html = buildEnhancedHtmlContent(payroll, attendance, tasks, harvests);
+            sendEmail(to, subject, html, true);
             System.out.println("DEBUG: Successfully sent background payroll email to " + to);
         } catch (Exception e) {
             System.err.println("CRITICAL: Failed to send background payroll email to " + to + ": " + e.getMessage());
@@ -131,13 +125,6 @@ public class EmailService {
         String workerName = task.getAssignedWorker().getUser().getName();
 
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
-            helper.setFrom(mailUser);
-            helper.setTo(to);
-            helper.setSubject(subject);
-
             StringBuilder content = new StringBuilder();
             content.append("<html><body style='font-family: \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px;'>");
             content.append("<div style='max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;'>");
@@ -172,13 +159,80 @@ public class EmailService {
 
             content.append("</div></div></body></html>");
 
-            helper.setText(content.toString(), true);
-            mailSender.send(message);
+            sendEmail(to, subject, content.toString(), false);
             System.out.println("DEBUG: Successfully sent background task assignment email to " + to);
         } catch (Exception e) {
             System.err.println("CRITICAL: Failed to send background task assignment email to " + to + ": " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private void sendEmail(String to, String subject, String htmlContent, boolean includeInlineLogo) throws Exception {
+        if ("resend".equalsIgnoreCase(mailProvider)) {
+            sendViaResend(to, subject, htmlContent);
+            return;
+        }
+        sendViaSmtp(to, subject, htmlContent, includeInlineLogo);
+    }
+
+    private void sendViaSmtp(String to, String subject, String htmlContent, boolean includeInlineLogo) throws Exception {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        helper.setFrom(mailUser);
+        helper.setTo(to);
+        helper.setSubject(subject);
+        helper.setText(htmlContent, true);
+
+        if (includeInlineLogo) {
+            File logoFile = new File("Pics/TeaPlanterLogo3.png");
+            if (!logoFile.exists()) {
+                logoFile = new File("../Pics/TeaPlanterLogo3.png");
+            }
+            if (logoFile.exists()) {
+                FileSystemResource logo = new FileSystemResource(logoFile);
+                helper.addInline("logo", logo);
+            }
+        }
+
+        mailSender.send(message);
+    }
+
+    private void sendViaResend(String to, String subject, String htmlContent) throws Exception {
+        if (resendApiKey == null || resendApiKey.isBlank()) {
+            throw new IllegalStateException("MAIL_PROVIDER is resend but RESEND_API_KEY is missing.");
+        }
+
+        String fromAddress = (mailFrom == null || mailFrom.isBlank()) ? mailUser : mailFrom;
+        if (fromAddress == null || fromAddress.isBlank()) {
+            throw new IllegalStateException("MAIL_FROM (or SPRING_MAIL_USERNAME fallback) is required for Resend.");
+        }
+
+        String payload = "{\"from\":\"" + escapeJson(fromAddress) + "\"," +
+                "\"to\":[\"" + escapeJson(to) + "\"]," +
+                "\"subject\":\"" + escapeJson(subject) + "\"," +
+                "\"html\":\"" + escapeJson(htmlContent) + "\"}";
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://api.resend.com/emails"))
+                .header("Authorization", "Bearer " + resendApiKey)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(payload))
+                .build();
+
+        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() < 200 || response.statusCode() >= 300) {
+            throw new RuntimeException("Resend API failed with status " + response.statusCode() + ": " + response.body());
+        }
+    }
+
+    private String escapeJson(String value) {
+        if (value == null) return "";
+        return value
+                .replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
     }
 
     private String buildEnhancedHtmlContent(Payroll payroll, List<Attendance> attendance, List<Task> tasks, List<Harvest> harvests) {
