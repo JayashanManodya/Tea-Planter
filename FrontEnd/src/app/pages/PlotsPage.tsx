@@ -116,9 +116,12 @@ export function PlotsPage() {
         longitude: ''
       });
       fetchPlots();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to save plot:', error);
-      alert('Failed to save plot. Please check if Block ID is unique.');
+      const msg = error?.message || 'Failed to save plot';
+      alert(msg.includes('already exists') 
+        ? 'This Plot ID is already used in this plantation. Please choose a unique name.' 
+        : `Could not save plot: ${msg}`);
     } finally {
       setIsSubmitting(false);
     }

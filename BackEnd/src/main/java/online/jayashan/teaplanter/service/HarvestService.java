@@ -45,8 +45,22 @@ public class HarvestService {
     public Harvest recordHarvest(online.jayashan.teaplanter.dto.HarvestRequestDTO dto) {
         Worker worker = workerRepository.findById(dto.getWorkerId())
                 .orElseThrow(() -> new RuntimeException("Worker not found"));
-        Plot plot = plotRepository.findByBlockId(dto.getPlotId())
-                .orElseThrow(() -> new RuntimeException("Plot not found"));
+        // Identify plantation first to find the correct plot within it
+        online.jayashan.teaplanter.entity.Plantation plantation = null;
+        if (dto.getPlantationId() != null) {
+            plantation = plantationRepository.findById(dto.getPlantationId())
+                    .orElseThrow(() -> new RuntimeException("Plantation not found"));
+        } else if (worker.getPlantation() != null) {
+            plantation = worker.getPlantation();
+        }
+
+        if (plantation == null) {
+            throw new RuntimeException("Plantation context is required to identify a plot");
+        }
+
+        final online.jayashan.teaplanter.entity.Plantation finalPlantation = plantation;
+        Plot plot = plotRepository.findByBlockIdAndPlantation(dto.getPlotId(), finalPlantation)
+                .orElseThrow(() -> new RuntimeException("Plot '" + dto.getPlotId() + "' not found in plantation: " + finalPlantation.getName()));
 
         if (!"Active".equalsIgnoreCase(plot.getStatus())) {
             throw new RuntimeException("Harvest records can only be added for active plots");
@@ -54,15 +68,7 @@ public class HarvestService {
 
         double netWeight = dto.getGrossWeight() - dto.getTareWeight();
 
-        // Explicitly fetch plantation to ensure we have the most up-to-date data (e.g.
-        // harvestingRate)
-        online.jayashan.teaplanter.entity.Plantation plantation = null;
-        if (dto.getPlantationId() != null) {
-            plantation = plantationRepository.findById(dto.getPlantationId()).orElse(null);
-        }
-        if (plantation == null && worker.getPlantation() != null) {
-            plantation = plantationRepository.findById(worker.getPlantation().getId()).orElse(null);
-        }
+        // Rate calculation - reuse the plantation we found above
 
         double rate = 0.0;
         if (plantation != null && plantation.getHarvestingRate() != null) {
@@ -88,7 +94,7 @@ public class HarvestService {
                 .tareWeight(dto.getTareWeight())
                 .netWeight(netWeight)
                 .calculatedPay(netWeight * rate)
-                .plantation(plantation != null ? plantation : worker.getPlantation())
+                .plantation(plantation)
                 .build();
 
         return harvestRepository.save(harvest);
@@ -117,8 +123,8 @@ public class HarvestService {
         }
 
         if (dto.getPlotId() != null) {
-            Plot plot = plotRepository.findByBlockId(dto.getPlotId())
-                    .orElseThrow(() -> new RuntimeException("Plot not found"));
+            Plot plot = plotRepository.findByBlockIdAndPlantation(dto.getPlotId(), harvest.getPlantation())
+                    .orElseThrow(() -> new RuntimeException("Plot not found in this harvest's plantation"));
             harvest.setPlot(plot);
         }
 

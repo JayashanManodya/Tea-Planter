@@ -18,9 +18,18 @@ public class RegistryService {
     private final online.jayashan.teaplanter.repository.PlantationRepository plantationRepository;
 
     public Plot createPlot(Plot plot, Long plantationId) {
+        online.jayashan.teaplanter.entity.Plantation plantation = null;
         if (plantationId != null) {
-            plantationRepository.findById(plantationId).ifPresent(plot::setPlantation);
+            plantation = plantationRepository.findById(plantationId)
+                    .orElseThrow(() -> new RuntimeException("Plantation not found"));
+            plot.setPlantation(plantation);
         }
+
+        // Validation: Block ID must be unique within the plantation
+        if (plantation != null && plotRepository.existsByBlockIdAndPlantation(plot.getBlockId(), plantation)) {
+            throw new RuntimeException("A plot with name '" + plot.getBlockId() + "' already exists in this plantation.");
+        }
+
         if (plot.getStatus() == null || plot.getStatus().trim().isEmpty()) {
             plot.setStatus("Active");
         }

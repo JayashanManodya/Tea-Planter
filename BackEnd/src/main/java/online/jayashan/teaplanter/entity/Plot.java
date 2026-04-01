@@ -10,7 +10,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "plots")
+@Table(name = "plots", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"blockId", "plantation_id"})
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,7 +22,7 @@ public class Plot {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String blockId;
 
     private Double acreage;

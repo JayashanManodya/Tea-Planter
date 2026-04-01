@@ -9,7 +9,9 @@ import java.util.Optional;
 
 @Repository
 public interface PlotRepository extends JpaRepository<Plot, Long> {
-    Optional<Plot> findByBlockId(String blockId);
+    java.util.Optional<Plot> findByBlockIdAndPlantation(String blockId, online.jayashan.teaplanter.entity.Plantation plantation);
+
+    boolean existsByBlockIdAndPlantation(String blockId, online.jayashan.teaplanter.entity.Plantation plantation);
 
     List<Plot> findByPlantation(online.jayashan.teaplanter.entity.Plantation plantation);
 
