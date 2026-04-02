@@ -15,6 +15,7 @@ import {
     Menu
 } from 'lucide-react';
 import { useState } from 'react';
+import logo from '@/app/assets/TeaPlanterLogo3.png';
 
 interface NavItem {
     to: string;
@@ -49,9 +50,7 @@ export function WorkerLayout() {
             {/* Mobile Header */}
             <div className="md:hidden w-full h-16 bg-white border-b border-gray-200 flex-shrink-0 flex items-center justify-between px-4 z-40 relative">
                 <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center p-0.5 border border-gray-100 shadow-sm">
-                        <img src="/src/app/assets/logo.png" alt="Logo" className="w-full h-full object-contain" />
-                    </div>
+                    <img src={logo} alt="Logo" className="w-16 h-16 object-contain" />
                     <span className="font-bold text-gray-900">Tea Planter</span>
                 </div>
 
@@ -141,9 +140,7 @@ export function WorkerLayout() {
                 <div className="h-16 border-b border-gray-200 flex items-center justify-between px-4">
                     {!collapsed && (
                         <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center p-0.5 border border-gray-100 shadow-sm">
-                                <img src="/src/app/assets/logo.png" alt="Logo" className="w-full h-full object-contain" />
-                            </div>
+                            <img src={logo} alt="Logo" className="w-16 h-16 object-contain" />
                             <span className="font-bold text-gray-900">Tea Planter</span>
                         </div>
                     )}

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useClerk } from "@clerk/clerk-react";
 import { Leaf, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import logo from '@/app/assets/TeaPlanterLogo3.png';
 
 export function PublicNavbar() {
     const { openSignIn } = useClerk();
@@ -25,7 +26,8 @@ export function PublicNavbar() {
         <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] w-[90%] md:w-auto">
             <nav className="bg-black/90 backdrop-blur-xl rounded-full px-4 py-2 flex items-center justify-between md:gap-8 shadow-2xl border border-white/10 relative">
                 {/* Logo Pill */}
-                <Link to="/" className="flex items-center gap-2 group cursor-pointer pr-4 md:pr-0 border-r border-white/20 md:border-0 pl-2 text-decoration-none">
+                <Link to="/" className="flex items-center gap-2 group cursor-pointer pr-4 md:pr-0 border-r border-white/20 md:border-0 pl-2 text-decoration-none transition-transform hover:scale-105">
+                    <img src={logo} alt="Logo" className="w-10 h-10 object-contain" />
                     <span className="text-white font-bold hidden sm:inline">Tea Planter</span>
                 </Link>
 
