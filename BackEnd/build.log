@@ -15,3 +15,4 @@
 [INFO] --- compiler:3.14.1:compile (default-compile) @ teaplanter ---
 [INFO] Recompiling the module because of changed source code.
 [INFO] Compiling 71 source files with javac [debug parameters release 17] to target\classes
+
