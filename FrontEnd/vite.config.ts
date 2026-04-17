@@ -20,8 +20,8 @@ if (fs.existsSync(envFile)) {
   })
 }
 
-// Helper to prioritize system process.env (Railway) over local file
-const getEnv = (key: string) => process.env[key] || localEnv[key] || '';
+// Prefer project-local env file in development to avoid stale shell env overrides.
+const getEnv = (key: string) => localEnv[key] || process.env[key] || '';
 
 export default defineConfig({
   plugins: [
