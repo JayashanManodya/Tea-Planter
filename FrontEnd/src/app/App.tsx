@@ -23,7 +23,6 @@ import { ReportsPage } from './pages/ReportsPage';
 import { WorkerReportsPage } from './pages/WorkerReportsPage';
 import { TasksPage } from './pages/TasksPage';
 import { SettingsPage } from './pages/SettingsPage';
-import { OwnerOnboardingPage } from './pages/OwnerOnboardingPage';
 import { PricePredictorPage } from './pages/PricePredictorPage';
 
 // Public Marketing Pages
@@ -143,7 +142,6 @@ function AppRoutes() {
         } />
         <Route path="worker-financial" element={<WorkerFinancial />} />
         <Route path="settings" element={<SettingsPage />} />
-        <Route path="owner-onboarding" element={<OwnerOnboardingPage />} />
       </Route>
 
       <Route

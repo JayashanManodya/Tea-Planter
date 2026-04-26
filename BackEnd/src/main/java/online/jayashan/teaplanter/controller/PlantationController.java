@@ -14,8 +14,8 @@ public class PlantationController {
     private final PlantationService plantationService;
 
     @PostMapping
-    public Plantation createPlantation(@RequestBody Plantation plantation, @RequestParam String clerkId) {
-        return plantationService.createPlantation(plantation, clerkId);
+    public Plantation createPlantation(@RequestBody Plantation plantation, @RequestParam String clerkId, @RequestParam String creationPin) {
+        return plantationService.createPlantation(plantation, clerkId, creationPin);
     }
 
     @GetMapping
