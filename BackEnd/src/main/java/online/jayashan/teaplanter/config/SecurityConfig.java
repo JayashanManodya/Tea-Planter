@@ -14,8 +14,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import online.jayashan.teaplanter.security.UserSynchronizationFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 import java.util.Arrays;
 
 @Configuration
@@ -47,11 +45,14 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Use patterns to allow localhost, your specified frontendUrl, and any Railway subdomains
+        // Local dev, deployed frontend (FRONTEND_URL / .env), production domain, Railway previews
         configuration.setAllowedOriginPatterns(Arrays.asList(
                 "http://localhost:[*]",
                 "https://localhost:[*]",
                 frontendUrl,
+                "https://www.teaplanter.online",
+                "https://teaplanter.online",
+                "https://*.teaplanter.online",
                 "https://*.up.railway.app"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
