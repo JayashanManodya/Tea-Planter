@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useLanguage, Language } from '@/contexts/LanguageContext';
 import { useUser, useAuth } from "@clerk/clerk-react";
-import { Globe, User, Shield, Sprout, MapPin, Maximize, QrCode, Download, Monitor, Smartphone, Apple, Loader2, Trash2, AlertTriangle, CalendarDays, CreditCard, History, BadgeCheck } from 'lucide-react';
+import { Globe, User, Bell, Shield, Sprout, MapPin, Maximize, QrCode, Download, Monitor, Smartphone, Apple, Loader2, Trash2, AlertTriangle } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { toast } from 'sonner';
 import { api } from '@/lib/api';
-import { submitPayHereCheckout } from '@/lib/payhere';
-import { PAYHERE_ORDER_ID_KEY, setPayHerePendingFlags } from '@/lib/ownerPayHere';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,26 +29,6 @@ export function SettingsPage() {
 
   const [plantation, setPlantation] = useState<any>(null);
   const [loadingPlantation, setLoadingPlantation] = useState(false);
-  const [renewLoading, setRenewLoading] = useState(false);
-  const [activePanel, setActivePanel] = useState<'account' | 'plantation'>('account');
-
-  const handleRenewOwnerSubscription = async () => {
-    if (!user?.id) return;
-    setRenewLoading(true);
-    try {
-      setPayHerePendingFlags();
-      const token = await getToken();
-      const session = await api.createOwnerSubscriptionSession(user.id, token || undefined);
-      if (session?.order_id) {
-        localStorage.setItem(PAYHERE_ORDER_ID_KEY, String(session.order_id));
-      }
-      submitPayHereCheckout(session);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Could not start renewal checkout';
-      toast.error(msg);
-      setRenewLoading(false);
-    }
-  };
 
   useEffect(() => {
     const fetchPlantation = async () => {
@@ -62,7 +40,6 @@ export function SettingsPage() {
           setPlantation(p);
         } catch (error) {
           console.error('Failed to fetch plantation:', error);
-          setPlantation(null);
         } finally {
           setLoadingPlantation(false);
         }
@@ -70,7 +47,7 @@ export function SettingsPage() {
     };
 
     fetchPlantation();
-  }, [plantationId, user?.id, getToken]);
+  }, [plantationId, user?.id]);
 
   if (!isLoaded) {
     return (
@@ -90,157 +67,93 @@ export function SettingsPage() {
         <p className="text-gray-600 mt-1">Manage your account and preferences</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <button
-          type="button"
-          onClick={() => setActivePanel('account')}
-          className={`rounded-2xl border p-4 text-left transition-all ${activePanel === 'account'
-            ? 'border-indigo-300 bg-indigo-50 shadow-sm'
-            : 'border-gray-200 bg-white hover:border-indigo-200 hover:bg-indigo-50/40'
-            }`}
-        >
-          <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-lg ${activePanel === 'account' ? 'bg-indigo-100' : 'bg-gray-100'}`}>
-              <Shield className={`w-5 h-5 ${activePanel === 'account' ? 'text-indigo-700' : 'text-gray-600'}`} />
-            </div>
-            <div>
-              <p className="font-semibold text-gray-900">Security & Personal Profile</p>
-              <p className="text-sm text-gray-600">PIN, profile details, language, and app settings</p>
-            </div>
+      {/* Language Settings */}
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-lg bg-blue-100">
+            <Globe className="w-5 h-5 text-blue-700" />
           </div>
-        </button>
+          <div>
+            <h3 className="font-semibold text-gray-900">{t('select-language')}</h3>
+            <p className="text-sm text-gray-600">Choose your preferred language</p>
+          </div>
+        </div>
 
-        <button
-          type="button"
-          onClick={() => setActivePanel('plantation')}
-          className={`rounded-2xl border p-4 text-left transition-all ${activePanel === 'plantation'
-            ? 'border-green-300 bg-green-50 shadow-sm'
-            : 'border-gray-200 bg-white hover:border-green-200 hover:bg-green-50/40'
-            }`}
-        >
-          <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-lg ${activePanel === 'plantation' ? 'bg-green-100' : 'bg-gray-100'}`}>
-              <Sprout className={`w-5 h-5 ${activePanel === 'plantation' ? 'text-green-700' : 'text-gray-600'}`} />
-            </div>
-            <div>
-              <p className="font-semibold text-gray-900">Plantation & Subscription</p>
-              <p className="text-sm text-gray-600">Estate details, renewal, onboarding, and danger zone</p>
-            </div>
-          </div>
-        </button>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {(['en', 'si', 'ta'] as Language[]).map((lang) => (
+            <button
+              key={lang}
+              onClick={() => setLanguage(lang)}
+              className={`p-4 rounded-lg border-2 font-medium transition-all ${language === lang
+                ? 'border-green-600 bg-green-50 text-green-700'
+                : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                }`}
+            >
+              {t(lang === 'en' ? 'english' : lang === 'si' ? 'sinhala' : 'tamil')}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {activePanel === 'account' && (
-        <div className="space-y-6 animate-in fade-in-0 duration-200">
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-lg bg-blue-100">
-                <Globe className="w-5 h-5 text-blue-700" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">{t('select-language')}</h3>
-                <p className="text-sm text-gray-600">Choose your preferred language</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {(['en', 'si', 'ta'] as Language[]).map((lang) => (
-                <button
-                  key={lang}
-                  onClick={() => setLanguage(lang)}
-                  className={`p-4 rounded-lg border-2 font-medium transition-all ${language === lang
-                    ? 'border-green-600 bg-green-50 text-green-700'
-                    : 'border-gray-200 text-gray-600 hover:border-gray-300'
-                    }`}
-                >
-                  {t(lang === 'en' ? 'english' : lang === 'si' ? 'sinhala' : 'tamil')}
-                </button>
-              ))}
-            </div>
+      {/* Profile Settings */}
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-lg bg-green-100">
+            <User className="w-5 h-5 text-green-700" />
           </div>
-
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-lg bg-green-100">
-                <User className="w-5 h-5 text-green-700" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">Profile Information</h3>
-                <p className="text-sm text-gray-600">Your account details (Managed via Clerk)</p>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center gap-4 mb-4">
-                {user?.imageUrl && <img src={user.imageUrl} className="w-16 h-16 rounded-full border-2 border-green-500" alt="Avatar" />}
-                <div>
-                  <p className="font-bold text-lg text-gray-900">{user?.fullName}</p>
-                  <p className="text-sm text-gray-500 capitalize font-medium">{userRole}</p>
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input
-                  type="email"
-                  value={user?.primaryEmailAddress?.emailAddress}
-                  disabled
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600"
-                />
-              </div>
-            </div>
+          <div>
+            <h3 className="font-semibold text-gray-900">Profile Information</h3>
+            <p className="text-sm text-gray-600">Your account details (Managed via Clerk)</p>
           </div>
-
-          <PinSettings />
-          <PersonalProfile />
-          <PWAInstallNotice />
         </div>
-      )}
 
-      {activePanel === 'plantation' && (
-        <div className="space-y-6 animate-in fade-in-0 duration-200">
-          {(userRole.toLowerCase() === 'worker' || userRole.toLowerCase() === 'clerk') && (
-            <WorkerQRSettings />
-          )}
-
-          {plantation && (
-            <PlantationCard plantation={plantation} loading={loadingPlantation} userRole={userRole} />
-          )}
-
-          {userRole.toLowerCase() === 'owner' && plantation && (
-            <OwnerSubscriptionDetailsCard
-              clerkId={user?.id || ''}
-              onRenew={handleRenewOwnerSubscription}
-              renewLoading={renewLoading}
+        <div className="space-y-4">
+          <div className="flex items-center gap-4 mb-4">
+            {user?.imageUrl && <img src={user.imageUrl} className="w-16 h-16 rounded-full border-2 border-green-500" alt="Avatar" />}
+            <div>
+              <p className="font-bold text-lg text-gray-900">{user?.fullName}</p>
+              <p className="text-sm text-gray-500 capitalize font-medium">{userRole}</p>
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input
+              type="email"
+              value={user?.primaryEmailAddress?.emailAddress}
+              disabled
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600"
             />
-          )}
-
-          {(!plantationId || !plantation) && userRole.toLowerCase() !== 'clerk' && (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 rounded-lg bg-green-100">
-                  <Sprout className="w-5 h-5 text-green-700" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 text-left">Become a plantation owner</h3>
-                  <p className="text-sm text-gray-600 text-left">
-                    Pay for your subscription, then register your estate on the owner setup page.
-                  </p>
-                </div>
-              </div>
-              <Link
-                to="/owner-onboarding"
-                className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700 transition-colors"
-              >
-                Open owner setup
-              </Link>
-            </div>
-          )}
-
-          {userRole.toLowerCase() === 'owner' && plantation && (
-            <DangerZone plantation={plantation} />
-          )}
+          </div>
         </div>
+      </div>
+
+      {/* Security PIN Settings */}
+      <PinSettings />
+
+      {/* Personal Profile Settings */}
+      <PersonalProfile />
+      
+      {/* Worker QR Settings (Only for workers/clerks) */}
+      {(userRole.toLowerCase() === 'worker' || userRole.toLowerCase() === 'clerk') && (
+        <WorkerQRSettings />
       )}
+
+      {plantation && (
+        <PlantationCard plantation={plantation} loading={loadingPlantation} userRole={userRole} />
+      )}
+
+      {!plantationId && userRole.toLowerCase() !== 'clerk' && (
+        <PlantationForm />
+      )}
+
+      {/* PWA Installation Notice */}
+      <PWAInstallNotice />
+
+      {/* Danger Zone */}
+      {userRole.toLowerCase() === 'owner' && plantation && (
+        <DangerZone plantation={plantation} />
+      )}
+
     </div>
   );
 }
@@ -438,6 +351,237 @@ function PlantationCard({ plantation, loading, userRole }: { plantation: any, lo
             </p>
           </div>
         </div>
+      )}
+    </div>
+  );
+}
+
+function PlantationForm() {
+  const { user } = useUser();
+  const { getToken } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const [step, setStep] = useState<'INITIAL' | 'PIN' | 'FORM'>('INITIAL');
+  const [formData, setFormData] = useState({
+    name: '',
+    location: '',
+    totalArea: '',
+    latitude: '',
+    longitude: '',
+    harvestingRate: '',
+    creationPin: ''
+  });
+
+  const handleVerifyPin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      const token = await getToken();
+      await api.validatePlantationPin(formData.creationPin, token || undefined);
+      setStep('FORM');
+    } catch (err: any) {
+      setError(err.message || 'Invalid Administrative PIN');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const token = await getToken();
+      await api.createPlantation(
+        {
+          name: formData.name,
+          location: formData.location,
+          totalArea: parseFloat(formData.totalArea),
+          latitude: formData.latitude ? parseFloat(formData.latitude) : null,
+          longitude: formData.longitude ? parseFloat(formData.longitude) : null,
+          harvestingRate: formData.harvestingRate ? parseFloat(formData.harvestingRate) : null
+        },
+        user?.id || '',
+        formData.creationPin,
+        token || undefined
+      );
+
+      setSuccess(true);
+      window.location.reload();
+    } catch (err: any) {
+      setError(err.message || 'Failed to create plantation');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (step === 'INITIAL') {
+    return (
+      <div className="bg-green-50 border border-green-200 rounded-lg p-8 flex flex-col items-center text-center space-y-4">
+        <div className="p-3 rounded-2xl bg-green-100">
+          <Sprout className="w-10 h-10 text-green-700" />
+        </div>
+        <div>
+          <h3 className="text-xl font-bold text-gray-900">Become an Owner</h3>
+          <p className="text-gray-600 max-w-md">Register your tea plantation to start managing your own workforce, finances, and factory deliveries.</p>
+        </div>
+        <button
+          onClick={() => setStep('PIN')}
+          className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-green-200"
+        >
+          Begin Registration
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-green-100">
+            <Sprout className="w-5 h-5 text-green-700" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-gray-900 text-left">
+              {step === 'PIN' ? 'Verify Authority' : 'Estate Registration'}
+            </h3>
+            <p className="text-sm text-gray-600 text-left">
+              {step === 'PIN' ? 'Enter administrative PIN to proceed' : 'Fill in your plantation details'}
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={() => setStep(step === 'PIN' ? 'INITIAL' : 'PIN')}
+          className="text-sm font-bold text-gray-500 hover:text-gray-700"
+        >
+          Back
+        </button>
+      </div>
+
+      {success ? (
+        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
+          Plantation created successfully! Redirecting...
+        </div>
+      ) : (
+        <form onSubmit={step === 'PIN' ? handleVerifyPin : handleSubmit} className="space-y-4">
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-left">
+              {error}
+            </div>
+          )}
+
+          {step === 'PIN' ? (
+            <div className="space-y-4 max-w-sm mx-auto py-4">
+              <label className="block text-sm font-bold text-gray-700 mb-1 text-center italic">Administrative PIN Required</label>
+              <input
+                type="password"
+                required
+                autoFocus
+                value={formData.creationPin}
+                onChange={(e) => setFormData({ ...formData, creationPin: e.target.value })}
+                placeholder="Enter 6-digit creation PIN"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none text-center text-xl tracking-[0.5em]"
+              />
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-black transition-colors disabled:opacity-50"
+              >
+                {loading ? 'Verifying...' : 'Verify PIN'}
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1 text-left">Plantation Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="e.g., Summit Tea Estate"
+                    className="w-full px-4 py-2 border border-blue-100 bg-white rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1 text-left">Location</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.location}
+                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                    placeholder="e.g., Nuwara Eliya"
+                    className="w-full px-4 py-2 border border-blue-100 bg-white rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition-all"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1 text-left">Total Area (Acreage)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    required
+                    value={formData.totalArea}
+                    onChange={(e) => setFormData({ ...formData, totalArea: e.target.value })}
+                    placeholder="e.g., 50.5"
+                    className="w-full px-4 py-2 border border-blue-100 bg-white rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition-all"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1 text-left">Latitude</label>
+                    <input
+                      type="number"
+                      step="0.000001"
+                      value={formData.latitude}
+                      onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
+                      placeholder="6.9271"
+                      className="w-full px-4 py-2 border border-blue-100 bg-white rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1 text-left">Longitude</label>
+                    <input
+                      type="number"
+                      step="0.000001"
+                      value={formData.longitude}
+                      onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
+                      placeholder="79.8612"
+                      className="w-full px-4 py-2 border border-blue-100 bg-white rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition-all"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1 text-left">Harvesting Rate (LKR/kg)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={formData.harvestingRate}
+                    onChange={(e) => setFormData({ ...formData, harvestingRate: e.target.value })}
+                    placeholder="e.g. 50.00"
+                    className="w-full px-4 py-2 border border-blue-100 bg-white rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition-all"
+                  />
+                </div>
+              </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className={`w-full py-3 px-4 rounded-xl font-bold text-white transition-all shadow-lg ${loading ? 'bg-gray-400' : 'bg-green-600 hover:bg-green-700 hover:shadow-green-200'
+                  }`}
+              >
+                {loading ? 'Creating Estate...' : 'Complete Registration'}
+              </button>
+            </>
+          )}
+        </form>
       )}
     </div>
   );
@@ -897,229 +1041,10 @@ function WorkerQRSettings() {
   );
 }
 
-function OwnerSubscriptionDetailsCard({
-  clerkId,
-  onRenew,
-  renewLoading
-}: {
-  clerkId: string;
-  onRenew: () => Promise<void>;
-  renewLoading: boolean;
-}) {
-  const { getToken } = useAuth();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [details, setDetails] = useState<any>(null);
-
-  useEffect(() => {
-    if (!clerkId) return;
-    let cancelled = false;
-    const load = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const token = await getToken();
-        const data = await api.getOwnerSubscriptionDetails(clerkId, token || undefined);
-        if (!cancelled) {
-          setDetails(data);
-        }
-      } catch (err: any) {
-        if (!cancelled) {
-          setError(err.message || 'Failed to load subscription details');
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, [clerkId, getToken]);
-
-  const formatDate = (value?: string | null) => {
-    if (!value) return 'Not available';
-    const d = new Date(value);
-    if (Number.isNaN(d.getTime())) return 'Not available';
-    return d.toLocaleDateString();
-  };
-
-  const formatDateTime = (value?: string | null) => {
-    if (!value) return 'Not available';
-    const d = new Date(value);
-    if (Number.isNaN(d.getTime())) return 'Not available';
-    return d.toLocaleString();
-  };
-
-  const latest = details?.latest;
-  const history = Array.isArray(details?.history) ? details.history : [];
-  const currentPlanName = latest?.planName || 'Tea Planter Owner Subscription';
-  const currentCurrency = latest?.currency || 'LKR';
-  const currentAmount = typeof latest?.amount === 'number' ? latest.amount.toFixed(2) : '0.00';
-
-  const downloadInvoice = (item: any) => {
-    const amountValue =
-      typeof item?.amount === 'number' ? item.amount.toFixed(2) : '0.00';
-    const currency = item?.currency || 'LKR';
-    const planName = item?.planName || 'Tea Planter Owner Subscription';
-    const lines = [
-      'Tea Planter - Subscription Invoice',
-      '--------------------------------',
-      `Invoice Date: ${new Date().toLocaleString()}`,
-      `Plan: ${planName}`,
-      `Status: ${item?.status || 'UNKNOWN'}`,
-      `Amount: ${currency} ${amountValue}`,
-      `Order ID: ${item?.orderId || 'N/A'}`,
-      `Payment ID: ${item?.paymentId || 'N/A'}`,
-      `Paid At: ${formatDateTime(item?.paidAt)}`,
-      `Valid Until: ${formatDate(item?.validUntil)}`,
-      `Created At: ${formatDateTime(item?.createdAt)}`,
-      '',
-      'Thank you for using Tea Planter.'
-    ];
-
-    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `invoice-${item?.orderId || 'subscription'}.txt`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  };
-
-  return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-5">
-        <div>
-          <h3 className="font-semibold text-gray-900 text-left">Owner subscription</h3>
-          <p className="text-sm text-gray-600 text-left mt-1">
-            Full subscription details including renewal timeline, payment metadata, and billing history.
-          </p>
-        </div>
-        <button
-          type="button"
-          disabled={renewLoading}
-          onClick={onRenew}
-          className="px-4 py-2 rounded-xl bg-gray-900 text-white font-bold hover:bg-black disabled:opacity-50 whitespace-nowrap"
-        >
-          {renewLoading ? 'Redirecting...' : 'Renew with PayHere'}
-        </button>
-      </div>
-
-      {loading && (
-        <div className="rounded-xl border border-gray-200 bg-gray-50 p-6 flex items-center gap-3">
-          <Loader2 className="w-5 h-5 animate-spin text-green-600" />
-          <p className="text-sm text-gray-600">Loading subscription details...</p>
-        </div>
-      )}
-
-      {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-          {error}
-        </div>
-      )}
-
-      {!loading && !error && (
-        <div className="space-y-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-            <div className="rounded-xl border border-gray-200 p-4 bg-gradient-to-br from-green-50 to-white">
-              <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-1">Current phase</p>
-              <p className="text-sm font-bold text-gray-900">{details?.phase || 'NONE'}</p>
-            </div>
-            <div className="rounded-xl border border-gray-200 p-4 bg-gradient-to-br from-blue-50 to-white">
-              <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-1">Next subscription date</p>
-              <p className="text-sm font-bold text-gray-900">{formatDate(details?.nextSubscriptionDate)}</p>
-            </div>
-            <div className="rounded-xl border border-gray-200 p-4 bg-gradient-to-br from-violet-50 to-white">
-              <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-1">Plan duration</p>
-              <p className="text-sm font-bold text-gray-900">{details?.subscriptionDurationDays || 30} days</p>
-            </div>
-            <div className="rounded-xl border border-gray-200 p-4 bg-gradient-to-br from-amber-50 to-white">
-              <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-1">Successful payments</p>
-              <p className="text-sm font-bold text-gray-900">{details?.totalSuccessfulPayments || 0}</p>
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-gray-200 p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <BadgeCheck className="w-4 h-4 text-green-700" />
-              <p className="font-semibold text-gray-900">Current plan details</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 text-sm">
-              <div className="rounded-lg bg-gray-50 p-3">
-                <p className="text-gray-500 mb-1">Plan name</p>
-                <p className="font-semibold text-gray-900">{currentPlanName}</p>
-              </div>
-              <div className="rounded-lg bg-gray-50 p-3">
-                <p className="text-gray-500 mb-1">Plan amount</p>
-                <p className="font-semibold text-gray-900">{currentCurrency} {currentAmount}</p>
-              </div>
-              <div className="rounded-lg bg-gray-50 p-3">
-                <p className="text-gray-500 mb-1">Paid at</p>
-                <p className="font-semibold text-gray-900">{formatDateTime(latest?.paidAt)}</p>
-              </div>
-              <div className="rounded-lg bg-gray-50 p-3">
-                <p className="text-gray-500 mb-1">Valid until</p>
-                <p className="font-semibold text-gray-900">{formatDate(latest?.validUntil)}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-gray-200 p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <History className="w-4 h-4 text-gray-700" />
-              <p className="font-semibold text-gray-900">Subscription history</p>
-            </div>
-            {history.length === 0 ? (
-              <p className="text-sm text-gray-500">No subscription history yet. Your paid records will appear after the first transaction.</p>
-            ) : (
-              <div className="space-y-3">
-                {history.map((item: any) => (
-                  <div key={item.orderId} className="rounded-xl border border-gray-200 p-3">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                      <div className="flex items-center gap-2 text-sm font-semibold text-gray-900">
-                        <CreditCard className="w-4 h-4 text-gray-500" />
-                        {item.currency || 'LKR'} {typeof item.amount === 'number' ? item.amount.toFixed(2) : '0.00'}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => downloadInvoice(item)}
-                          className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                        >
-                          <Download className="w-3 h-3" />
-                          Download Invoice
-                        </button>
-                        <div className="inline-flex items-center gap-2 text-xs font-semibold px-2 py-1 rounded-full bg-gray-100 text-gray-700 w-fit">
-                          <CalendarDays className="w-3 h-3" />
-                          {item.status || 'UNKNOWN'}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2 mt-3 text-xs text-gray-600">
-                      <p><span className="font-semibold text-gray-800">Order ID:</span> {item.orderId || 'N/A'}</p>
-                      <p><span className="font-semibold text-gray-800">Payment ID:</span> {item.paymentId || 'N/A'}</p>
-                      <p><span className="font-semibold text-gray-800">Created:</span> {formatDateTime(item.createdAt)}</p>
-                      <p><span className="font-semibold text-gray-800">Valid until:</span> {formatDate(item.validUntil)}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
 function DangerZone({ plantation }: { plantation: any }) {
   const { user } = useUser();
   const { getToken } = useAuth();
+  const navigate = useNavigate();
   const [confirmName, setConfirmName] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -1174,24 +1099,22 @@ function DangerZone({ plantation }: { plantation: any }) {
                   <AlertTriangle className="w-6 h-6" />
                   <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 </div>
-                <AlertDialogDescription asChild>
-                  <div className="text-gray-600 space-y-3">
-                    <p>
-                      This action <strong className="text-red-900">cannot be undone</strong>. This will permanently delete
-                      the <strong className="text-gray-900 font-bold">"{plantation.name}"</strong> estate and all its associated data.
-                    </p>
-                    <p className="p-3 bg-gray-50 rounded border border-gray-200 text-xs text-gray-500">
-                      Workers will be unassigned, history will be wiped, and your role will be reset.
-                    </p>
-                    <div className="pt-2">
-                      <p className="mb-2 text-sm font-medium text-gray-900">Please type <span className="font-mono font-bold text-red-600"> {plantation.name} </span> to confirm.</p>
-                      <Input
-                        placeholder="Type plantation name"
-                        value={confirmName}
-                        onChange={(e) => setConfirmName(e.target.value)}
-                        className="border-red-200 focus:ring-red-500"
-                      />
-                    </div>
+                <AlertDialogDescription className="text-gray-600 space-y-3">
+                  <p>
+                    This action <strong className="text-red-900">cannot be undone</strong>. This will permanently delete 
+                    the <strong className="text-gray-900 font-bold">"{plantation.name}"</strong> estate and all its associated data.
+                  </p>
+                  <p className="p-3 bg-gray-50 rounded border border-gray-200 text-xs text-gray-500">
+                    Workers will be unassigned, history will be wiped, and your role will be reset.
+                  </p>
+                  <div className="pt-2">
+                    <p className="mb-2 text-sm font-medium text-gray-900">Please type <span className="font-mono font-bold text-red-600"> {plantation.name} </span> to confirm.</p>
+                    <Input
+                      placeholder="Type plantation name"
+                      value={confirmName}
+                      onChange={(e) => setConfirmName(e.target.value)}
+                      className="border-red-200 focus:ring-red-500"
+                    />
                   </div>
                 </AlertDialogDescription>
               </AlertDialogHeader>

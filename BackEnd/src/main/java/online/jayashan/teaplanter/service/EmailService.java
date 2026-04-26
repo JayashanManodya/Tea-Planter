@@ -4,16 +4,12 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import online.jayashan.teaplanter.entity.Attendance;
 import online.jayashan.teaplanter.entity.Harvest;
-import online.jayashan.teaplanter.entity.OwnerSubscription;
 import online.jayashan.teaplanter.entity.Payroll;
 import online.jayashan.teaplanter.entity.Task;
-import online.jayashan.teaplanter.entity.User;
 import online.jayashan.teaplanter.repository.AttendanceRepository;
 import online.jayashan.teaplanter.repository.HarvestRepository;
-import online.jayashan.teaplanter.repository.OwnerSubscriptionRepository;
 import online.jayashan.teaplanter.repository.PayrollRepository;
 import online.jayashan.teaplanter.repository.TaskRepository;
-import online.jayashan.teaplanter.repository.UserRepository;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -42,8 +38,6 @@ public class EmailService {
     private final HarvestRepository harvestRepository;
     private final TaskRepository taskRepository;
     private final PayrollRepository payrollRepository;
-    private final OwnerSubscriptionRepository ownerSubscriptionRepository;
-    private final UserRepository userRepository;
 
     @Value("${spring.mail.host:Not Configured}")
     private String mailHost;
@@ -68,12 +62,6 @@ public class EmailService {
 
     @Value("${mail.from.tasks:${mail.from:${spring.mail.username:}}}")
     private String mailFromTasks;
-
-    @Value("${mail.from.subscription:${mail.from:${spring.mail.username:}}}")
-    private String mailFromSubscription;
-
-    @Value("${app.frontend.url:http://localhost:5174}")
-    private String frontendUrl;
 
     @PostConstruct
     public void init() {
@@ -182,46 +170,6 @@ public class EmailService {
         } catch (Exception e) {
             System.err.println("CRITICAL: Failed to send background task assignment email to " + to + ": " + e.getMessage());
             e.printStackTrace();
-        }
-    }
-
-    @Async
-    @Transactional(readOnly = true)
-    public void sendSubscriptionInvoiceEmail(Long subscriptionId) {
-        OwnerSubscription sub = ownerSubscriptionRepository.findById(subscriptionId)
-                .orElseThrow(() -> new RuntimeException("Subscription not found for invoice email: " + subscriptionId));
-        User user = userRepository.findByClerkId(sub.getClerkId())
-                .orElseThrow(() -> new RuntimeException("User not found for subscription invoice: " + sub.getClerkId()));
-        if (user.getEmail() == null || user.getEmail().isBlank()) {
-            return;
-        }
-
-        String subject = "Tea Planter Invoice - " + firstNonBlank(sub.getPlanName(), "Owner Subscription");
-        String html = buildSubscriptionInvoiceHtml(user, sub);
-        try {
-            sendEmail(mailFromSubscription, user.getEmail(), subject, html, false);
-        } catch (Exception ex) {
-            throw new RuntimeException("Failed sending subscription invoice email", ex);
-        }
-    }
-
-    @Async
-    @Transactional(readOnly = true)
-    public void sendSubscriptionRenewalReminderEmail(Long subscriptionId, int daysLeft) {
-        OwnerSubscription sub = ownerSubscriptionRepository.findById(subscriptionId)
-                .orElseThrow(() -> new RuntimeException("Subscription not found for renewal reminder: " + subscriptionId));
-        User user = userRepository.findByClerkId(sub.getClerkId())
-                .orElseThrow(() -> new RuntimeException("User not found for renewal reminder: " + sub.getClerkId()));
-        if (user.getEmail() == null || user.getEmail().isBlank()) {
-            return;
-        }
-
-        String subject = "Tea Planter Renewal Reminder - " + daysLeft + " day(s) left";
-        String html = buildSubscriptionReminderHtml(user, sub, daysLeft);
-        try {
-            sendEmail(mailFromSubscription, user.getEmail(), subject, html, false);
-        } catch (Exception ex) {
-            throw new RuntimeException("Failed sending subscription renewal reminder", ex);
         }
     }
 
@@ -429,78 +377,5 @@ public class EmailService {
         sb.append("<td style='padding: 12px; color: #666;'>").append(label).append("</td>");
         sb.append("<td style='padding: 12px; text-align: right; font-weight: 600; color: ").append(isPositive ? "#2e7d32" : "#333").append(";'>").append(value).append("</td>");
         sb.append("</tr>");
-    }
-
-    private String buildSubscriptionInvoiceHtml(User user, OwnerSubscription sub) {
-        String amount = String.format("%.2f", sub.getAmount() != null ? sub.getAmount() : 0.0);
-        String plan = firstNonBlank(sub.getPlanName(), "Tea Planter Owner Subscription");
-        String paidAt = sub.getPaidAt() != null ? sub.getPaidAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) : "N/A";
-        String validUntil = sub.getValidUntil() != null ? sub.getValidUntil().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) : "N/A";
-        return "<html><body style='font-family:Segoe UI,Arial,sans-serif;background:#f5f7fb;padding:20px;'>"
-                + "<div style='max-width:680px;margin:auto;background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;'>"
-                + "<div style='padding:24px;background:#ecfdf3;border-bottom:1px solid #d1fae5;'>"
-                + "<h2 style='margin:0;color:#065f46;'>Payment Invoice</h2>"
-                + "<p style='margin:6px 0 0;color:#047857;'>Thank you for your subscription payment.</p>"
-                + "</div>"
-                + "<div style='padding:24px;'>"
-                + "<p style='margin-top:0;color:#111827;'>Hi " + escapeHtml(firstNonBlank(user.getName(), "Owner")) + ",</p>"
-                + "<p style='color:#374151;'>Your payment was successfully received. Here is your invoice summary.</p>"
-                + "<table style='width:100%;border-collapse:collapse;margin-top:14px;'>"
-                + row("Plan", plan)
-                + row("Amount", firstNonBlank(sub.getCurrency(), "LKR") + " " + amount)
-                + row("Order ID", firstNonBlank(sub.getOrderId(), "N/A"))
-                + row("Payment ID", firstNonBlank(sub.getPaymentId(), "N/A"))
-                + row("Paid At", paidAt)
-                + row("Valid Until", validUntil)
-                + "</table>"
-                + "<p style='margin-top:18px;color:#374151;'>Manage subscription: <a href='" + escapeHtml(frontendUrl) + "/settings'>Open Settings</a></p>"
-                + "<p style='font-size:12px;color:#6b7280;margin-top:24px;'>Tea Planter Billing System</p>"
-                + "</div></div></body></html>";
-    }
-
-    private String buildSubscriptionReminderHtml(User user, OwnerSubscription sub, int daysLeft) {
-        String validUntil = sub.getValidUntil() != null ? sub.getValidUntil().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) : "N/A";
-        String plan = firstNonBlank(sub.getPlanName(), "Tea Planter Owner Subscription");
-        String urgencyColor = daysLeft <= 1 ? "#b91c1c" : "#92400e";
-        String banner = daysLeft <= 1 ? "Urgent renewal reminder" : "Subscription renewal reminder";
-        return "<html><body style='font-family:Segoe UI,Arial,sans-serif;background:#fff7ed;padding:20px;'>"
-                + "<div style='max-width:680px;margin:auto;background:#fff;border:1px solid #fed7aa;border-radius:12px;overflow:hidden;'>"
-                + "<div style='padding:24px;background:#ffedd5;border-bottom:1px solid #fdba74;'>"
-                + "<h2 style='margin:0;color:" + urgencyColor + ";'>" + banner + "</h2>"
-                + "<p style='margin:6px 0 0;color:#9a3412;'>Your owner subscription expires in " + daysLeft + " day(s).</p>"
-                + "</div>"
-                + "<div style='padding:24px;'>"
-                + "<p style='margin-top:0;color:#111827;'>Hi " + escapeHtml(firstNonBlank(user.getName(), "Owner")) + ",</p>"
-                + "<p style='color:#374151;'>Please renew your subscription before <strong>" + validUntil + "</strong> to avoid interruption.</p>"
-                + "<table style='width:100%;border-collapse:collapse;margin-top:14px;'>"
-                + row("Plan", plan)
-                + row("Current expiry", validUntil)
-                + row("Order reference", firstNonBlank(sub.getOrderId(), "N/A"))
-                + "</table>"
-                + "<p style='margin-top:18px;'><a href='" + escapeHtml(frontendUrl) + "/settings' style='display:inline-block;padding:10px 16px;background:#111827;color:#fff;text-decoration:none;border-radius:8px;'>Renew Now</a></p>"
-                + "<p style='font-size:12px;color:#6b7280;margin-top:24px;'>Tea Planter Billing Reminder</p>"
-                + "</div></div></body></html>";
-    }
-
-    private String row(String label, String value) {
-        return "<tr>"
-                + "<td style='padding:10px;border-bottom:1px solid #f3f4f6;color:#6b7280;width:38%;'>" + escapeHtml(label) + "</td>"
-                + "<td style='padding:10px;border-bottom:1px solid #f3f4f6;color:#111827;font-weight:600;'>" + escapeHtml(value) + "</td>"
-                + "</tr>";
-    }
-
-    private String firstNonBlank(String value, String fallback) {
-        if (value == null || value.isBlank()) return fallback;
-        return value;
-    }
-
-    private String escapeHtml(String value) {
-        if (value == null) return "";
-        return value
-                .replace("&", "&amp;")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;")
-                .replace("\"", "&quot;")
-                .replace("'", "&#39;");
     }
 }
