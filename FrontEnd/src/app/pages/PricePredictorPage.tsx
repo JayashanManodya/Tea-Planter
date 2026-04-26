@@ -12,7 +12,6 @@ export function PricePredictorPage() {
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState('January');
   const [estate, setEstate] = useState('Kendalanda');
-  const [dollarRate, setDollarRate] = useState(300.00);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<PredictionResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -38,8 +37,7 @@ export function PricePredictorPage() {
         body: JSON.stringify({
           Year: year,
           Month: month,
-          Estate: estate,
-          Dollar_Rate: dollarRate
+          Estate: estate
         }),
       });
 
@@ -56,7 +54,6 @@ export function PricePredictorPage() {
         year,
         month,
         estate,
-        dollarRate,
         price: data.predicted_price,
         date: new Date().toISOString().split('T')[0]
       }, ...prev].slice(0, 5));
@@ -81,7 +78,7 @@ export function PricePredictorPage() {
         </div>
         <div className="flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold uppercase tracking-wider">
           <CheckCircle2 className="w-3 h-3" />
-          Model V3.0 Active
+          Model V2.1 Active
         </div>
       </div>
 
@@ -132,22 +129,6 @@ export function PricePredictorPage() {
                     <option key={e} value={e}>{e}</option>
                   ))}
                 </select>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-gray-700 flex items-center justify-between">
-                  Dollar Rate (LKR)
-                  <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-bold">USD/LKR</span>
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={dollarRate}
-                  onChange={(e) => setDollarRate(parseFloat(e.target.value))}
-                  className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition-all font-medium"
-                  required
-                />
-                <p className="text-[10px] text-gray-400 italic">Fluctuations in currency exchange affect global tea demand.</p>
               </div>
 
               <button
@@ -208,7 +189,7 @@ export function PricePredictorPage() {
                     <p className="text-sm text-gray-500">per kg of Manufactured Tea</p>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto">
+                  <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto">
                     <div className="p-3 bg-gray-50 rounded-lg text-left">
                       <p className="text-[10px] text-gray-400 font-bold uppercase mb-1">Period</p>
                       <p className="text-sm font-bold text-gray-700">{month} {year}</p>
@@ -216,10 +197,6 @@ export function PricePredictorPage() {
                     <div className="p-3 bg-gray-50 rounded-lg text-left">
                       <p className="text-[10px] text-gray-400 font-bold uppercase mb-1">Factory</p>
                       <p className="text-sm font-bold text-gray-700">{estate}</p>
-                    </div>
-                    <div className="p-3 bg-blue-50/50 rounded-lg text-left border border-blue-100/50">
-                      <p className="text-[10px] text-blue-400 font-bold uppercase mb-1">USD Rate</p>
-                      <p className="text-sm font-bold text-blue-700">{dollarRate.toFixed(2)} LKR</p>
                     </div>
                   </div>
                </div>
