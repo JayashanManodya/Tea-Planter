@@ -59,6 +59,7 @@ export function OwnerOnboardingPage() {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [retryConfirmLoading, setRetryConfirmLoading] = useState(false);
   const [confirmHint, setConfirmHint] = useState(false);
+  const [confirmElapsedSeconds, setConfirmElapsedSeconds] = useState(0);
   const [devSettleMode, setDevSettleMode] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -153,30 +154,11 @@ export function OwnerOnboardingPage() {
       setPhase('confirming');
       try {
         toast('Confirming your subscription…');
-        const maxAttempts = 40;
-        const delayMs = 2000;
+        const maxAttempts = 20;
+        const delayMs = 1500;
         const allowDevSettle =
           import.meta.env.DEV || import.meta.env.VITE_PAYHERE_DEV_SETTLE === 'true';
         setDevSettleMode(allowDevSettle);
-
-        const tryManualSettle = async (): Promise<boolean> => {
-          if (!allowDevSettle) return false;
-          try {
-            const token = await getTokenRef.current();
-            const oid = localStorage.getItem(PAYHERE_ORDER_ID_KEY) || undefined;
-            await api.payhereManualSettleLocal(user.id, oid, token || undefined);
-            const st = await api.getOwnerSubscriptionStatus(user.id, token || undefined);
-            const ok =
-              st?.hasOwnerPortalAccess === true || st?.hasOwnerPortalAccess === 'true';
-            if (ok && !cancelled) {
-              await proceedAfterSubscriptionConfirmed();
-              return true;
-            }
-          } catch {
-            /* backend may have manual settle off, or order mismatch */
-          }
-          return false;
-        };
 
         for (let i = 0; i < maxAttempts && !cancelled; i++) {
           try {
@@ -192,21 +174,10 @@ export function OwnerOnboardingPage() {
             /* retry */
           }
 
-          /* PayHere cannot POST notify_url to localhost — nudge subscription active in dev. */
-          if (allowDevSettle && i > 0 && i % 3 === 0) {
-            const settled = await tryManualSettle();
-            if (settled) return;
-          }
-
           await new Promise((r) => setTimeout(r, delayMs));
         }
 
         if (cancelled) return;
-
-        if (allowDevSettle) {
-          const settled = await tryManualSettle();
-          if (settled) return;
-        }
 
         clearPayHerePendingFlags();
         stripPayHereReturnQuery();
@@ -231,8 +202,21 @@ export function OwnerOnboardingPage() {
       setConfirmHint(false);
       return;
     }
-    const t = window.setTimeout(() => setConfirmHint(true), 20000);
+    const t = window.setTimeout(() => setConfirmHint(true), 10000);
     return () => window.clearTimeout(t);
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== 'confirming') {
+      setConfirmElapsedSeconds(0);
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      setConfirmElapsedSeconds((prev) => prev + 1);
+    }, 1000);
+
+    return () => window.clearInterval(timer);
   }, [phase]);
 
   const handleRetryConfirmation = async () => {
@@ -378,7 +362,7 @@ export function OwnerOnboardingPage() {
           )}
           <div>
             <p className="font-semibold text-gray-900">1. Subscription payment</p>
-            <p className="text-sm text-gray-600">Pay with PayHere to activate owner access.</p>
+            <p className="text-sm text-gray-600">Get Subscribed and Activate your Owner Access.</p>
           </div>
         </li>
         <li className="flex items-start gap-3 flex-1">
@@ -399,11 +383,33 @@ export function OwnerOnboardingPage() {
       {phase === 'loading' || phase === 'confirming' ? (
         <div className="flex flex-col items-center justify-center py-16 gap-4 bg-white border border-gray-200 rounded-xl px-4">
           <Loader2 className="w-10 h-10 animate-spin text-green-600" />
-          <p className="text-gray-600 text-center">
-            {phase === 'confirming'
-              ? 'Verifying your payment with the server. This usually takes a few seconds…'
-              : 'Loading…'}
-          </p>
+          {phase === 'confirming' ? (
+            <div className="w-full max-w-xl rounded-xl border border-green-100 bg-green-50/60 p-4 space-y-4">
+              <div className="text-center space-y-1">
+                <p className="text-base font-semibold text-gray-900">Finalizing your payment</p>
+                <p className="text-sm text-gray-600">
+                  Securely syncing PayHere confirmation with your owner account.
+                </p>
+                <p className="text-xs text-gray-500">Elapsed: {confirmElapsedSeconds}s</p>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between rounded-lg border border-green-200 bg-white px-3 py-2 text-sm">
+                  <span className="text-gray-700">Payment returned from PayHere</span>
+                  <span className="font-medium text-green-700">Done</span>
+                </div>
+                <div className="flex items-center justify-between rounded-lg border border-green-200 bg-white px-3 py-2 text-sm">
+                  <span className="text-gray-700">Checking your payment status</span>
+                  <span className="font-medium text-amber-700 animate-pulse">In progress</span>
+                </div>
+                <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm">
+                  <span className="text-gray-700">Preparing estate setup step</span>
+                  <span className="font-medium text-gray-500">Next</span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <p className="text-gray-600 text-center">Loading…</p>
+          )}
           {phase === 'confirming' && confirmHint && devSettleMode ? (
             <div className="max-w-md text-sm text-gray-600 text-center space-y-2">
               <p>
@@ -433,8 +439,8 @@ export function OwnerOnboardingPage() {
               <Sprout className="w-5 h-5 text-green-700" />
             </div>
             <div>
-              <h2 className="font-semibold text-gray-900">Step 1 — Pay here</h2>
-              <p className="text-sm text-gray-600">You will return to this page after PayHere.</p>
+              <h2 className="font-semibold text-gray-900">Step 1 : Pay here</h2>
+              <p className="text-sm text-gray-600">You will return to this page after Paid.</p>
             </div>
           </div>
           {error && (
@@ -448,7 +454,7 @@ export function OwnerOnboardingPage() {
             disabled={payLoading}
             className="w-full py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-black disabled:opacity-50"
           >
-            {payLoading ? 'Redirecting…' : 'Pay with PayHere'}
+            {payLoading ? 'Redirecting…' : 'Proceed to payment'}
           </button>
         </div>
       ) : null}
