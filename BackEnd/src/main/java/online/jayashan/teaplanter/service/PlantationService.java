@@ -5,12 +5,10 @@ import online.jayashan.teaplanter.entity.Plantation;
 import online.jayashan.teaplanter.entity.Role;
 import online.jayashan.teaplanter.entity.User;
 import online.jayashan.teaplanter.repository.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -28,14 +26,12 @@ public class PlantationService {
     private final PlotRepository plotRepository;
     private final FactoryRepository factoryRepository;
     private final ClerkService clerkService;
+    private final PayHereSubscriptionService payHereSubscriptionService;
     
-    @Value("${PLANTATION_CREATION_PIN}")
-    private String requiredCreationPin;
-
     @Transactional
-    public Plantation createPlantation(Plantation plantation, String clerkId, String creationPin) {
-        if (requiredCreationPin != null && !requiredCreationPin.equals(creationPin)) {
-            throw new RuntimeException("Invalid Administrative PIN. Contact system administrator.");
+    public Plantation createPlantation(Plantation plantation, String clerkId) {
+        if (!payHereSubscriptionService.hasOwnerPortalAccess(clerkId)) {
+            throw new RuntimeException("Active owner subscription required (including grace period). Please renew via PayHere.");
         }
         
         User user = userRepository.findByClerkId(clerkId)
@@ -106,7 +102,7 @@ public class PlantationService {
     public Plantation getPlantationByClerkId(String clerkId) {
         return userRepository.findByClerkId(clerkId)
                 .map(User::getPlantation)
-                .orElseThrow(() -> new RuntimeException("User not found or no plantation associated"));
+                .orElse(null);
     }
 
     @Transactional
@@ -171,8 +167,6 @@ public class PlantationService {
     }
 
     public void validatePlantationPin(String pin) {
-        if (requiredCreationPin != null && !requiredCreationPin.equals(pin)) {
-            throw new RuntimeException("Invalid Administrative PIN. Contact system administrator.");
-        }
+        // PIN validation removed from owner registration flow.
     }
 }

@@ -1,4 +1,5 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const RAW_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+const API_BASE_URL = RAW_API_BASE_URL.replace(/^https:\/\/localhost(?=[:/]|$)/, 'http://localhost');
 
 async function handleResponse(response: Response) {
     if (!response.ok) {
@@ -386,8 +387,8 @@ export const api = {
         headers: getHeaders(token)
     }).then(handleResponse),
     // Plantations
-    createPlantation: (data: any, clerkId: string, creationPin: string, token?: string) =>
-        fetch(`${API_BASE_URL}/plantations?clerkId=${clerkId}&creationPin=${creationPin}`, {
+    createPlantation: (data: any, clerkId: string, token?: string) =>
+        fetch(`${API_BASE_URL}/plantations?clerkId=${clerkId}`, {
             method: 'POST',
             headers: getHeaders(token),
             body: JSON.stringify(data),
@@ -412,6 +413,28 @@ export const api = {
             method: 'POST',
             headers: getHeaders(token)
         }).then(handleResponse),
+    createOwnerSubscriptionSession: (clerkId: string, token?: string) =>
+        fetch(`${API_BASE_URL}/payhere/subscription/session?clerkId=${clerkId}`, {
+            method: 'POST',
+            headers: getHeaders(token)
+        }).then(handleResponse),
+    getOwnerSubscriptionStatus: (clerkId: string, token?: string) =>
+        fetch(`${API_BASE_URL}/payhere/subscription/status?clerkId=${clerkId}`, {
+            headers: getHeaders(token)
+        }).then(handleResponse),
+    getOwnerSubscriptionDetails: (clerkId: string, token?: string) =>
+        fetch(`${API_BASE_URL}/payhere/subscription/details?clerkId=${clerkId}`, {
+            headers: getHeaders(token)
+        }).then(handleResponse),
+    /** When notify_url cannot reach localhost: requires PAYHERE_MANUAL_SETTLE_ENABLED on backend (dev only). */
+    payhereManualSettleLocal: (clerkId: string, orderId: string | undefined, token?: string) => {
+        const q = new URLSearchParams({ clerkId });
+        if (orderId) q.set('orderId', orderId);
+        return fetch(`${API_BASE_URL}/payhere/subscription/manual-settle-local?${q}`, {
+            method: 'POST',
+            headers: getHeaders(token),
+        }).then(handleResponse);
+    },
     // Users
     getMe: (clerkId: string, token?: string) =>
         fetch(`${API_BASE_URL}/users/me?clerkId=${clerkId}`, {

@@ -14,6 +14,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import online.jayashan.teaplanter.security.UserSynchronizationFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import java.util.Arrays;
 
 @Configuration
@@ -34,6 +36,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/public/**").permitAll()
+                        .requestMatchers("/api/payhere/webhook").permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> {
                 }))
@@ -45,14 +48,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Local dev, deployed frontend (FRONTEND_URL / .env), production domain, Railway previews
+        // Use patterns to allow localhost, your specified frontendUrl, and any Railway subdomains
         configuration.setAllowedOriginPatterns(Arrays.asList(
                 "http://localhost:[*]",
                 "https://localhost:[*]",
                 frontendUrl,
-                "https://www.teaplanter.online",
-                "https://teaplanter.online",
-                "https://*.teaplanter.online",
                 "https://*.up.railway.app"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
