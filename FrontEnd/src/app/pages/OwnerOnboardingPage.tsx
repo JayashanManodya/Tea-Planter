@@ -13,6 +13,7 @@ import {
 } from '@/lib/ownerPayHere';
 
 type Phase = 'loading' | 'confirming' | 'payment' | 'plantation';
+const PAYHERE_DEMO_FORM_UNLOCK_KEY = 'teaplanter_payhere_demo_form_unlock';
 
 async function createPlantationWithRetries(
   body: {
@@ -132,6 +133,7 @@ export function OwnerOnboardingPage() {
       if (fromPayHere) {
         clearPayHerePendingFlags();
         stripPayHereReturnQuery();
+        localStorage.setItem(PAYHERE_DEMO_FORM_UNLOCK_KEY, '1');
         if (!cancelled) {
           setPhase('plantation');
           toast.success('Payment step completed. Continue by creating your plantation.');
@@ -151,6 +153,11 @@ export function OwnerOnboardingPage() {
           /* no plantation */
         }
         if (cancelled) return;
+        const demoFormUnlocked = localStorage.getItem(PAYHERE_DEMO_FORM_UNLOCK_KEY) === '1';
+        if (demoFormUnlocked) {
+          if (!cancelled) setPhase('plantation');
+          return;
+        }
         try {
           const token = await getTokenRef.current();
           const st = await api.getOwnerSubscriptionStatus(user.id, token || undefined);
@@ -351,6 +358,7 @@ export function OwnerOnboardingPage() {
     const result = await createPlantationWithRetries(body, user.id, getToken);
     setSubmitLoading(false);
     if (result.ok) {
+      localStorage.removeItem(PAYHERE_DEMO_FORM_UNLOCK_KEY);
       toast.success('Plantation created and saved.');
       try {
         await user.reload();

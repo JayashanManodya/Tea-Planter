@@ -5,6 +5,7 @@ import online.jayashan.teaplanter.entity.Plantation;
 import online.jayashan.teaplanter.entity.Role;
 import online.jayashan.teaplanter.entity.User;
 import online.jayashan.teaplanter.repository.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,10 +28,12 @@ public class PlantationService {
     private final FactoryRepository factoryRepository;
     private final ClerkService clerkService;
     private final PayHereSubscriptionService payHereSubscriptionService;
+    @Value("${OWNER_ONBOARDING_DEMO_BYPASS_SUBSCRIPTION:false}")
+    private boolean onboardingDemoBypassSubscription;
     
     @Transactional
     public Plantation createPlantation(Plantation plantation, String clerkId) {
-        if (!payHereSubscriptionService.hasOwnerPortalAccess(clerkId)) {
+        if (!onboardingDemoBypassSubscription && !payHereSubscriptionService.hasOwnerPortalAccess(clerkId)) {
             throw new RuntimeException("Active owner subscription required (including grace period). Please renew via PayHere.");
         }
         
